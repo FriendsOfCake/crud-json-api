@@ -16,12 +16,12 @@ from _config import *
 ########################
 
 maintainer = u'FriendsOfCake'
-project = u'crud'
-project_pretty_name = u'Crud'
+project = u'crud-json-api'
+project_pretty_name = u'Crud JsonApi'
 copyright = u'%d, Friends of Cake' % datetime.datetime.now().year
-version = '4.0'
-release = '4.0'
-html_title = 'Crud v4'
+version = '1.0'
+release = '1.0'
+html_title = 'Crud JsonApi'
 html_context = {
     'maintainer': maintainer,
     'project_pretty_name': project_pretty_name,
@@ -29,6 +29,7 @@ html_context = {
         'Bootstrap UI': 'https://bootstrap-ui.readthedocs.io/',
         'CakePDF': 'https://cakepdf.readthedocs.io/',
         'Crud': 'https://crud.readthedocs.io/',
+        'Crud JsonApi': 'https://crud-json-api.readthedocs.io/',
         'Crud Users': 'https://crud-users.readthedocs.io/',
         'Crud View': 'https://crud-view.readthedocs.io/',
         'CsvView': 'https://csvview.readthedocs.io/',
@@ -36,19 +37,19 @@ html_context = {
     }
 }
 
-htmlhelp_basename = 'crud'
+htmlhelp_basename = 'crud-json-api'
 latex_documents = [
-    ('index', 'crud.tex', u'crud',
+    ('index', 'crud-json-api.tex', u'crud-json-api',
      u'Friends Of Cake', 'manual'),
 ]
 man_pages = [
-    ('index', 'crud', u'Crud Documentation',
+    ('index', 'crud-json-api', u'Crud JsonApi Documentation',
      [u'Friends Of Cake'], 1)
 ]
 
 texinfo_documents = [
-    ('index', 'crud', u'Crud Documentation',
-     u'Friends Of Cake', 'crud', 'CakePHP scaffolding on steroids!',
+    ('index', 'crud-json-api', u'Crud JsonApi Documentation',
+     u'Friends Of Cake', 'crud-json-api', 'Crud listener for building APIs that follow the JSON API specification',
      'Miscellaneous'),
 ]
 

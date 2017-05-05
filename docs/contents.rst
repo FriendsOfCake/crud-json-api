@@ -1,14 +1,18 @@
 Contents
 ########
 
+.. toctree::
+   :hidden:
+
 .. _preface-docs:
 
 .. toctree::
    :maxdepth: 3
    :caption: Preface
 
-	 Introduction <index>
-	 Installation <installation>
+    Introduction <index>
+    Installation <preface/installation>
+    Setup <preface/setup>
 
 .. _usage-docs:
 
@@ -16,11 +20,27 @@ Contents
    :maxdepth: 3
    :caption: Usage
 
-	 Quick Start <quick-start>
-	 Configuration <configuration>
-	 Actions <actions>
-	 Events <events>
-	 Event subject <crud-subject>
-	 Listeners <listeners>
-	 Creating an Api <api>
-	 Unit Testing <unit-testing>
+    Fetching Data <usage/fetching-data>
+    Posting Data <usage/posting-data>
+    Deleting Data <usage/deleting-data>
+    Errors and Exceptions <usage/errors-exceptions>
+
+.. _configuration-docs:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Configuration
+
+    Listener Options<configuration/listener-options>
+    Pagination <configuration/pagination>
+    Query Logs <configuration/query-logs>
+    Filtering<configuration/filtering>
+    Schemas <configuration/schemas>
+
+.. _additional-information-docs:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Additional Information
+
+    Missing Functionality <additional-information/missing-functionality>
