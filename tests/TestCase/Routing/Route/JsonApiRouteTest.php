@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\TestCase\Routing\Route;
+namespace CrudJsonApi\Test\TestCase\Routing\Route;
 
 use Crud\TestSuite\TestCase;
 
@@ -16,9 +16,9 @@ class JsonApiRouteTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
-        'plugin.crud.cultures',
-        'plugin.crud.currencies',
+        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.currencies',
     ];
 
     /**
@@ -34,7 +34,7 @@ class JsonApiRouteTest extends TestCase
     public function setup()
     {
         $this->_route = $this
-            ->getMockBuilder('\Crud\Routing\Route\JsonApiRoute')
+            ->getMockBuilder('\CrudJsonApi\Routing\Route\JsonApiRoute')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();

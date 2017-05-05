@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Listener;
+namespace CrudJsonApi\Listener;
 
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
@@ -8,10 +8,11 @@ use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use CrudJsonApi\Listener\JsonApi\DocumentValidator;
+use CrudJsonApi\Traits\JsonApiTrait;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
-use Crud\Listener\JsonApi\DocumentValidator;
-use Crud\Traits\JsonApiTrait;
+use Crud\Listener\ApiListener;
 
 /**
  * Extends Crud ApiListener to respond in JSON API format.
@@ -372,7 +373,7 @@ class JsonApiListener extends ApiListener
     public function render(Subject $subject)
     {
         $controller = $this->_controller();
-        $controller->viewBuilder()->className('Crud.JsonApi');
+        $controller->viewBuilder()->className('CrudJsonApi.JsonApi');
 
         // render a JSON API response with resource(s) if data is found
         if (isset($subject->entity) || isset($subject->entities)) {

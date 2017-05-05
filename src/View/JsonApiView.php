@@ -1,5 +1,5 @@
 <?php
-namespace Crud\View;
+namespace CrudJsonApi\View;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -248,7 +248,7 @@ class JsonApiView extends View
 
             // Otherwise use the dynamic schema provided by Crud
             if (!$schemaClass) {
-                $schemaClass = App::className('Crud.DynamicEntity', 'Schema\JsonApi', 'Schema');
+                $schemaClass = App::className('CrudJsonApi.DynamicEntity', 'Schema\JsonApi', 'Schema');
             }
 
             // Uses NeoMerx createSchemaFromClosure()` to generate Closure

@@ -1,10 +1,11 @@
 <?php
-namespace Crud\Error;
+namespace CrudJsonApi\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Error\Debugger;
+use Crud\Error\ExceptionRenderer;
 use Crud\Listener\ApiQueryLogListener;
 use Neomerx\JsonApi\Document\Error;
 use Neomerx\JsonApi\Encoder\Encoder;

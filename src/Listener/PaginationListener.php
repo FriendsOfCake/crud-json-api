@@ -1,8 +1,9 @@
 <?php
-namespace Crud\Listener;
+namespace CrudJsonApi\Listener;
 
 use Cake\Event\Event;
 use Cake\Routing\Router;
+use Crud\Listener\ApiPaginationListener as BaseListener;
 
 /**
  * When loaded Crud API Pagination Listener will include
@@ -11,7 +12,7 @@ use Cake\Routing\Router;
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  */
-class ApiPaginationListener extends BaseListener
+class PaginationListener extends BaseListener
 {
 
     /**

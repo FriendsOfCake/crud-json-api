@@ -38,7 +38,7 @@ define('CAKE', CORE_PATH . 'src' . DS);
 require ROOT . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
-Cake\Core\Configure::write('App', ['namespace' => 'Crud\Test\App']);
+Cake\Core\Configure::write('App', ['namespace' => 'CrudJsonApi\Test\App']);
 Cake\Core\Configure::write('debug', true);
 
 $TMP = new \Cake\Filesystem\Folder(TMP);
@@ -72,6 +72,7 @@ Cake\Core\Configure::write('Session', [
 ]);
 
 Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
 
 Cake\Routing\DispatcherFactory::add('Routing');
 Cake\Routing\DispatcherFactory::add('ControllerFactory');

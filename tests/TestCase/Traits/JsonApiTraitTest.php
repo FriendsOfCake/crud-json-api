@@ -1,9 +1,9 @@
 <?php
-namespace Crud\Test\TestCase\Traits;
+namespace CrudJsonApi\Test\TestCase\Traits;
 
+use CrudJsonApi\Test\App\Model\Entity\Country;
+use CrudJsonApi\Traits\JsonApiTrait;
 use Crud\TestSuite\TestCase;
-use Crud\Test\App\Model\Entity\Country;
-use Crud\Traits\JsonApiTrait;
 use stdClass;
 
 /**

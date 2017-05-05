@@ -1,9 +1,9 @@
 <?php
-namespace Crud\Test\TestCase\Integration\JsonApi;
+namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Crud\Test\TestCase\Integration\JsonApiBaseTestCase;
+use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class IncludeQueryIntegrationTest extends JsonApiBaseTestCase
 {

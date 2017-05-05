@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\App\Model\Table;
+namespace CrudJsonApi\Test\App\Model\Table;
 
 class CurrenciesTable extends \Cake\ORM\Table
 {

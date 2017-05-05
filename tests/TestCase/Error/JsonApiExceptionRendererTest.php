@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\TestCase\Error;
+namespace CrudJsonApi\Test\TestCase\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
@@ -21,7 +21,7 @@ class JsonApiExceptionRendererTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
+        'plugin.CrudJsonApi.countries',
     ];
 
     /**
@@ -52,7 +52,7 @@ class JsonApiExceptionRendererTest extends TestCase
         ]);
         $controller->response = new Response();
 
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(['_getController'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -107,7 +107,7 @@ class JsonApiExceptionRendererTest extends TestCase
         ]);
         $controller->response = new Response();
 
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(['_getController'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -170,7 +170,7 @@ class JsonApiExceptionRendererTest extends TestCase
 
         $controller->response = $response;
 
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(['_getController'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -207,7 +207,7 @@ class JsonApiExceptionRendererTest extends TestCase
             ],
         ];
 
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
@@ -244,7 +244,7 @@ class JsonApiExceptionRendererTest extends TestCase
      */
     public function testGetNeoMerxErrorCollection()
     {
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
@@ -320,7 +320,7 @@ class JsonApiExceptionRendererTest extends TestCase
                 'dummy' => 'log-entry'
             ]));
 
-        $renderer = $this->getMockBuilder('Crud\Error\JsonApiExceptionRenderer')
+        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
             ->setMethods(['_getApiQueryLogListenerObject'])
             ->disableOriginalConstructor()
             ->getMock();

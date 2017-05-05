@@ -1,11 +1,10 @@
 <?php
-namespace Crud\Traits;
+namespace CrudJsonApi\Traits;
 
 use Cake\Utility\Inflector;
 
 trait JsonApiTrait
 {
-
     /**
      * Parses the name of an Entity class to build a lowercase plural
      * controller name to be used in links.

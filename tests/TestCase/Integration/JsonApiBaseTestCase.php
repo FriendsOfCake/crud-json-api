@@ -1,12 +1,12 @@
 <?php
-namespace Crud\Test\TestCase\Integration;
+namespace CrudJsonApi\Test\TestCase\Integration;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
-use Crud\Error\JsonApiExceptionRenderer;
+use CrudJsonApi\Error\JsonApiExceptionRenderer;
 
 abstract class JsonApiBaseTestCase extends IntegrationTestCase
 {
@@ -16,11 +16,11 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
-        'plugin.crud.currencies',
-        'plugin.crud.cultures',
-        'plugin.crud.national_capitals',
-        'plugin.crud.national_cities',
+        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.currencies',
+        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.national_capitals',
+        'plugin.CrudJsonApi.national_cities',
     ];
 
     /**

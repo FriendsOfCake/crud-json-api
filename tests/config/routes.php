@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\App\Config;
+namespace CrudJsonApi\Test\App\Config;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -22,7 +22,7 @@ Router::scope('/', function ($routes) {
                 'from' => 'Countries',
             ],
             [
-                'routeClass' => 'Crud.JsonApiRoute',
+                'routeClass' => 'CrudJsonApi.JsonApiRoute',
             ]
         );
 

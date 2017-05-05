@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\Fixture;
+namespace CrudJsonApi\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 

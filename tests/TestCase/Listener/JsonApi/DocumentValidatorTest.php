@@ -1,7 +1,7 @@
 <?php
-namespace Crud\Test\TestCase\Listener\JsonApi;
+namespace CrudJsonApi\Test\TestCase\Listener\JsonApi;
 
-use Crud\Listener\JsonApi\DocumentValidator;
+use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use Crud\TestSuite\TestCase;
 use stdClass;
 

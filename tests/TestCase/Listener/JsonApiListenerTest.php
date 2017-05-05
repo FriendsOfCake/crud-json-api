@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\TestCase\Listener;
+namespace CrudJsonApi\Test\TestCase\Listener;
 
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
@@ -9,10 +9,10 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
+use CrudJsonApi\Listener\JsonApiListener;
+use CrudJsonApi\Test\App\Model\Entity\Country;
 use Crud\Event\Subject;
-use Crud\Listener\JsonApiListener;
 use Crud\TestSuite\TestCase;
-use Crud\Test\App\Model\Entity\Country;
 
 /**
  * Licensed under The MIT License
@@ -27,11 +27,11 @@ class JsonApiListenerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
-        'plugin.crud.cultures',
-        'plugin.crud.currencies',
-        'plugin.crud.national_capitals',
-        'plugin.crud.national_cities',
+        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.currencies',
+        'plugin.CrudJsonApi.national_capitals',
+        'plugin.CrudJsonApi.national_cities',
     ];
 
     /**
@@ -93,7 +93,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->setMethods(['setupDetectors', '_checkRequestType', '_controller'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -162,7 +162,7 @@ class JsonApiListenerTest extends TestCase
         ];
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->setMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDataArray', '_checkRequestData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -198,7 +198,7 @@ class JsonApiListenerTest extends TestCase
     public function testAfterSave()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_response', 'render'])
             ->getMock();
@@ -282,7 +282,7 @@ class JsonApiListenerTest extends TestCase
     public function testAfterDelete()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_response'])
             ->getMock();
@@ -344,7 +344,7 @@ class JsonApiListenerTest extends TestCase
     public function testBeforeRedirect()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -384,7 +384,7 @@ class JsonApiListenerTest extends TestCase
             ->will($this->returnValue($subject));
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller'])
             ->getMock();
@@ -425,7 +425,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_action'])
             ->getMock();
@@ -464,7 +464,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_action'])
             ->getMock();
@@ -489,7 +489,7 @@ class JsonApiListenerTest extends TestCase
     public function testCheckPackageDependenciesSuccess()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -521,7 +521,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionWithJsonApiVersionSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -542,7 +542,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionWithJsonApiVersionSuccessWithArray()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -564,7 +564,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionWithJsonApiVersionFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -585,7 +585,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionMetaSuccessWithArray()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -607,7 +607,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionMetaFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -628,7 +628,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionAbsoluteLinksSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -650,7 +650,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionAbsoluteLinksFailsWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -671,7 +671,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionJsonApiBelongsToLinksSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -693,7 +693,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionJsonApiBelongsToLinksFailsWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -715,7 +715,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionIncludeFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -737,7 +737,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionFieldSetsFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -759,7 +759,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionJsonOptionsFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -781,7 +781,7 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionDebugPrettyPrintFailWithString()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -802,7 +802,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testValidateConfigOptionQueryParametersPrintFailWithString()
     {
-        $listener = $this->getMockBuilder('\Crud\Listener\JsonApiListener')
+        $listener = $this->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -892,7 +892,7 @@ class JsonApiListenerTest extends TestCase
     public function testGetFindResult()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller'])
             ->getMock();
@@ -925,7 +925,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_event'])
             ->getMock();
@@ -1052,7 +1052,7 @@ class JsonApiListenerTest extends TestCase
     public function testGetIncludeList()
     {
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(['_controller', '_event'])
             ->getMock();
@@ -1157,7 +1157,7 @@ class JsonApiListenerTest extends TestCase
         $controller->request = $request;
 
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->setMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDataArray'])
             ->disableOriginalConstructor()
             ->getMock();

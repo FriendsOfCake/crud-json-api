@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\App\Controller;
+namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
 use Crud\Controller\ControllerTrait;
@@ -26,8 +26,8 @@ class CountriesController extends Controller
                 'Crud.Delete',
             ],
             'listeners' => [
-                'Crud.JsonApi',
-                'Crud.ApiPagination',
+                'CrudJsonApi.JsonApi',
+                'CrudJsonApi.Pagination'
             ]
         ]
     ];

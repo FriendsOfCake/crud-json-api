@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\App\Model\Entity;
+namespace CrudJsonApi\Test\App\Model\Entity;
 
 class NationalCity extends \Cake\ORM\Entity
 {

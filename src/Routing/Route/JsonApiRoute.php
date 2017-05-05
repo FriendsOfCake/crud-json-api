@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Routing\Route;
+namespace CrudJsonApi\Routing\Route;
 
 use Cake\Database\Exception;
 use Cake\ORM\TableRegistry;

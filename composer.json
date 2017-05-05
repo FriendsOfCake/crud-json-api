@@ -1,71 +1,60 @@
 {
-    "name":"friendsofcake/crud",
-    "description":"CakePHP Application development on steroids - rapid prototyping / scaffolding & production ready code - XML / JSON APIs and more",
+    "name":"friendsofcake/crud-json-api",
+    "description":"Listener for building CakePHP Crud APIs following the JSON API specification.",
     "type":"cakephp-plugin",
     "keywords":[
         "cakephp",
         "crud",
-        "create",
-        "retrieve",
-        "update",
-        "delete",
-        "bake",
-        "cake",
-        "scaffold",
-        "scaffolding"
+        "api",
+        "jsonapi",
+        "json api"
     ],
-    "homepage":"https://github.com/FriendsOfCake/crud",
+    "homepage":"https://github.com/FriendsOfCake/crud-json-api",
     "license":"MIT",
     "authors":[
         {
-            "name":"Christian Winther",
+            "name":"Bravo-Kernel",
             "role":"Author",
-            "homepage":"http://cakephp.nu/"
+            "homepage":"http://github.com/bravo-kernel"
         },
         {
-            "name":"José Lorenzo Rodríguez",
+            "name":"Marlin Cremers",
             "role":"Contributor",
-            "homepage":"https://github.com/lorenzo"
+            "homepage":"https://github.com/Marlinc"
         },
         {
-            "name":"Andy Dawson",
+            "name":"Walther Lalk",
             "role":"Contributor",
-            "homepage":"https://github.com/ad7six"
-        },
-        {
-            "name":"ADmad",
-            "role":"Contributor",
-            "homepage":"https://github.com/admad"
+            "homepage":"https://github.com/dakota"
         }
     ],
     "require":{
-        "cakephp/cakephp": "^3.2.2"
+        "cakephp/cakephp": "^3.2.2",
+        "friendsofcake/crud": "*",
+        "neomerx/json-api": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "<6.0",
         "friendsofcake/cakephp-test-utilities": "dev-master",
-        "friendsofcake/search": "dev-master",
-        "neomerx/json-api": "^0.8.10"
+        "friendsofcake/search": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "Crud\\": "src"
+            "CrudJsonApi\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Crud\\Test\\": "tests",
+            "CrudJsonApi\\Test\\": "tests",
             "Cake\\Test\\Fixture\\": "./vendor/cakephp/cakephp/tests/Fixture"
         }
     },
     "suggest": {
-        "friendsofcake/search": "Provides search capabilities for the Crud plugin.",
-        "friendsofcake/crud-view": "Automated admin backend based on your Crud configuration.",
-        "neomerx/json-api": "Framework agnostic JSON API (jsonapi.org) implementation"
+        "friendsofcake/search": "Provides search capabilities for the Crud plugin."
     },
     "support":{
-        "source":"https://github.com/FriendsOfCake/crud",
-        "issues":"https://github.com/FriendsOfCake/crud/issues",
+        "source":"https://github.com/FriendsOfCake/crud-json-api",
+        "issues":"https://github.com/FriendsOfCake/crud-json-api/issues",
         "wiki":"http://crud.readthedocs.org/en/latest/",
         "irc":"irc://irc.freenode.org/friendsofcake"
     }

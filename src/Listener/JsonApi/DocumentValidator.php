@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Listener\JsonApi;
+namespace CrudJsonApi\Listener\JsonApi;
 
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;

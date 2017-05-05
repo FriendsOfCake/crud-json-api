@@ -1,7 +1,7 @@
 <?php
-namespace Crud\Test\TestCase\Integration\JsonApi;
+namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
-use Crud\Test\TestCase\Integration\JsonApiBaseTestCase;
+use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class DefaultIndexActionIntegrationTest extends JsonApiBaseTestCase
 {

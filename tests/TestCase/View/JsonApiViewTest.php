@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Test\TestCase\View;
+namespace CrudJsonApi\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -12,11 +12,11 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CrudJsonApi\Listener\JsonApiListener;
+use CrudJsonApi\View\JsonApiView;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
-use Crud\Listener\JsonApiListener;
 use Crud\TestSuite\TestCase;
-use Crud\View\JsonApiView;
 use StdClass;
 
 /**
@@ -31,9 +31,9 @@ class JsonApiViewTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
-        'plugin.crud.currencies',
-        'plugin.crud.cultures',
+        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.currencies',
+        'plugin.CrudJsonApi.cultures',
     ];
 
     /**
@@ -126,7 +126,7 @@ class JsonApiViewTest extends TestCase
         $controller = new Controller($request, $response, $tableName);
 
         $builder = $controller->viewBuilder();
-        $builder->className('\Crud\View\JsonApiView');
+        $builder->className('\CrudJsonApi\View\JsonApiView');
 
         // create view with viewVars for resource-less response
         if (!$tableName) {
@@ -152,7 +152,7 @@ class JsonApiViewTest extends TestCase
         // create required '_entities' and '_associations' viewVars normally
         // produced and set by the JsonApiListener
         $listener = $this
-            ->getMockBuilder('\Crud\Listener\JsonApiListener')
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -430,7 +430,7 @@ class JsonApiViewTest extends TestCase
     public function testGetDataToSerializeFromViewVarsSuccess()
     {
         $view = $this
-            ->getMockBuilder('\Crud\View\JsonApiView')
+            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -495,7 +495,7 @@ class JsonApiViewTest extends TestCase
     public function testGetDataToSerializeFromViewVarsObjectExcecption()
     {
         $view = $this
-            ->getMockBuilder('\Crud\View\JsonApiView')
+            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -512,7 +512,7 @@ class JsonApiViewTest extends TestCase
     public function testJsonOptions()
     {
         $view = $this
-            ->getMockBuilder('\Crud\View\JsonApiView')
+            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -630,7 +630,7 @@ class JsonApiViewTest extends TestCase
         ];
 
         $view = $this
-            ->getMockBuilder('\Crud\View\JsonApiView')
+            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();

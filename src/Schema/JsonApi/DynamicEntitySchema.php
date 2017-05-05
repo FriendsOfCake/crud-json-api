@@ -1,5 +1,5 @@
 <?php
-namespace Crud\Schema\JsonApi;
+namespace CrudJsonApi\Schema\JsonApi;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
@@ -7,7 +7,7 @@ use Cake\ORM\Association;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
-use Crud\Traits\JsonApiTrait;
+use CrudJsonApi\Traits\JsonApiTrait;
 use Neomerx\JsonApi\Contracts\Document\LinkInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface;
 use Neomerx\JsonApi\Document\Link;

@@ -1,9 +1,9 @@
 <?php
-namespace Crud\Test\TestCase\Schema\JsonApi;
+namespace CrudJsonApi\Test\TestCase\Schema\JsonApi;
 
 use Cake\Controller\Controller;
 use Cake\ORM\TableRegistry;
-use Crud\Listener\JsonApiListener;
+use CrudJsonApi\Listener\JsonApiListener;
 use Crud\TestSuite\TestCase;
 use Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface;
 use Neomerx\JsonApi\Factories\Factory;
@@ -21,9 +21,9 @@ class DynamicEntitySchemaTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.crud.countries',
-        'plugin.crud.cultures',
-        'plugin.crud.currencies',
+        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.currencies',
     ];
 
     /**
@@ -81,7 +81,7 @@ class DynamicEntitySchemaTest extends TestCase
             ->getMock();
 
         $schema = $this
-            ->getMockBuilder('\Crud\Schema\JsonApi\DynamicEntitySchema')
+            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
             ->setMethods(null)
             ->setConstructorArgs([$schemaFactoryInterface, $view, $table])
             ->getMock();
@@ -153,7 +153,7 @@ class DynamicEntitySchemaTest extends TestCase
 
         // setup the schema
         $schema = $this
-            ->getMockBuilder('\Crud\Schema\JsonApi\DynamicEntitySchema')
+            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
             ->setMethods(null)
             ->setConstructorArgs([new Factory(), $view, $table])
             ->getMock();
@@ -229,7 +229,7 @@ class DynamicEntitySchemaTest extends TestCase
         $table = TableRegistry::get('Countries');
 
         $schema = $this
-            ->getMockBuilder('\Crud\Schema\JsonApi\DynamicEntitySchema')
+            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
             ->setMethods(null)
             ->setConstructorArgs([new Factory(), $view, $table])
             ->getMock();
