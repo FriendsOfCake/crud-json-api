@@ -9,7 +9,8 @@
 Crud Listener for (rapidly) building CakePHP APIs following the
 [JSON API specification](http://jsonapi.org/).
 
-Full documentation [found here](https://crud-json-api.readthedocs.io/).
+## Documentation
+Documentation [found here](https://crud-json-api.readthedocs.io/).
 
 ## Installation
 
