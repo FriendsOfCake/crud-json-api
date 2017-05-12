@@ -482,38 +482,6 @@ class JsonApiListenerTest extends TestCase
     }
 
     /**
-     * Make sure listener continues if neomerx package is installed
-     *
-     * @return void
-     */
-    public function testCheckPackageDependenciesSuccess()
-    {
-        $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        $this->assertTrue(class_exists('\Neomerx\JsonApi\Encoder\Encoder'));
-
-        $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_checkPackageDependencies', [], $listener);
-    }
-
-    /**
-     * Make sure listener stops if neomerx package is not installed
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener requires composer installing neomerx/json-api:^0.8.10
-     */
-    public function testCheckPackageDependenciesFail()
-    {
-        $this->markTestIncomplete(
-            'Implement this test to bump coverage to 100%. Requires mocking system/php functions'
-        );
-    }
-
-    /**
      * Make sure config option `withJsonApiVersion` accepts a boolean
      *
      * @return void
