@@ -25,7 +25,7 @@ class PaginationListener extends BaseListener
      */
     public function implementedEvents()
     {
-        if (!$this->_checkRequestType('api') && !$this->_checkRequestType('jsonapi')) {
+        if (!$this->_checkRequestType('jsonapi')) {
             return null;
         }
 
@@ -61,23 +61,7 @@ class PaginationListener extends BaseListener
             return;
         }
 
-        if ($this->_checkRequestType('jsonapi')) {
-            $controller->set('_pagination', $this->_getJsonApiPaginationResponse($pagination));
-
-            return;
-        }
-
-        $paginationResponse = [
-            'page_count' => $pagination['pageCount'],
-            'current_page' => $pagination['page'],
-            'has_next_page' => $pagination['nextPage'],
-            'has_prev_page' => $pagination['prevPage'],
-            'count' => $pagination['count'],
-            'limit' => $pagination['limit']
-        ];
-
-        $controller->set('pagination', $paginationResponse);
-        $this->_action()->config('serialize.pagination', 'pagination');
+        $controller->set('_pagination', $this->_getJsonApiPaginationResponse($pagination));
     }
 
     /**
