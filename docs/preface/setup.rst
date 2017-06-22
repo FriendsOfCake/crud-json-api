@@ -82,7 +82,7 @@ Routing
 ^^^^^^^
 
 Only controllers explicitly mapped can be exposed as API resources so make sure
-to configure your global routing scope in ``config/router.php`` similar to:
+to configure your global routing scope in ``config/routes.php`` similar to:
 
 .. code-block:: phpinline
 
@@ -116,4 +116,4 @@ and can be used like this inside your application:
 .. note::
 
 To make sure the listener won't get in your way it will
-return ``NULL`` for all requests unless ``is('jsonapi')`` is true.
+return ``null`` for all requests unless ``is('jsonapi')`` is true.
