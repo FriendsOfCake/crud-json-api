@@ -26,6 +26,9 @@ matrix:
 before_script:
   - if [[ $TRAVIS_PHP_VERSION != 7.0 ]]; then phpenv config-rm xdebug.ini; fi
 
+  - if [[ $TRAVIS_PHP_VERSION = 5.5 ]]; then composer require --dev friendsofcake/search:^3.0; fi
+  - if [[ $TRAVIS_PHP_VERSION != 5.5 ]]; then composer install --prefer-dist --no-interaction; fi
+
   - composer self-update
   - composer install --prefer-dist --no-interaction
 
