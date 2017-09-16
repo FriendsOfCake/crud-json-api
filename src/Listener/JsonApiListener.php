@@ -40,7 +40,7 @@ class JsonApiListener extends ApiListener
             'message' => 'Unknown error',
             'code' => 0,
         ],
-        'exceptionRenderer' => 'Crud\Error\JsonApiExceptionRenderer',
+        'exceptionRenderer' => 'CrudJsonApi\Error\JsonApiExceptionRenderer',
         'setFlash' => false,
         'withJsonApiVersion' => false, // true or array/hash with additional meta information (will add top-level member `jsonapi` to the response)
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
