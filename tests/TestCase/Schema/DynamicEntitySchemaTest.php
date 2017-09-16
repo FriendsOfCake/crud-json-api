@@ -73,6 +73,7 @@ class DynamicEntitySchemaTest extends TestCase
             ->getMock();
 
         $view->set('_repositories', $repositories);
+        $view->set('_inflect', 'dasherize');
 
         // setup the schema
         $schemaFactoryInterface = $this
