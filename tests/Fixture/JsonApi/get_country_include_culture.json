@@ -4,7 +4,8 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands"
+            "name": "The Netherlands",
+            "dummy-counter": 11111
         },
         "relationships": {
             "cultures": {
@@ -29,7 +30,8 @@
             "id": "1",
             "attributes": {
                 "code": "nl-NL",
-                "name": "Dutch"
+                "name": "Dutch",
+                "another-dummy-counter": 11111
             },
             "links": {
                 "self": "\/cultures\/1"
