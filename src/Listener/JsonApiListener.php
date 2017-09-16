@@ -722,7 +722,19 @@ class JsonApiListener extends ApiListener
 
         if (array_key_exists('attributes', $document['data'])) {
             $result = array_merge_recursive($result, $document['data']['attributes']);
-        };
+
+            // dasherize attribute keys if need be
+            if ($this->config('inflect') === 'dasherize') {
+                foreach ($result as $key => $value) {
+                    $underscoredKey = Inflector::underscore($key);
+
+                    if (!array_key_exists($underscoredKey, $result)) {
+                        $result[$underscoredKey] = $value;
+                        unset($result[$key]);
+                    }
+                }
+            }
+        }
 
         if (!array_key_exists('relationships', $document['data'])) {
             return $result;

@@ -3,7 +3,8 @@
         "type": "countries",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands"
+            "name": "The Netherlands",
+            "dummy-counter": 11111
         }
     }
 }
