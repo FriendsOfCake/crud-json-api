@@ -1,6 +1,7 @@
 <?php
 namespace CrudJsonApi\Listener;
 
+use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Network\Exception\BadRequestException;
@@ -40,7 +41,7 @@ class JsonApiListener extends ApiListener
             'message' => 'Unknown error',
             'code' => 0,
         ],
-        'exceptionRenderer' => 'Crud\Error\JsonApiExceptionRenderer',
+        'exceptionRenderer' => 'CrudJsonApi\Error\JsonApiExceptionRenderer',
         'setFlash' => false,
         'withJsonApiVersion' => false, // true or array/hash with additional meta information (will add top-level member `jsonapi` to the response)
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
@@ -95,6 +96,28 @@ class JsonApiListener extends ApiListener
             'Crud.beforePaginate' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
         ];
+    }
+
+    /**
+     * setup
+     *
+     * Called when the listener is created
+     *
+     * @return void
+     */
+    public function setup()
+    {
+        if (!$this->_checkRequestType('jsonapi')) {
+            return;
+        }
+
+        $appClass = Configure::read('App.namespace') . '\Application';
+
+        // If `App\Application` class exists it means Cake 3.3's PSR7 middleware
+        // implementation is used and it's too late to register new error handler.
+        if (!class_exists($appClass, false)) {
+            $this->registerExceptionHandler();
+        }
     }
 
     /**

@@ -51,7 +51,7 @@ class JsonApiListenerTest extends TestCase
                 'message' => 'Unknown error',
                 'code' => 0,
             ],
-            'exceptionRenderer' => 'Crud\Error\JsonApiExceptionRenderer',
+            'exceptionRenderer' => 'CrudJsonApi\Error\JsonApiExceptionRenderer',
             'setFlash' => false,
             'withJsonApiVersion' => false,
             'meta' => [],
