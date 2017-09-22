@@ -1221,6 +1221,12 @@ class JsonApiListenerTest extends TestCase
             'code' => 'NL',
             'name' => 'The Netherlands',
             'dummy_counter' => 11111,
+            'cultures' => [
+                [
+                    'id' => '2',
+                    'name' => 'nl_NL',
+                ],
+            ],
             'currency_id' => '3'
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);

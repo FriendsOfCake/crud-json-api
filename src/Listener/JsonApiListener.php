@@ -764,8 +764,23 @@ class JsonApiListener extends ApiListener
         }
 
         foreach ($document['data']['relationships'] as $key => $details) {
-            // skip hasMany relationships for now
             if (isset($details['data'][0])) {
+                $relationResults = [];
+                foreach ($details['data'] as $relationData) {
+                    $relationResult = [];
+                    if (array_key_exists('id', $relationData)) {
+                        $relationResult['id'] = $relationData['id'];
+                    };
+
+                    if (array_key_exists('attributes', $relationData)) {
+                        $relationResult = array_merge_recursive($relationResult, $relationData['attributes']);
+                    };
+
+                    $relationResults[] = $relationResult;
+                }
+
+                $result[$key] = $relationResults;
+
                 continue;
             }
 
