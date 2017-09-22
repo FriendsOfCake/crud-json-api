@@ -1225,6 +1225,7 @@ class JsonApiListenerTest extends TestCase
                 [
                     'id' => '2',
                     'name' => 'nl_NL',
+                    'language_name' => 'Dutch',
                 ],
             ],
             'currency_id' => '3'
