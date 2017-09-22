@@ -51,7 +51,7 @@ class JsonApiListenerTest extends TestCase
                 'message' => 'Unknown error',
                 'code' => 0,
             ],
-            'exceptionRenderer' => 'Crud\Error\JsonApiExceptionRenderer',
+            'exceptionRenderer' => 'CrudJsonApi\Error\JsonApiExceptionRenderer',
             'setFlash' => false,
             'withJsonApiVersion' => false,
             'meta' => [],
@@ -1208,7 +1208,8 @@ class JsonApiListenerTest extends TestCase
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
-            'name' => 'The Netherlands'
+            'name' => 'The Netherlands',
+            'dummy_counter' => 11111
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);
@@ -1219,6 +1220,7 @@ class JsonApiListenerTest extends TestCase
         $expected = [
             'code' => 'NL',
             'name' => 'The Netherlands',
+            'dummy_counter' => 11111,
             'currency_id' => '3'
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
@@ -1232,7 +1234,8 @@ class JsonApiListenerTest extends TestCase
 
         $expected = [
             'code' => 'NL',
-            'name' => 'The Netherlands'
+            'name' => 'The Netherlands',
+            'dummy_counter' => 11111
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);

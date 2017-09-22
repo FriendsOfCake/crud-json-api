@@ -114,6 +114,18 @@ class DynamicEntitySchema extends SchemaProvider
             unset($attributes[$propertyName]);
         }
 
+        // dasherize attribute keys (like `created_by`) if need be
+        if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+            foreach ($attributes as $key => $value) {
+                $dasherizedKey = Inflector::dasherize($key);
+
+                if (!array_key_exists($dasherizedKey, $attributes)) {
+                    $attributes[$dasherizedKey] = $value;
+                    unset($attributes[$key]);
+                }
+            }
+        }
+
         return $attributes;
     }
 

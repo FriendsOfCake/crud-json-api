@@ -5,7 +5,7 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
-use Crud\Core\Object;
+use Crud\Core\BaseObject;
 use Crud\Error\Exception\CrudException;
 use Crud\Error\Exception\ValidationException;
 use Neomerx\JsonApi\Document\Error;
@@ -20,7 +20,7 @@ use StdClass;
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  */
-class DocumentValidator extends Object
+class DocumentValidator extends BaseObject
 {
     /**
      * RequestHandler decoded JSON API document array.

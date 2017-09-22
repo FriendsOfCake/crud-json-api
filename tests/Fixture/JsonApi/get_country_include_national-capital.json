@@ -4,7 +4,8 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands"
+            "name": "The Netherlands",
+            "dummy-counter": 11111
         },
         "relationships": {
             "national-capital": {

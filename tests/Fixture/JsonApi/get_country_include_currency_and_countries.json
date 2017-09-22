@@ -4,7 +4,8 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands"
+            "name": "The Netherlands",
+            "dummy-counter": 11111
         },
         "relationships": {
             "currency": {
@@ -27,7 +28,8 @@
             "id": "2",
             "attributes": {
                 "code": "BE",
-                "name": "Belgium"
+                "name": "Belgium",
+                "dummy-counter": 22222
             },
             "links": {
                 "self": "\/countries\/2"

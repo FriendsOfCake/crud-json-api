@@ -400,7 +400,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands"},"links":{"self":"\/countries\/1"}}}',
+            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"links":{"self":"\/countries\/1"}}}',
             $view->render()
         );
     }

@@ -40,7 +40,7 @@ class JsonApiListener extends ApiListener
             'message' => 'Unknown error',
             'code' => 0,
         ],
-        'exceptionRenderer' => 'Crud\Error\JsonApiExceptionRenderer',
+        'exceptionRenderer' => 'CrudJsonApi\Error\JsonApiExceptionRenderer',
         'setFlash' => false,
         'withJsonApiVersion' => false, // true or array/hash with additional meta information (will add top-level member `jsonapi` to the response)
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
@@ -722,7 +722,19 @@ class JsonApiListener extends ApiListener
 
         if (array_key_exists('attributes', $document['data'])) {
             $result = array_merge_recursive($result, $document['data']['attributes']);
-        };
+
+            // dasherize attribute keys if need be
+            if ($this->config('inflect') === 'dasherize') {
+                foreach ($result as $key => $value) {
+                    $underscoredKey = Inflector::underscore($key);
+
+                    if (!array_key_exists($underscoredKey, $result)) {
+                        $result[$underscoredKey] = $value;
+                        unset($result[$key]);
+                    }
+                }
+            }
+        }
 
         if (!array_key_exists('relationships', $document['data'])) {
             return $result;
