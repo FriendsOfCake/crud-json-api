@@ -64,9 +64,12 @@ class and enabling it with the ``exceptionRenderer`` configuration option.
     }
   }
 
-**Note:** However if you are using CakePHP 3.3+'s PSR7 middleware feature the ``exceptionRenderer``
-config won't be used and instead you will have to set the ``Error.exceptionRenderer``
-config in ``config/app.php`` to ``'CrudJsonApi\Error\JsonApiExceptionRenderer'`` as following:
+**Note:** The listener setting above is ignored when using CakePHP's PSR7 middleware feature.
+
+If you want to use CakePHP's ``ErrorHandlerMiddleware``:
+
+- make sure that you are using CakePHP 3.4+
+- set the ``Error.exceptionRenderer`` option in ``config/app.php`` to ``'CrudJsonApi\Error\JsonApiExceptionRenderer'`` like shown below:
 
 .. code-block:: php
 
