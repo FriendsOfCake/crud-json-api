@@ -11,7 +11,11 @@
                 "data": [
                     {
                         "type": "cultures",
-                        "id": "2"
+                        "id": "2",
+                        "attributes": {
+                            "name": "nl_NL",
+                            "language-name": "Dutch"
+                        }
                     }
                 ]
             },
