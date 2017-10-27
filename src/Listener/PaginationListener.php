@@ -82,21 +82,21 @@ class PaginationListener extends BaseListener
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => $pagination['page'],
-            '_method' => $this->_controller()->request->getMethod(),
+            '_method' => $this->_controller()->request->method(),
         ], true);
 
         $first = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => 1,
-            '_method' => $this->_controller()->request->getMethod(),
+            '_method' => $this->_controller()->request->method(),
         ], true);
 
         $last = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => $pagination['pageCount'],
-            '_method' => $this->_controller()->request->getMethod(),
+            '_method' => $this->_controller()->request->method(),
         ], true);
 
         $prev = null;
@@ -105,7 +105,7 @@ class PaginationListener extends BaseListener
                 'controller' => $this->_controller()->name,
                 'action' => 'index',
                 'page' => $pagination['page'] - 1,
-                '_method' => $this->_controller()->request->getMethod()
+                '_method' => $this->_controller()->request->method(),
             ], true);
         }
 
@@ -115,7 +115,7 @@ class PaginationListener extends BaseListener
                 'controller' => $this->_controller()->name,
                 'action' => 'index',
                 'page' => $pagination['page'] + 1,
-                '_method' => $this->_controller()->request->getMethod(),
+                '_method' => $this->_controller()->request->method(),
             ], true);
         }
 
