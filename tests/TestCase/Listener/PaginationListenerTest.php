@@ -95,7 +95,7 @@ class PaginationListenerTest extends TestCase
      */
     public function testBeforeRender()
     {
-
+        $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
@@ -106,6 +106,6 @@ class PaginationListenerTest extends TestCase
 
     public function testGetJsonApiPaginationResponse()
     {
-
+        $this->markTestIncomplete('Not implemented yet.');
     }
 }
