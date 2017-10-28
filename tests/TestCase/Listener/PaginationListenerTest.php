@@ -41,51 +41,13 @@ class PaginationListenerTest extends TestCase
      */
     public function testImplementedEvents()
     {
-        $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(['foobar'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $controller->RequestHandler = $this->getMockBuilder('\Cake\Controller\Component\RequestHandlerComponent')
-            ->setMethods(['config'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->setMethods(['setupDetectors', '_checkRequestType', '_controller'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener
-            ->expects($this->at(1))
-            ->method('_checkRequestType')
-            ->will($this->returnValue(false)); // for asserting missing JSON API Accept header
-
-        $listener
-            ->expects($this->at(3))
-            ->method('_checkRequestType')
-            ->will($this->returnValue(true)); // for asserting valid JSON API Accept header
-
-        $listener
-            ->expects($this->once())
-            ->method('_controller')
-            ->will($this->returnValue($controller));
-
-        // assert that listener does nothing if JSON API Accept header is missing
-        $result = $listener->implementedEvents();
-
-        $this->assertNull($result);
-
-        // assert success if a JSON API Accept header is used
-        $result = $listener->implementedEvents();
-
+        /*
         $expected = [
             'Crud.beforeRender' => ['callable' => 'beforeRender', 'priority' => 75]
         ];
 
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, $result);*/
+        $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
