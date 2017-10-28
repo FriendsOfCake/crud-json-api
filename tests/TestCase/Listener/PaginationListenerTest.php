@@ -41,13 +41,35 @@ class PaginationListenerTest extends TestCase
      */
     public function testImplementedEvents()
     {
-        /*
+        $listener = $this
+            ->getMockBuilder('\CrudJsonApi\Listener\PaginationListener')
+            ->setMethods(['_checkRequestType'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener
+            ->expects($this->at(0))
+            ->method('_checkRequestType')
+            ->will($this->returnValue(false)); // for asserting missing JSON API Accept header
+
+        $listener
+            ->expects($this->at(1))
+            ->method('_checkRequestType')
+            ->will($this->returnValue(true)); // for asserting valid JSON API Accept header
+
+        // assert that listener does nothing if JSON API Accept header is missing
+        $result = $listener->implementedEvents();
+
+        $this->assertNull($result);
+
+        // assert success if a JSON API Accept header is used
+        $result = $listener->implementedEvents();
+
         $expected = [
             'Crud.beforeRender' => ['callable' => 'beforeRender', 'priority' => 75]
         ];
 
-        $this->assertSame($expected, $result);*/
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -57,7 +79,39 @@ class PaginationListenerTest extends TestCase
      */
     public function testBeforeRender()
     {
+        $request_null = $this
+            ->getMockBuilder('\Cake\Network\Request')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request_paging = $this
+            ->getMockBuilder('\Cake\Network\Request')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $controller = $this
+            ->getMockBuilder('\Cake\Controller\Controller')
+            ->setMethods(['set'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener = $this
+            ->getMockBuilder('\CrudJsonApi\Listener\PaginationListener')
+            ->setMethods(['_controller', '_request'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener
+            ->expects($this->at(0))
+            ->method('_request')
+            ->will($this->returnValue($request_null));
+
+        $listener->beforeRender(new Event('Crud.beforeRender'));
+
         $this->markTestIncomplete('Not implemented yet.');
+
     }
 
     /**
