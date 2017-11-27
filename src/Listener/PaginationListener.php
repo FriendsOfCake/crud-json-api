@@ -81,19 +81,22 @@ class PaginationListener extends BaseListener
         $self = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
-            'page' => $pagination['page']
+            'page' => $pagination['page'],
+            '_method' => 'GET',
         ], true);
 
         $first = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => 1,
+            '_method' => 'GET',
         ], true);
 
         $last = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
-            'page' => $pagination['pageCount']
+            'page' => $pagination['pageCount'],
+            '_method' => 'GET',
         ], true);
 
         $prev = null;
@@ -101,7 +104,8 @@ class PaginationListener extends BaseListener
             $prev = Router::$routerMethod([
                 'controller' => $this->_controller()->name,
                 'action' => 'index',
-                'page' => $pagination['page'] - 1
+                'page' => $pagination['page'] - 1,
+                '_method' => 'GET',
             ], true);
         }
 
@@ -110,7 +114,8 @@ class PaginationListener extends BaseListener
             $next = Router::$routerMethod([
                 'controller' => $this->_controller()->name,
                 'action' => 'index',
-                'page' => $pagination['page'] + 1
+                'page' => $pagination['page'] + 1,
+                '_method' => 'GET',
             ], true);
         }
 
