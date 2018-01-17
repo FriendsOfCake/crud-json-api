@@ -60,7 +60,7 @@ class and enabling it with the ``exceptionRenderer`` configuration option.
     public function initialize()
     {
       parent::initialize();
-      $this->Crud->config(['listeners.jsonapi.exceptionRenderer' => 'App\Error\JsonApiExceptionRenderer']);
+      $this->Crud->config(['listeners.jsonApi.exceptionRenderer' => 'App\Error\JsonApiExceptionRenderer']);
     }
   }
 
