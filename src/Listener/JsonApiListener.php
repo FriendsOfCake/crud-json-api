@@ -374,7 +374,7 @@ class JsonApiListener extends ApiListener
 
                 $entity->$key = $result;
 
-                //Also inset the contained associations into the query
+                //Also insert the contained associations into the query
                 if (isset($event->subject()->query)){
                     $event->subject()->query->contain($association->name());
                 }
