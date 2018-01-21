@@ -6,10 +6,10 @@ use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 class DefaultEditActionIntegrationTest extends JsonApiBaseTestCase
 {
     /**
-     * Make sure successful POST requests return HTTP Status Code 201.
+     * Make sure successful PATCH requests return HTTP Status Code 200.
      *
-     * @link http://jsonapi.org/format/#crud-creating-responses-201
-     * @link https://github.com/FriendsOfCake/crud/issues/496
+     * @link http://jsonapi.org/format/#crud-updating-responses-200
+     * @link https://github.com/FriendsOfCake/crud-json-api/issues/23
      * @return void
      */
     public function testSuccessfulPatchReturnsStatusCode201()
