@@ -21,7 +21,7 @@ class DefaultEditActionIntegrationTest extends JsonApiBaseTestCase
                 'attributes' => [
                     'code' => 'NZ',
                     'name' => 'New Zealand',
-                    'currency_id' => 1,
+                    'currency_id' => 10,
                     'national_capital_id' => 3
                 ]
             ]
@@ -39,7 +39,7 @@ class DefaultEditActionIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseOk();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseCode(201);
+        $this->assertResponseCode(200);
         $this->assertResponseNotEmpty();
     }
 }
