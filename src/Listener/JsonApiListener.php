@@ -1,5 +1,4 @@
 <?php
-
 namespace CrudJsonApi\Listener;
 
 use Cake\Core\Configure;
@@ -246,10 +245,10 @@ class JsonApiListener extends ApiListener
             }
 
             if ($whitelist === false || (
-                    $whitelist !== true &&
-                    !$wildcardWhitelist &&
-                    Hash::get($whitelist, $includeDotPath) === null
-                )) {
+                $whitelist !== true &&
+                !$wildcardWhitelist &&
+                Hash::get($whitelist, $includeDotPath) === null
+            )) {
                 continue;
             }
 
@@ -376,7 +375,7 @@ class JsonApiListener extends ApiListener
                 $entity->$key = $result;
 
                 //Also inset the contained associations into the query
-                if (isset($event->subject()->query)) {
+                if (isset($event->subject()->query)){
                     $event->subject()->query->contain($association->name());
                 }
             }
