@@ -12,7 +12,7 @@ class DefaultEditActionIntegrationTest extends JsonApiBaseTestCase
      * @link https://github.com/FriendsOfCake/crud-json-api/issues/23
      * @return void
      */
-    public function testSuccessfulPatchReturnsStatusCode201()
+    public function testSuccessfulPatchReturnsStatusCode200()
     {
         $postData = [
             'data' => [
