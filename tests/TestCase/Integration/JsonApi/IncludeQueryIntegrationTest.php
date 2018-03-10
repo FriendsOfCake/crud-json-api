@@ -94,6 +94,7 @@ class IncludeQueryIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->assertResponseEquals($this->_getExpected('get_country_include_currency_and_culture.json'));
+        EventManager::instance()->off('Crud.beforeFind');
     }
 
     /**
