@@ -330,7 +330,7 @@ class JsonApiListener extends ApiListener
         foreach ($fieldSets as $include => $fieldString) {
             $fields = array_filter(explode(',', $fieldString));
             if ($include === Inflector::tableize($repository->alias())) {
-                $aliasFields = array_map(function($val) use ($repository) {
+                $aliasFields = array_map(function ($val) use ($repository) {
                     return $repository->aliasField($val);
                 }, $fields);
                 array_push($aliasFields, $repository->aliasField('id'));
@@ -339,7 +339,7 @@ class JsonApiListener extends ApiListener
             }
 
             $association = $associations->get($include);
-            $aliasFields = array_map(function($val) use ($association) {
+            $aliasFields = array_map(function ($val) use ($association) {
                 return $association->target()->aliasField($val);
             }, $fields);
             $subject->query->select($aliasFields);
