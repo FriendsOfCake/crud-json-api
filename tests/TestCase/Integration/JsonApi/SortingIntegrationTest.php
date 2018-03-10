@@ -5,7 +5,7 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class SortQueryIntegrationTest extends JsonApiBaseTestCase
+class SortingIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * @return array
@@ -45,6 +45,10 @@ class SortQueryIntegrationTest extends JsonApiBaseTestCase
                 '/currencies?include=countries&sort=code,-countries.code',
                 'get_currencies_and_countries_sort_by_code_desc.json',
             ],
+            'view with multi fields sorting with direction' => [
+                '/currencies/1?include=countries&sort=code,-countries.code',
+                'get_currency_and_countries_sort_by_code_desc.json',
+            ],
         ];
     }
 
@@ -62,5 +66,4 @@ class SortQueryIntegrationTest extends JsonApiBaseTestCase
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseEquals($this->_getExpected($expectedFile));
     }
-
 }
