@@ -8,6 +8,8 @@ class CountriesTable extends Table
 {
     public function initialize(array $config)
     {
+        $this->addBehavior('Search.Search');
+
         $this->belongsTo('Currencies');
         $this->belongsTo('NationalCapitals');
 
@@ -33,5 +35,18 @@ class CountriesTable extends Table
             ]);
 
         return $validator;
+    }
+
+    // set up the search filter
+    public function searchManager()
+    {
+        $searchManager = $this->behaviors()->Search->searchManager();
+        $searchManager->like('filter', [
+            'before' => true,
+            'after' => true,
+            'field' => [$this->aliasField('name')]
+        ]);
+
+        return $searchManager;
     }
 }
