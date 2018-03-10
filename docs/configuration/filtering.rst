@@ -1,27 +1,33 @@
-Filtering
-=========
+Filtering/Search
+================
 
-To enable `JSON API Filtering <http://jsonapi.org/format/#fetching-filtering>`_
-install and configure the
-``Search`` listener as `described here <http://crud.readthedocs.io/en/latest/listeners/search.html>`_
-and then simply use search aliases named ``filter`` like shown below:
+`JSON API Filtering <http://jsonapi.org/format/#fetching-filtering>`_
+requires installing and configuring the
+``Crud SearchListener`` as `described here <http://crud.readthedocs.io/en/latest/listeners/search.html>`_.
+
+After you have installed the plugin simply use search aliases named ``filter`` like shown below:
 
 .. code-block:: phpinline
+// src/Model/Table/CountriesTable.php
 
-  public function searchConfiguration()
-  {
-    $search = new Manager($this);
-    $search->like('filter', [
+public function searchManager()
+{
+    $searchManager = $this->behaviors()->Search->searchManager();
+    $searchManager->like('filter', [
         'before' => true,
         'after' => true,
         'field' => [$this->aliasField('name')]
     ]);
 
-    return $search;
-  }
+    return $searchManager;
+}
 
-Which would allow you to search your API using a URL similar to ``/countries?filter=nether``.
+Which would then allow you to search your API using a URL similar to:
 
-Please note that not
-`all filtering options <https://github.com/FriendsOfCake/crud/issues/524>`_
-have been implemented yet.
+- ``/countries?filter=netherlands``
+- ``/countries?filter=nether``
+
+Please note that the following requests would also be matched:
+
+- ``/countries?filter[id]=1``
+- ``/countries?filter[id][]=1&filter[id][]=2``
