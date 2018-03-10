@@ -321,6 +321,9 @@ class JsonApiListener extends ApiListener
     {
         //Inject default query handlers
         $queryParameters = Hash::merge($this->config('queryParameters'), [
+            'sort' => [
+                'callable' => [$this, '_sortParameter'],
+            ],
             'include' => [
                 'callable' => [$this, '_includeParameter']
             ]
@@ -339,6 +342,25 @@ class JsonApiListener extends ApiListener
 
             $options['callable']($this->_request()->query($parameter), $event->subject(), $options);
         }
+    }
+
+    protected function _sortParameter($sortFields, Subject $subject, $options)
+    {
+        if (is_string($sortFields)) {
+            $sortFields = explode(',', $sortFields);
+        }
+        $sortFields = array_filter((array)$sortFields);
+
+        $order = [];
+        foreach ($sortFields as $sortField) {
+            $direction = 'ASC';
+            if ($sortField[0] == '-') {
+                $direction = 'DESC';
+                $sortField = substr($sortField, 1);
+            }
+            $order[$sortField] = $direction;
+        }
+        $subject->query->order($order);
     }
 
     /**
