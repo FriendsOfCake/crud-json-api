@@ -321,6 +321,9 @@ class JsonApiListener extends ApiListener
      */
     protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
     {
+        if ($fieldSets === null) {
+            return;
+        }
         $repository = $subject->query->repository();
         $associations = $repository->associations();
 
@@ -330,6 +333,7 @@ class JsonApiListener extends ApiListener
                 $aliasFields = array_map(function($val) use ($repository) {
                     return $repository->aliasField($val);
                 }, $fields);
+                array_push($aliasFields, $repository->aliasField('id'));
                 $subject->query->select($aliasFields);
                 continue;
             }
