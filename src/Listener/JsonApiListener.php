@@ -312,6 +312,37 @@ class JsonApiListener extends ApiListener
     }
 
     /**
+     * Parses out fields query parameter and apply it to the query
+     *
+     * @param string|array $fieldSets The query data
+     * @param \Crud\Event\Subject $subject The subject
+     * @param array $options Array of options for includes.
+     * @return void
+     */
+    protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
+    {
+        $repository = $subject->query->repository();
+        $associations = $repository->associations();
+
+        foreach ($fieldSets as $include => $fieldString) {
+            $fields = array_filter(explode(',', $fieldString));
+            if ($include === Inflector::tableize($repository->alias())) {
+                $aliasFields = array_map(function($val) use ($repository) {
+                    return $repository->aliasField($val);
+                }, $fields);
+                $subject->query->select($aliasFields);
+                continue;
+            }
+
+            $association = $associations->get($include);
+            $aliasFields = array_map(function($val) use ($association) {
+                return $association->target()->aliasField($val);
+            }, $fields);
+            $subject->query->select($aliasFields);
+        }
+    }
+
+    /**
      * BeforeFind event listener to parse any supplied query parameters
      *
      * @param \Cake\Event\Event $event Event
@@ -326,6 +357,9 @@ class JsonApiListener extends ApiListener
             ],
             'include' => [
                 'callable' => [$this, '_includeParameter']
+            ],
+            'fields' => [
+                'callable' => [$this, '_fieldSetsParameter']
             ]
         ]);
 
