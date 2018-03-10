@@ -34,7 +34,7 @@ Contents
     Listener Options<configuration/listener-options>
     Pagination <configuration/pagination>
     Query Logs <configuration/query-logs>
-    Filtering<configuration/filtering>
+    Filtering/Search<configuration/filtering>
     Schemas <configuration/schemas>
 
 .. _additional-information-docs:
