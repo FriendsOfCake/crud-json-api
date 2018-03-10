@@ -29,10 +29,3 @@ JSON API Sparse Fieldsets
 The JsonApiListener is currently missing support for
 `JSON API Sparse Fieldsets <http://jsonapi.org/format/#fetching-sparse-fieldsets>`_
 .
-
-JSON API Filtering
-^^^^^^^^^^^^^^^^^^
-
-The JsonApiListener currently does not fully support
-`JSON API Filtering <http://jsonapi.org/format/#fetching-filtering>`_
-.
