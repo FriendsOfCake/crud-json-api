@@ -344,6 +344,13 @@ class JsonApiListener extends ApiListener
         }
     }
 
+    /**
+     * Add 'sort' capability
+     *
+     * @see http://jsonapi.org/format/#fetching-sorting
+     * @param \Cake\Event\Event $event Event
+     * @return void
+     */
     protected function _sortParameter($sortFields, Subject $subject, $options)
     {
         if (is_string($sortFields)) {
@@ -358,6 +365,25 @@ class JsonApiListener extends ApiListener
                 $direction = 'DESC';
                 $sortField = substr($sortField, 1);
             }
+
+            if (strpos($sortField, '.') !== false) {
+                list ($include, $field) = explode('.', $sortField);
+                $associations = $subject->query->repository()->associations();
+                foreach ($associations as $association) {
+                    if ($association->property() !== $include) {
+                        continue;
+                    }
+                    $subject->query->contain([
+                        $association->alias() => [
+                            'sort' => [
+                                $association->aliasField($field) => $direction,
+                            ],
+                        ]
+                    ]);
+                }
+                continue;
+            }
+
             $order[$sortField] = $direction;
         }
         $subject->query->order($order);
