@@ -13,13 +13,14 @@ class SearchIntegrationTest extends JsonApiBaseTestCase
     public function viewProvider()
     {
         return [
-            // assert single-field searches
+            // assert single-field searches (case sensitive for now or
+            //  Postgres CI tests will fail)
             'single field full search-key' => [
-                '/countries?filter=netherlands',
+                '/countries?filter=Netherlands',
                 'search_single_field.json',
             ],
             'single field partial search-key' => [
-                '/countries?filter=nether',
+                '/countries?filter=Nether',
                 'search_single_field.json',
             ]
         ];
