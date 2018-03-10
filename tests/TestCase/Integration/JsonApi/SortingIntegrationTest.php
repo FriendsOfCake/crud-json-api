@@ -37,6 +37,14 @@ class SortQueryIntegrationTest extends JsonApiBaseTestCase
                 '/currencies?include=countries&sort=-countries.code',
                 'get_currencies_and_countries_sort_by_code_desc.json',
             ],
+            'multi fields sorting' => [
+                '/currencies?include=countries&sort=code,countries.code',
+                'get_currencies_and_countries_sort_by_code.json',
+            ],
+            'multi fields sorting with direction' => [
+                '/currencies?include=countries&sort=code,-countries.code',
+                'get_currencies_and_countries_sort_by_code_desc.json',
+            ],
         ];
     }
 
