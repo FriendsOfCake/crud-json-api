@@ -411,6 +411,64 @@ class JsonApiListenerTest extends TestCase
     }
 
     /**
+     * _insertBelongsToDataIntoEventFindResult()
+     *
+     * @return void
+     */
+    public function testInsertBelongsToDataIntoEventFindResultSelfReferenced()
+    {
+        $controller = $this
+            ->getMockBuilder('\Cake\Controller\Controller')
+            ->setMethods(null)
+            ->setConstructorArgs([null, null, 'Countries'])
+            ->enableOriginalConstructor()
+            ->getMock();
+
+        $event = $this
+            ->getMockBuilder('\Cake\Event\Event')
+            ->disableOriginalConstructor()
+            ->setMethods(['subject'])
+            ->getMock();
+
+        $subject = $this
+            ->getMockBuilder('\Crud\Event\Subject')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $event
+            ->expects($this->any())
+            ->method('subject')
+            ->will($this->returnValue($subject));
+
+        $listener = $this
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->disableOriginalConstructor()
+            ->setMethods(['_controller'])
+            ->getMock();
+
+        $listener
+            ->expects($this->any())
+            ->method('_controller')
+            ->will($this->returnValue($controller));
+
+        $this->setReflectionClassInstance($listener);
+
+        // Check if Vatican has supercountry (self-referenced tables)
+        $table = TableRegistry::get('Countries');
+        $entity = $table->get(4);
+        $subject->entity = $entity;
+
+        $this->assertArrayHasKey('name', $subject->entity);
+        $this->assertArrayNotHasKey('supercountry', $subject->entity);
+
+        $this->callProtectedMethod('_insertBelongsToDataIntoEventFindResult', [$event], $listener);
+
+        $this->assertArrayHasKey('name', $subject->entity);
+        $this->assertArrayHasKey('supercountry', $subject->entity);
+    }
+
+    /**
      * Make sure render() works with find data
      *
      * @return void
