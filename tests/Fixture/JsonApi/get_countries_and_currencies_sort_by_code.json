@@ -14,29 +14,6 @@
     "data": [
         {
             "type": "countries",
-            "id": "1",
-            "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
-            },
-            "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/countries\/1"
-            }
-        },
-        {
-            "type": "countries",
             "id": "2",
             "attributes": {
                 "code": "BE",
@@ -56,6 +33,29 @@
             },
             "links": {
                 "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
             }
         }
     ],

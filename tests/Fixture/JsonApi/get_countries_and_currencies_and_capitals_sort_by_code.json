@@ -14,38 +14,6 @@
     "data": [
         {
             "type": "countries",
-            "id": "1",
-            "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
-            },
-            "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                },
-                "national-capital": {
-                    "data": {
-                        "type": "national-capitals",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/1"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/countries\/1"
-            }
-        },
-        {
-            "type": "countries",
             "id": "2",
             "attributes": {
                 "code": "BE",
@@ -75,6 +43,38 @@
             "links": {
                 "self": "\/countries\/2"
             }
+        },
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                },
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
         }
     ],
     "included": [
@@ -91,17 +91,6 @@
         },
         {
             "type": "national-capitals",
-            "id": "1",
-            "attributes": {
-                "name": "Amsterdam",
-                "description": "National capital of the Netherlands"
-            },
-            "links": {
-                "self": "\/national-capitals\/1"
-            }
-        },
-        {
-            "type": "national-capitals",
             "id": "2",
             "attributes": {
                 "name": "Brussels",
@@ -109,6 +98,17 @@
             },
             "links": {
                 "self": "\/national-capitals\/2"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "1",
+            "attributes": {
+                "name": "Amsterdam",
+                "description": "National capital of the Netherlands"
+            },
+            "links": {
+                "self": "\/national-capitals\/1"
             }
         }
     ]

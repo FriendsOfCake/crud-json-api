@@ -348,7 +348,9 @@ class JsonApiListener extends ApiListener
      * Add 'sort' capability
      *
      * @see http://jsonapi.org/format/#fetching-sorting
-     * @param \Cake\Event\Event $event Event
+     * @param string|array $sortFields Field sort request
+     * @param \Crud\Event\Subject $subject The subject
+     * @param array $options Array of options for includes.
      * @return void
      */
     protected function _sortParameter($sortFields, Subject $subject, $options)
@@ -359,6 +361,8 @@ class JsonApiListener extends ApiListener
         $sortFields = array_filter((array)$sortFields);
 
         $order = [];
+        $includes = $this->config('include');
+        $repository = $subject->query->repository();
         foreach ($sortFields as $sortField) {
             $direction = 'ASC';
             if ($sortField[0] == '-') {
@@ -368,7 +372,17 @@ class JsonApiListener extends ApiListener
 
             if (strpos($sortField, '.') !== false) {
                 list ($include, $field) = explode('.', $sortField);
-                $associations = $subject->query->repository()->associations();
+
+                if ($include === Inflector::tableize($repository->alias())) {
+                    $order[$repository->aliasField($sortField)] = $direction;
+                    continue;
+                }
+
+                if (!in_array($include, $includes)) {
+                    continue;
+                }
+
+                $associations = $repository->associations();
                 foreach ($associations as $association) {
                     if ($association->property() !== $include) {
                         continue;
@@ -382,9 +396,9 @@ class JsonApiListener extends ApiListener
                     ]);
                 }
                 continue;
+            } else {
+                $order[$repository->aliasField($sortField)] = $direction;
             }
-
-            $order[$sortField] = $direction;
         }
         $subject->query->order($order);
     }
