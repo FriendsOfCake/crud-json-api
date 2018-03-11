@@ -374,7 +374,7 @@ class JsonApiListener extends ApiListener
                 list ($include, $field) = explode('.', $sortField);
 
                 if ($include === Inflector::tableize($repository->alias())) {
-                    $order[$repository->aliasField($sortField)] = $direction;
+                    $order[$repository->aliasField($field)] = $direction;
                     continue;
                 }
 
