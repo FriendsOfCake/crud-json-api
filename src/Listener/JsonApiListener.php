@@ -369,8 +369,11 @@ class JsonApiListener extends ApiListener
                     ->where([$association->name() . '.id' => $entity->$foreignKey])
                     ->first();
 
-                $key = Inflector::tableize($association->name());
-                $key = Inflector::singularize($key);
+                // Unfortunately, _propertyName is protected. We have got serious reason to use it though.
+                $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
+                $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
+                $propertyNameProp->setAccessible(true);
+                $key = $propertyNameProp->getValue($association);
 
                 $entity->$key = $result;
 
