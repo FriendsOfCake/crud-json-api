@@ -384,9 +384,6 @@ class JsonApiListener extends ApiListener
 
                 $associations = $repository->associations();
                 foreach ($associations as $association) {
-                    if ($association->property() !== $include) {
-                        continue;
-                    }
                     $subject->query->contain([
                         $association->alias() => [
                             'sort' => [
