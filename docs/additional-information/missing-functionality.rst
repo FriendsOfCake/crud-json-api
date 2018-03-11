@@ -13,16 +13,6 @@ The JsonApiListener is currently missing
 `JSON API Links <http://jsonapi.org/format/#document-links?>`_
 functionality.
 
-JSON API Sorting
-^^^^^^^^^^^^^^^^
-
-The JsonApiListener currently does not fully support
-`JSON API Sorting <http://jsonapi.org/format/#fetching-sorting>`_
-.
-
-* - single field sorting works
-* - (optional) multi field sorting does not yet work
-
 JSON API Sparse Fieldsets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
