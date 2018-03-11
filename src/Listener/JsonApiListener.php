@@ -375,6 +375,12 @@ class JsonApiListener extends ApiListener
                 $propertyNameProp->setAccessible(true);
                 $key = $propertyNameProp->getValue($association);
 
+                // There are cases when _propertyName is not set and we go default then
+                if(!$key) {
+                    $key = Inflector::tableize($association->name());
+                    $key = Inflector::singularize($key);
+                }
+
                 $entity->$key = $result;
 
                 //Also insert the contained associations into the query

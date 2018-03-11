@@ -13,6 +13,18 @@ class CountriesTable extends Table
 
         $this->hasMany('Cultures');
         $this->hasMany('NationalCities');
+
+        // e.g. Italy has Vatican
+        $this->hasMany('SubCountries', [
+            'className' => 'Countries',
+            'propertyName' => 'subcountries' //not-default to mess a little
+        ]);
+
+        // e.g. Vatican has Italy
+        $this->belongsTo('SuperCountries', [
+            'className' => 'Countries',
+            'propertyName' => 'supercountry'
+        ]);
     }
 
     public function validationDefault(Validator $validator)
