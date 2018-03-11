@@ -17,12 +17,14 @@ class CountriesTable extends Table
         // e.g. Italy has Vatican
         $this->hasMany('SubCountries', [
             'className' => 'Countries',
+            'foreignKey' => 'supercountry_id',
             'propertyName' => 'subcountries' //not-default to mess a little
         ]);
 
         // e.g. Vatican has Italy
         $this->belongsTo('SuperCountries', [
             'className' => 'Countries',
+            'foreignKey' => 'supercountry_id',
             'propertyName' => 'supercountry'
         ]);
     }
