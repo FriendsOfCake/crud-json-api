@@ -57,13 +57,14 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
                 '/countries?include=currencies,national_capitals&sort=countries.code,national_capitals.name',
                 'get_countries_and_currencies_and_capitals_sort_by_code.json',
             ],
-            // Should produce identical result as 'sort fields not in include'
+            // Aside from the pagination payload in "meta", this should
+            // produce identical result as 'sort fields not in include'.
             // Test two things:
             // - fields from non included type does generate a contain()
             // - dot notation against primary type is correctly handled
             'sort primary field in dot notation' => [
                 '/countries?include=currencies&sort=countries.code,national_capitals.name',
-                'get_countries_and_currencies_sort_by_code.json',
+                'sort_primary_field_in_dot_notation.json',
             ],
         ];
     }

@@ -74,6 +74,11 @@ class PaginationListener extends BaseListener
     {
         $routerMethod = 'normalize'; // produce relative links
 
+        $defaultUrl = array_intersect_key($pagination, [
+            'sort' => null,
+            'page' => null,
+        ], $pagination);
+
         if ($this->_controller()->Crud->config('listeners.jsonApi.absoluteLinks') === true) {
             $routerMethod = 'url'; // produce absolute links
         }
@@ -83,21 +88,21 @@ class PaginationListener extends BaseListener
             'action' => 'index',
             'page' => $pagination['page'],
             '_method' => 'GET',
-        ], true);
+        ] + $defaultUrl, true);
 
         $first = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => 1,
             '_method' => 'GET',
-        ], true);
+        ] + $defaultUrl, true);
 
         $last = Router::$routerMethod([
             'controller' => $this->_controller()->name,
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
-        ], true);
+        ] + $defaultUrl, true);
 
         $prev = null;
         if ($pagination['prevPage']) {
@@ -106,7 +111,7 @@ class PaginationListener extends BaseListener
                 'action' => 'index',
                 'page' => $pagination['page'] - 1,
                 '_method' => 'GET',
-            ], true);
+            ] + $defaultUrl, true);
         }
 
         $next = null;
@@ -116,7 +121,7 @@ class PaginationListener extends BaseListener
                 'action' => 'index',
                 'page' => $pagination['page'] + 1,
                 '_method' => 'GET',
-            ], true);
+            ] + $defaultUrl, true);
         }
 
         return [

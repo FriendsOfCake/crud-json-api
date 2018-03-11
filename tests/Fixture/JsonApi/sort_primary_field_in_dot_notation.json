@@ -29,15 +29,6 @@
                     "links": {
                         "self": "\/currencies\/1"
                     }
-                },
-                "national-capital": {
-                    "data": {
-                        "type": "national-capitals",
-                        "id": "2"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/2"
-                    }
                 }
             },
             "links": {
@@ -61,15 +52,6 @@
                     "links": {
                         "self": "\/currencies\/1"
                     }
-                },
-                "national-capital": {
-                    "data": {
-                        "type": "national-capitals",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/1"
-                    }
                 }
             },
             "links": {
@@ -87,28 +69,6 @@
             },
             "links": {
                 "self": "\/currencies\/1"
-            }
-        },
-        {
-            "type": "national-capitals",
-            "id": "2",
-            "attributes": {
-                "name": "Brussels",
-                "description": "National capital of Belgium"
-            },
-            "links": {
-                "self": "\/national-capitals\/2"
-            }
-        },
-        {
-            "type": "national-capitals",
-            "id": "1",
-            "attributes": {
-                "name": "Amsterdam",
-                "description": "National capital of the Netherlands"
-            },
-            "links": {
-                "self": "\/national-capitals\/1"
             }
         }
     ]
