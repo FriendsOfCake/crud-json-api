@@ -238,13 +238,10 @@ class DynamicEntitySchema extends SchemaProvider
             return new Link($url, $meta, $treatAsHref);
         }
 
-        $searchKey = Inflector::tableize($this->_getClassName($entity));
-        $searchKey = Inflector::singularize($searchKey) . '_id';
-
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
             '_method' => 'GET',
             'action' => 'index',
-            $searchKey => $entity->id,
+            '?' => [$association->foreignKey() => $entity->id],
         ], $this->_view->viewVars['_absoluteLinks']);
 
         return new Link($url, $meta, $treatAsHref);
