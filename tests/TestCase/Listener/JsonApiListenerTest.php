@@ -1131,7 +1131,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'national_capital', 'cultures', 'national_cities',  'subcountries', 'supercountry'], $result);
+        $this->assertSame(['currency', 'national_capital', 'cultures', 'national_cities', 'subcountries', 'supercountry'], $result);
 
         // assert the include list is still auto-generated if an association is
         // removed from the AssociationsCollection

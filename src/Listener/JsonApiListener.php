@@ -376,7 +376,7 @@ class JsonApiListener extends ApiListener
                 $key = $propertyNameProp->getValue($association);
 
                 // There are cases when _propertyName is not set and we go default then
-                if(!$key) {
+                if (!$key) {
                     $key = Inflector::tableize($association->name());
                     $key = Inflector::singularize($key);
                 }

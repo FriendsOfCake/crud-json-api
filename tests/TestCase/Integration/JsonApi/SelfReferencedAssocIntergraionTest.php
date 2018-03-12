@@ -36,5 +36,4 @@ class SelfReferencedAssocIntegrationTest extends JsonApiBaseTestCase
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseEquals($this->_getExpected($expectedFile));
     }
-
 }

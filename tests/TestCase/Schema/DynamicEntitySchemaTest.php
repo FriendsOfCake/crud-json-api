@@ -227,7 +227,6 @@ class DynamicEntitySchemaTest extends TestCase
 
         $entity = $query->first();
         $this->assertArrayHasKey('subcountries', $entity);
-        
     }
 
     /**
