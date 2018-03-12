@@ -1,0 +1,48 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "4",
+        "attributes": {
+            "code": "VT",
+            "name": "Vatican",
+            "dummy-counter": 33333
+        },
+        "relationships": {
+            "currency": {
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
+                },
+                "links": {
+                    "self": "\/currencies\/1"
+                }
+            },
+            "supercountry": {
+                "data": {
+                    "type": "countries",
+                    "id": "3"
+                },
+                "links": {
+                    "self": "\/super_countries\/view\/3"
+                }
+            }
+        },
+        "links": {
+            "self": "\/countries\/4"
+        }
+    },
+    "included": [
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/super_countries\/view\/3"
+            }
+        }
+    ]
+}
