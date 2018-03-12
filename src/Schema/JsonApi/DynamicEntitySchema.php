@@ -241,7 +241,7 @@ class DynamicEntitySchema extends SchemaProvider
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
             '_method' => 'GET',
             'action' => 'index',
-            $association->foreignKey() => $entity->id,
+            '?' => [$association->foreignKey() => $entity->id]
         ], $this->_view->viewVars['_absoluteLinks']);
 
         return new Link($url, $meta, $treatAsHref);

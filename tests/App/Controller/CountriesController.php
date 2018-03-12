@@ -27,7 +27,8 @@ class CountriesController extends Controller
             ],
             'listeners' => [
                 'CrudJsonApi.JsonApi',
-                'CrudJsonApi.Pagination'
+                'CrudJsonApi.Pagination',
+                'Crud.Search'
             ]
         ]
     ];
