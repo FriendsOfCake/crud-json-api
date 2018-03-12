@@ -362,6 +362,9 @@ class JsonApiListener extends ApiListener
 
         $order = [];
         $includes = $this->config('include');
+        if (is_string($includes)) {
+            $includes = explode(',', $includes);
+        }
         $repository = $subject->query->repository();
         foreach ($sortFields as $sortField) {
             $direction = 'ASC';
@@ -384,6 +387,9 @@ class JsonApiListener extends ApiListener
 
                 $associations = $repository->associations();
                 foreach ($associations as $association) {
+                    if (Inflector::tableize($association->alias()) !== $include) {
+                        continue;
+                    }
                     $subject->query->contain([
                         $association->alias() => [
                             'sort' => [
