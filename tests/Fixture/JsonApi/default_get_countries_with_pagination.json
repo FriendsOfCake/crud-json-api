@@ -1,15 +1,15 @@
 {
     "meta": {
-        "record_count": 2,
-        "page_count": 1,
+        "record_count": 4,
+        "page_count": 2,
         "page_limit": null
     },
     "links": {
         "self": "\/countries?page=1",
         "first": "\/countries?page=1",
-        "last": "\/countries?page=1",
+        "last": "\/countries?page=2",
         "prev": null,
-        "next": null
+        "next": "\/countries?page=2"
     },
     "data": [
         {
@@ -34,6 +34,18 @@
             },
             "links": {
                 "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/countries\/3"
             }
         }
     ]
