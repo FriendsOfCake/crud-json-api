@@ -77,6 +77,7 @@ class PaginationListener extends BaseListener
         $defaultUrl = array_intersect_key($pagination, [
             'sort' => null,
             'page' => null,
+            'limit' => null,
         ], $pagination);
 
         if ($this->_controller()->Crud->config('listeners.jsonApi.absoluteLinks') === true) {
