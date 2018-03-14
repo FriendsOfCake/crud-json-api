@@ -1,0 +1,36 @@
+{
+    "meta": {
+        "record_count": 6,
+        "page_count": 3,
+        "page_limit": 2
+    },
+    "links": {
+        "self": "http:\/\/test-server\/national-cities?page=2&limit=2",
+        "first": "http:\/\/test-server\/national-cities?page=1&limit=2",
+        "last": "http:\/\/test-server\/national-cities?page=3&limit=2",
+        "prev": "http:\/\/test-server\/national-cities?page=1&limit=2",
+        "next": "http:\/\/test-server\/national-cities?page=3&limit=2"
+    },
+    "data": [
+        {
+            "type": "national-cities",
+            "id": "3",
+            "attributes": {
+                "name": "Brussels"
+            },
+            "links": {
+                "self": "\/national-cities\/3"
+            }
+        },
+        {
+            "type": "national-cities",
+            "id": "4",
+            "attributes": {
+                "name": "Antwerp"
+            },
+            "links": {
+                "self": "\/national-cities\/4"
+            }
+        }
+    ]
+}

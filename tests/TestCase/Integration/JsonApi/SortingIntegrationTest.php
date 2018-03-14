@@ -1,6 +1,7 @@
 <?php
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
@@ -70,6 +71,19 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
     }
 
     /**
+     * @return array
+     */
+    public function paginationUrlProvider()
+    {
+        return [
+            'pagination' => [
+                '/national-cities?page=2&limit=2',
+                'national_cities_absolute_links.json',
+            ],
+        ];
+    }
+
+    /**
      * @param string $url The endpoint to hit
      * @param string $expectedFile The file to find the expected result in
      * @return void
@@ -77,6 +91,22 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
      */
     public function testView($url, $expectedFile)
     {
+        $this->get($url);
+
+        $this->assertResponseSuccess();
+        $this->_assertJsonApiResponseHeaders();
+        $this->assertResponseEquals($this->_getExpected($expectedFile));
+    }
+
+    /**
+     * @param string $url The endpoint to hit
+     * @param string $expectedFile The file to find the expected result in
+     * @return void
+     * @dataProvider paginationUrlProvider
+     */
+    public function testAbsoluteLinksInPagination($url, $expectedFile)
+    {
+        Configure::write('App.fullBaseUrl', 'http://test-server');
         $this->get($url);
 
         $this->assertResponseSuccess();
