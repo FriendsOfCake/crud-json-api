@@ -362,9 +362,6 @@ class JsonApiListener extends ApiListener
 
         $order = [];
         $includes = $this->config('include');
-        if (is_string($includes)) {
-            $includes = explode(',', $includes);
-        }
         $repository = $subject->query->repository();
         foreach ($sortFields as $sortField) {
             $direction = 'ASC';
