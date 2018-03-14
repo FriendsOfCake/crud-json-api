@@ -17,6 +17,8 @@ class NationalCitiesFixture extends TestFixture
         ['name' => 'Amsterdam', 'country_id' => 1],
         ['name' => 'Rotterdam', 'country_id' => 1],
         ['name' => 'Brussels', 'country_id' => 2],
-        ['name' => 'Antwerp', 'country_id' => 2]
+        ['name' => 'Antwerp', 'country_id' => 2],
+        ['name' => 'Eindhoven', 'country_id' => 1],
+        ['name' => 'Nuenen', 'country_id' => 1],
     ];
 }

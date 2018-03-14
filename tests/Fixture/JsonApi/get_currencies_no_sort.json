@@ -1,0 +1,26 @@
+{
+    "data": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR",
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "currencies",
+            "id": "2",
+            "attributes": {
+                "code": "USD",
+                "name": "US Dollar"
+            },
+            "links": {
+                "self": "\/currencies\/2"
+            }
+        }
+    ]
+}

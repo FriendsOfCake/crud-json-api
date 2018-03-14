@@ -321,6 +321,9 @@ class JsonApiListener extends ApiListener
     {
         //Inject default query handlers
         $queryParameters = Hash::merge($this->config('queryParameters'), [
+            'sort' => [
+                'callable' => [$this, '_sortParameter'],
+            ],
             'include' => [
                 'callable' => [$this, '_includeParameter']
             ]
@@ -339,6 +342,65 @@ class JsonApiListener extends ApiListener
 
             $options['callable']($this->_request()->query($parameter), $event->subject(), $options);
         }
+    }
+
+    /**
+     * Add 'sort' capability
+     *
+     * @see http://jsonapi.org/format/#fetching-sorting
+     * @param string|array $sortFields Field sort request
+     * @param \Crud\Event\Subject $subject The subject
+     * @param array $options Array of options for includes.
+     * @return void
+     */
+    protected function _sortParameter($sortFields, Subject $subject, $options)
+    {
+        if (is_string($sortFields)) {
+            $sortFields = explode(',', $sortFields);
+        }
+        $sortFields = array_filter((array)$sortFields);
+
+        $order = [];
+        $includes = $this->config('include');
+        $repository = $subject->query->repository();
+        foreach ($sortFields as $sortField) {
+            $direction = 'ASC';
+            if ($sortField[0] == '-') {
+                $direction = 'DESC';
+                $sortField = substr($sortField, 1);
+            }
+
+            if (strpos($sortField, '.') !== false) {
+                list ($include, $field) = explode('.', $sortField);
+
+                if ($include === Inflector::tableize($repository->alias())) {
+                    $order[$repository->aliasField($field)] = $direction;
+                    continue;
+                }
+
+                if (!in_array($include, $includes)) {
+                    continue;
+                }
+
+                $associations = $repository->associations();
+                foreach ($associations as $association) {
+                    if (Inflector::tableize($association->alias()) !== $include) {
+                        continue;
+                    }
+                    $subject->query->contain([
+                        $association->alias() => [
+                            'sort' => [
+                                $association->aliasField($field) => $direction,
+                            ],
+                        ]
+                    ]);
+                }
+                continue;
+            } else {
+                $order[$repository->aliasField($sortField)] = $direction;
+            }
+        }
+        $subject->query->order($order);
     }
 
     /**

@@ -1395,4 +1395,38 @@ class JsonApiListenerTest extends TestCase
         $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
         $this->assertSame($expectedInclude, $listener->config('include'));
     }
+
+    /**
+     * Ensure that sort is not applied to all tables
+     *
+     * Simulate /countries?include=currencies,national_capitals&sort=code,currencies.code
+     *
+     * @return void
+     */
+    public function testSortingNotAppliedToAllTables()
+    {
+        $listener = new JsonApiListener(new Controller());
+        $this->setReflectionClassInstance($listener);
+
+        $subject = new Subject();
+
+        $query = $this
+            ->getMockBuilder(Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject->query = $query;
+        $subject->query
+            ->expects($this->once())
+            ->method('contain');
+        $subject->query
+            ->expects($this->any())
+            ->method('repository')
+            ->willReturn(TableRegistry::get('Countries'));
+
+        $sort = 'code,currencies.code';
+        $listener->config('include', ['currencies', 'national_capitals']);
+
+        $this->callProtectedMethod('_sortParameter', [$sort, $subject, []], $listener);
+    }
 }
