@@ -70,7 +70,7 @@ class IncludeQueryIntegrationTest extends JsonApiBaseTestCase
                 'get_countries_no_relationships_sparse.json',
             ],
             'sparse fields included index' => [
-                '/countries?fields[countries]=name&include=currencies&fields[currencies]=id,name',
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,name',
                 'get_countries_currencies_sparse.json',
             ],
         ];

@@ -329,33 +329,39 @@ class JsonApiListener extends ApiListener
         $fieldSets = array_map(function ($val) {
             return explode(',', $val);
         }, $fieldSets);
-        if (empty($fieldSets)) {
-            $this->config('fieldSets', $fieldSets);
-        }
 
         $repository = $subject->query->repository();
         $associations = $repository->associations();
 
+        $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        $columns = $repository->schema()->columns();
+        $contains = [];
         foreach ($fieldSets as $include => $fields) {
+
             if ($include === Inflector::tableize($repository->alias())) {
-                $aliasFields = array_map(function ($val) use ($repository) {
+                $aliasFields = array_map(function ($val) use ($repository, $columns) {
+                    if (!in_array($val, $columns)) {
+                        return null;
+                    }
                     return $repository->aliasField($val);
                 }, $fields);
-                array_push($aliasFields, $repository->aliasField('id'));
-                $subject->query->select($aliasFields);
-                continue;
+                $selectFields = array_merge($selectFields, array_filter($aliasFields));
             }
 
             $association = $associations->get($include);
-            $aliasFields = array_map(function ($val) use ($association) {
-                return $association->target()->aliasField($val);
-            }, $fields);
-            $subject->query->contain([
-                $association->alias() => [
-                    'fields' => $aliasFields,
-                ]
-            ]);
+            if ($association) {
+                $contains[$association->alias()] = [
+                    'fields' => $fields,
+                ];
+            }
         }
+
+        $subject->query->select($selectFields);
+        if (!empty($contains)) {
+            $subject->query->contain($contains);
+        }
+
+        $this->config('fieldSets', $fieldSets);
     }
 
     /**
