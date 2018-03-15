@@ -329,7 +329,9 @@ class JsonApiListener extends ApiListener
         $fieldSets = array_map(function ($val) {
             return explode(',', $val);
         }, $fieldSets);
-        $this->config('fieldSets', $fieldSets);
+        if (empty($fieldSets)) {
+            $this->config('fieldSets', $fieldSets);
+        }
 
         $repository = $subject->query->repository();
         $associations = $repository->associations();
