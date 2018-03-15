@@ -5,9 +5,9 @@
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&sort=code%2Cnational_capitals.name",
-        "first": "\/countries?page=1&sort=code%2Cnational_capitals.name",
-        "last": "\/countries?page=1&sort=code%2Cnational_capitals.name",
+        "self": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
+        "first": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
+        "last": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
         "prev": null,
         "next": null
     },
