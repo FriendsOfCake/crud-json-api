@@ -324,11 +324,17 @@ class JsonApiListener extends ApiListener
         if ($fieldSets === null) {
             return;
         }
+
+        // format $fieldSets to array acceptable by listener config()
+        $fieldSets = array_map(function ($val) {
+            return explode(',', $val);
+        }, $fieldSets);
+        $this->config('fieldSets', $fieldSets);
+
         $repository = $subject->query->repository();
         $associations = $repository->associations();
 
-        foreach ($fieldSets as $include => $fieldString) {
-            $fields = array_filter(explode(',', $fieldString));
+        foreach ($fieldSets as $include => $fields) {
             if ($include === Inflector::tableize($repository->alias())) {
                 $aliasFields = array_map(function ($val) use ($repository) {
                     return $repository->aliasField($val);
