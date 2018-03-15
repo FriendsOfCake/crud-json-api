@@ -348,7 +348,11 @@ class JsonApiListener extends ApiListener
             $aliasFields = array_map(function ($val) use ($association) {
                 return $association->target()->aliasField($val);
             }, $fields);
-            $subject->query->select($aliasFields);
+            $subject->query->contain([
+                $association->alias() => [
+                    'fields' => $aliasFields,
+                ]
+            ]);
         }
     }
 
