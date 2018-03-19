@@ -349,7 +349,7 @@ class JsonApiListener extends ApiListener
             }
 
             $association = $associations->get($include);
-            if ($association) {
+            if (!empty($association)) {
                 $contains[$association->alias()] = [
                     'fields' => $fields,
                 ];
