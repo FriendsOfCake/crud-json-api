@@ -60,6 +60,19 @@ class IncludeQueryIntegrationTest extends JsonApiBaseTestCase
                 '/countries/1?include=currencies,cultures,national-capitals,national-cities',
                 'get_country_include_all_supported_associations.json'
             ],
+            // sparse fields
+            'sparse fields view ' => [
+                '/countries/1?fields[countries]=name',
+                'get_country_no_relationships_sparse.json',
+            ],
+            'sparse fields index' => [
+                '/countries?fields[countries]=name',
+                'get_countries_no_relationships_sparse.json',
+            ],
+            'sparse fields included index' => [
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,name',
+                'get_countries_currencies_sparse.json',
+            ],
         ];
     }
 

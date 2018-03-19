@@ -80,6 +80,12 @@ class PaginationListener extends BaseListener
             'limit' => null,
         ], $pagination);
 
+        $request = $this->_request();
+        $defaultUrl += [
+            'include' => $request->query('include'),
+            'fields' => $request->query('fields'),
+        ];
+
         if ($this->_controller()->Crud->config('listeners.jsonApi.absoluteLinks') === true) {
             $routerMethod = 'url'; // produce absolute links
         }

@@ -5,43 +5,18 @@
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "first": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "last": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
+        "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "last": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
         "prev": null,
         "next": null
     },
     "data": [
         {
             "type": "countries",
-            "id": "2",
-            "attributes": {
-                "code": "BE",
-                "name": "Belgium",
-                "dummy-counter": 22222
-            },
-            "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/countries\/2"
-            }
-        },
-        {
-            "type": "countries",
             "id": "1",
             "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {
@@ -57,6 +32,27 @@
             "links": {
                 "self": "\/countries\/1"
             }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "name": "Belgium"
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
         }
     ],
     "included": [
@@ -64,7 +60,6 @@
             "type": "currencies",
             "id": "1",
             "attributes": {
-                "code": "EUR",
                 "name": "Euro"
             },
             "links": {

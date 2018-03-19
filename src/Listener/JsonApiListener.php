@@ -312,6 +312,59 @@ class JsonApiListener extends ApiListener
     }
 
     /**
+     * Parses out fields query parameter and apply it to the query
+     *
+     * @param string|array $fieldSets The query data
+     * @param \Crud\Event\Subject $subject The subject
+     * @param array $options Array of options for includes.
+     * @return void
+     */
+    protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
+    {
+        if ($fieldSets === null) {
+            return;
+        }
+
+        // format $fieldSets to array acceptable by listener config()
+        $fieldSets = array_map(function ($val) {
+            return explode(',', $val);
+        }, $fieldSets);
+
+        $repository = $subject->query->repository();
+        $associations = $repository->associations();
+
+        $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        $columns = $repository->schema()->columns();
+        $contains = [];
+        foreach ($fieldSets as $include => $fields) {
+            if ($include === Inflector::tableize($repository->alias())) {
+                $aliasFields = array_map(function ($val) use ($repository, $columns) {
+                    if (!in_array($val, $columns)) {
+                        return null;
+                    }
+
+                    return $repository->aliasField($val);
+                }, $fields);
+                $selectFields = array_merge($selectFields, array_filter($aliasFields));
+            }
+
+            $association = $associations->get($include);
+            if (!empty($association)) {
+                $contains[$association->alias()] = [
+                    'fields' => $fields,
+                ];
+            }
+        }
+
+        $subject->query->select($selectFields);
+        if (!empty($contains)) {
+            $subject->query->contain($contains);
+        }
+
+        $this->config('fieldSets', $fieldSets);
+    }
+
+    /**
      * BeforeFind event listener to parse any supplied query parameters
      *
      * @param \Cake\Event\Event $event Event
@@ -326,6 +379,9 @@ class JsonApiListener extends ApiListener
             ],
             'include' => [
                 'callable' => [$this, '_includeParameter']
+            ],
+            'fields' => [
+                'callable' => [$this, '_fieldSetsParameter']
             ]
         ]);
 
