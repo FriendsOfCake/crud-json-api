@@ -20,7 +20,7 @@ class CountriesFixture extends TestFixture
     public $records = [
         ['code' => 'NL', 'name' => 'The Netherlands', 'dummy_counter' => 11111, 'currency_id' => 1, 'national_capital_id' => 1],
         ['code' => 'BE', 'name' => 'Belgium', 'dummy_counter' => 22222, 'currency_id' => 1, 'national_capital_id' => 2],
-        ['code' => 'IT', 'name' => 'Italy', 'dummy_counter' => 33333, 'currency_id' => 1, 'national_capital_id' => 2],
-        ['code' => 'VT', 'name' => 'Vatican', 'dummy_counter' => 33333, 'currency_id' => 1, 'national_capital_id' => 2, 'supercountry_id' => 3],
+        ['code' => 'IT', 'name' => 'Italy', 'dummy_counter' => 33333, 'currency_id' => 1, 'national_capital_id' => 3],
+        ['code' => 'VT', 'name' => 'Vatican', 'dummy_counter' => 33333, 'currency_id' => 1, 'national_capital_id' => 4, 'supercountry_id' => 3],
     ];
 }
