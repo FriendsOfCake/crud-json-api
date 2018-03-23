@@ -10,12 +10,5 @@ JSON API Links
 ^^^^^^^^^^^^^^
 
 The JsonApiListener is currently missing
-`JSON API Links <http://jsonapi.org/format/#document-links?>`_
+`JSON API Links <http://jsonapi.org/format/#document-links>`_
 functionality.
-
-JSON API Sparse Fieldsets
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The JsonApiListener is currently missing support for
-`JSON API Sparse Fieldsets <http://jsonapi.org/format/#fetching-sparse-fieldsets>`_
-.
