@@ -26,11 +26,9 @@ Multi Field Sorting
 
 @rchavik: I THINK WE NEED AN EXAMPLE OR TESTCASE HERE, SEEMS MISSING. E.G.
 
-``/currencies?sort=code,name``
-
-``/currencies?sort=-code,name``
-
-``/currencies?sort=-code,-name``
+- ``/currencies?sort=code,name``
+- ``/currencies?sort=-code,name``
+- ``/currencies?sort=-code,-name``
 
 
 Sorting Included Data
