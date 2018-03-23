@@ -36,6 +36,7 @@ Contents
     Query Logs <configuration/query-logs>
     Filtering/Search<configuration/filtering-search>
     Sparse Fieldsets<configuration/sparse-fieldsets>
+    Sorting<configuration/sorting>
     Schemas <configuration/schemas>
     Sorting <configuration/sorting>
 
