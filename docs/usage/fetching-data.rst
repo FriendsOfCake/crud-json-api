@@ -70,7 +70,7 @@ and response body similar to this output produced by
     }
   }
 
-Associated data
+Associated Data
 ^^^^^^^^^^^^^^^
 
 The listener will detect associated data as produced by

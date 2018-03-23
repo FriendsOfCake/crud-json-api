@@ -19,7 +19,6 @@ It is also possible to limit the fields of associated data. The following exampl
 - `country` fields limited to `name` and `currency`
 - associated `currencies` fields limited to `id` and `name`
 
-
 ``/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,name``
 
 Please note that you MUST add the associated model to both `include` and `fields` for this to work.
