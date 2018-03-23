@@ -18,7 +18,7 @@ It is also possible to limit the fields of associated data. The following exampl
 show all fields for ``countries`` but will limit the fields shown for associated ``currencies``
 to ``id`` and ``name``.
 
-TEST NEEDED, SIMPLE CASE BUT SEEMS MISSING
+@rchavik: TEST NEEDED? SIMPLE CASE BUT SEEMS MISSING
 
 - ``/countries?include=currencies&fields[currencies]=id,name``
 

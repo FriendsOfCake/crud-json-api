@@ -24,7 +24,7 @@ To select all currencies and sort the results by the `code` field in descending 
 Multi Field Sorting
 ^^^^^^^^^^^^^^^^^^^
 
-I THINK WE NEED AN EXAMPLE OR TESTCASE HERE, SEEMS MISSING. E.G.
+@rchavik: I THINK WE NEED AN EXAMPLE OR TESTCASE HERE, SEEMS MISSING. E.G.
 
 ``/currencies?sort=code,name``
 
