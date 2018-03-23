@@ -17,6 +17,14 @@
                     {
                         "type": "national-cities",
                         "id": "2"
+                    },
+                    {
+                        "type": "national-cities",
+                        "id": "5"
+                    },
+                    {
+                        "type": "national-cities",
+                        "id": "6"
                     }
                 ],
                 "links": {
@@ -47,6 +55,26 @@
             },
             "links": {
                 "self": "\/national-cities\/2"
+            }
+        },
+        {
+            "type": "national-cities",
+            "id": "5",
+            "attributes": {
+                "name": "Eindhoven"
+            },
+            "links": {
+                "self": "\/national-cities\/5"
+            }
+        },
+        {
+            "type": "national-cities",
+            "id": "6",
+            "attributes": {
+                "name": "Nuenen"
+            },
+            "links": {
+                "self": "\/national-cities\/6"
             }
         }
     ]

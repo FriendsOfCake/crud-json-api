@@ -36,6 +36,7 @@ Contents
     Query Logs <configuration/query-logs>
     Filtering/Search<configuration/filtering>
     Schemas <configuration/schemas>
+    Sorting <configuration/sorting>
 
 .. _additional-information-docs:
 

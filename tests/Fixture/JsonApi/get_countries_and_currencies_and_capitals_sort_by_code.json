@@ -1,0 +1,115 @@
+{
+    "meta": {
+        "record_count": 2,
+        "page_count": 1,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
+        "first": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
+        "last": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
+        "prev": null,
+        "next": null
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BE",
+                "name": "Belgium",
+                "dummy-counter": 22222
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                },
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                },
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR",
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "2",
+            "attributes": {
+                "name": "Brussels",
+                "description": "National capital of Belgium"
+            },
+            "links": {
+                "self": "\/national-capitals\/2"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "1",
+            "attributes": {
+                "name": "Amsterdam",
+                "description": "National capital of the Netherlands"
+            },
+            "links": {
+                "self": "\/national-capitals\/1"
+            }
+        }
+    ]
+}
