@@ -1,0 +1,97 @@
+{
+    "meta": {
+        "record_count": 4,
+        "page_count": 2,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=1&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
+        "first": "\/countries?page=1&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
+        "last": "\/countries?page=2&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
+        "prev": null,
+        "next": "\/countries?page=2&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode"
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BG",
+                "name": "Bulgaria",
+                "dummy-counter": 22222
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        }
+    ]
+}
