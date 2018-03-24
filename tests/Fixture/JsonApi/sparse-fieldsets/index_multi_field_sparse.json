@@ -1,0 +1,49 @@
+{
+    "meta": {
+        "record_count": 4,
+        "page_count": 2,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
+        "first": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
+        "last": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode",
+        "prev": null,
+        "next": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode"
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "name": "The Netherlands",
+                "code": "NL"
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "name": "Bulgaria",
+                "code": "BG"
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "name": "Italy",
+                "code": "IT"
+            },
+            "links": {
+                "self": "\/countries\/3"
+            }
+        }
+    ]
+}
