@@ -1,0 +1,41 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "3",
+        "attributes": {
+            "code": "IT",
+            "name": "Italy",
+            "dummy-counter": 33333
+        },
+        "relationships": {
+            "subcountries": {
+                "data": [
+                    {
+                        "type": "countries",
+                        "id": "4"
+                    }
+                ],
+                "links": {
+                    "self": "\/sub_countries?supercountry_id=3"
+                }
+            }
+        },
+        "links": {
+            "self": "\/countries\/3"
+        }
+    },
+    "included": [
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "links": {
+                "self": "\/sub_countries\/view\/4"
+            }
+        }
+    ]
+}

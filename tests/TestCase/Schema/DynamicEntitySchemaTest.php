@@ -202,6 +202,31 @@ class DynamicEntitySchemaTest extends TestCase
         $result = $this->callProtectedMethod('getRelationships', [$entity, true, []], $schema);
         $this->assertArrayNotHasKey('currency', $result);
         $this->assertArrayHasKey('cultures', $result);
+
+        // test custom foreign key
+        $query = $table->find()
+            ->where([
+                'Countries.id' => 4
+            ])
+            ->contain([
+                'SuperCountries',
+            ]);
+
+        $entity = $query->first();
+        $this->assertArrayHasKey('supercountry_id', $entity);
+        $this->assertArrayHasKey('supercountry', $entity);
+
+        // test custom propertyName
+        $query = $table->find()
+            ->where([
+                'Countries.id' => 3
+            ])
+            ->contain([
+                'SubCountries',
+            ]);
+
+        $entity = $query->first();
+        $this->assertArrayHasKey('subcountries', $entity);
     }
 
     /**

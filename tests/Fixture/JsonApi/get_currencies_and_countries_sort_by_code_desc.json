@@ -12,7 +12,15 @@
                     "data": [
                         {
                             "type": "countries",
+                            "id": "4"
+                        },
+                        {
+                            "type": "countries",
                             "id": "1"
+                        },
+                        {
+                            "type": "countries",
+                            "id": "3"
                         },
                         {
                             "type": "countries",
@@ -43,6 +51,18 @@
     "included": [
         {
             "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "links": {
+                "self": "\/countries\/4"
+            }
+        },
+        {
+            "type": "countries",
             "id": "1",
             "attributes": {
                 "code": "NL",
@@ -51,6 +71,18 @@
             },
             "links": {
                 "self": "\/countries\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/countries\/3"
             }
         },
         {
