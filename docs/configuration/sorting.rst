@@ -1,9 +1,8 @@
 Sorting
 =======
 
-CrudJsonApi fully supports
 `JSON API Sorting <http://jsonapi.org/format/#fetching-sorting>`_
-which allows you to sort the results produced by your API according to one
+allows you to sort the results produced by your API according to one
 by passing one or more criteria to your request using the ``sort`` parameter.
 
 Before continuing please note that the default sort order for each field is ascending
@@ -13,36 +12,40 @@ be descending.
 Single Field Sorting
 ^^^^^^^^^^^^^^^^^^^^
 
-To select all currencies and sort the results by the `code` field:
+To sort by a single field passing in in ascending order:
 
 ``/currencies?sort=code``
 
-To select all currencies and sort the results by the `code` field in descending order:
+To sort in descending order:
 
 ``/currencies?sort=-code``
 
 Multi Field Sorting
 ^^^^^^^^^^^^^^^^^^^
 
-@rchavik: I THINK WE NEED AN EXAMPLE OR TESTCASE HERE, SEEMS MISSING. E.G.
+To sort by multiple fields simply pass them as comma-separated sort fields
+in the order you want them applied:
 
 - ``/currencies?sort=code,name``
 - ``/currencies?sort=-code,name``
 - ``/currencies?sort=-code,-name``
+- ``/currencies?sort=name,code``
 
+Sorting By Related Data
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You may want to sort your primary data using fields in the related data. In this case
+all ``currencies`` (the primary data) would be sorted using the ``code`` field of the
+associated ``countries``.
+
+- ``/currencies?include=countries&sort=countries.code``
+- ``/currencies?include=countries&sort=-countries.code``
 
 Sorting Included Data
 ^^^^^^^^^^^^^^^^^^^^^
 
-It is also possible to sort the data returned in the ``included`` node. In this example ``currencies`` will
-use the default sort order whereas all ``countries`` inside the ``included`` node will be sorted ascending,
-using their ``code`` field.
+Does this still apply?
 
-``/currencies?include=countries&sort=countries.code``
-
-To sort all ``countries`` in the ``included`` node in descending order:
-
-``/currencies?include=countries&sort=-countries.code``
 
 Combined Sorts
 ^^^^^^^^^^^^^^
