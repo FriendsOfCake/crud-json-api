@@ -1,47 +1,38 @@
 {
     "meta": {
         "record_count": 4,
-        "page_count": 2,
-        "page_limit": null
+        "page_count": 1,
+        "page_limit": 10
     },
     "links": {
-        "self": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
-        "first": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
-        "last": "\/countries?page=2&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
+        "self": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
+        "first": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
+        "last": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
         "prev": null,
-        "next": "\/countries?page=2&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals"
+        "next": null
     },
     "data": [
         {
             "type": "countries",
-            "id": "2",
+            "id": "1",
             "attributes": {
-                "code": "BG",
-                "name": "Bulgaria",
-                "dummy-counter": 22222
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
             },
             "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                },
                 "national-capital": {
                     "data": {
                         "type": "national-capitals",
-                        "id": "2"
+                        "id": "1"
                     },
                     "links": {
-                        "self": "\/national-capitals\/2"
+                        "self": "\/national-capitals\/1"
                     }
                 }
             },
             "links": {
-                "self": "\/countries\/2"
+                "self": "\/countries\/1"
             }
         },
         {
@@ -53,15 +44,6 @@
                 "dummy-counter": 33333
             },
             "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                },
                 "national-capital": {
                     "data": {
                         "type": "national-capitals",
@@ -78,47 +60,61 @@
         },
         {
             "type": "countries",
-            "id": "1",
+            "id": "2",
             "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
+                "code": "BG",
+                "name": "Bulgaria",
+                "dummy-counter": 22222
             },
             "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                },
                 "national-capital": {
                     "data": {
                         "type": "national-capitals",
-                        "id": "1"
+                        "id": "2"
                     },
                     "links": {
-                        "self": "\/national-capitals\/1"
+                        "self": "\/national-capitals\/2"
                     }
                 }
             },
             "links": {
-                "self": "\/countries\/1"
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "relationships": {
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/4"
             }
         }
     ],
     "included": [
         {
-            "type": "currencies",
+            "type": "national-capitals",
             "id": "1",
             "attributes": {
-                "code": "EUR",
-                "name": "Euro"
+                "name": "Amsterdam",
+                "description": "National capital of the Netherlands"
             },
             "links": {
-                "self": "\/currencies\/1"
+                "self": "\/national-capitals\/1"
             }
         },
         {
@@ -145,13 +141,13 @@
         },
         {
             "type": "national-capitals",
-            "id": "1",
+            "id": "5",
             "attributes": {
-                "name": "Amsterdam",
-                "description": "National capital of the Netherlands"
+                "name": "Vatican",
+                "description": "National capital of Vatican"
             },
             "links": {
-                "self": "\/national-capitals\/1"
+                "self": "\/national-capitals\/5"
             }
         }
     ]

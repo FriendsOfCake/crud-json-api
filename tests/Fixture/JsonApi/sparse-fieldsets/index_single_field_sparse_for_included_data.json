@@ -5,13 +5,36 @@
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "first": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "last": "\/countries?page=2&sort=code%2Cnational_capitals.name&include=currencies",
+        "self": "\/countries?page=1&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
+        "first": "\/countries?page=1&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
+        "last": "\/countries?page=2&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode",
         "prev": null,
-        "next": "\/countries?page=2&sort=code%2Cnational_capitals.name&include=currencies"
+        "next": "\/countries?page=2&include=currencies&fields%5Bcurrencies%5D=id%2Cname%2Ccode"
     },
     "data": [
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        },
         {
             "type": "countries",
             "id": "2",
@@ -57,29 +80,6 @@
             "links": {
                 "self": "\/countries\/3"
             }
-        },
-        {
-            "type": "countries",
-            "id": "1",
-            "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
-            },
-            "relationships": {
-                "currency": {
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/countries\/1"
-            }
         }
     ],
     "included": [
@@ -87,7 +87,6 @@
             "type": "currencies",
             "id": "1",
             "attributes": {
-                "code": "EUR",
                 "name": "Euro"
             },
             "links": {

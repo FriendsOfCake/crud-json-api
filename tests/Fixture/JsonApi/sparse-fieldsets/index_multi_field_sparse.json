@@ -1,23 +1,23 @@
 {
     "meta": {
         "record_count": 4,
-        "page_count": 1,
+        "page_count": 2,
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1",
-        "first": "\/countries?page=1",
-        "last": "\/countries?page=1",
+        "self": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
+        "first": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
+        "last": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode",
         "prev": null,
-        "next": null
+        "next": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode"
     },
     "data": [
         {
             "type": "countries",
             "id": "1",
             "attributes": {
-                "code": "NL",
-                "name": "The Netherlands"
+                "name": "The Netherlands",
+                "code": "NL"
             },
             "links": {
                 "self": "\/countries\/1"
@@ -27,8 +27,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "code": "BG",
-                "name": "Bulgaria"
+                "name": "Bulgaria",
+                "code": "BG"
             },
             "links": {
                 "self": "\/countries\/2"
@@ -38,24 +38,11 @@
             "type": "countries",
             "id": "3",
             "attributes": {
-                "code": "IT",
                 "name": "Italy",
-                "dummy-counter": 33333
+                "code": "IT"
             },
             "links": {
                 "self": "\/countries\/3"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "4",
-            "attributes": {
-                "code": "VT",
-                "name": "Vatican",
-                "dummy-counter": 33333
-            },
-            "links": {
-                "self": "\/countries\/4"
             }
         }
     ]

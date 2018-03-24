@@ -16,7 +16,7 @@
             "type": "national-cities",
             "id": "3",
             "attributes": {
-                "name": "Brussels"
+                "name": "Sofia"
             },
             "links": {
                 "self": "\/national-cities\/3"
@@ -26,7 +26,7 @@
             "type": "national-cities",
             "id": "4",
             "attributes": {
-                "name": "Antwerp"
+                "name": "Plovdiv"
             },
             "links": {
                 "self": "\/national-cities\/4"
