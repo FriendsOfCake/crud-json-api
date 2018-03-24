@@ -411,6 +411,64 @@ class JsonApiListenerTest extends TestCase
     }
 
     /**
+     * _insertBelongsToDataIntoEventFindResult()
+     *
+     * @return void
+     */
+    public function testInsertBelongsToDataIntoEventFindResultSelfReferenced()
+    {
+        $controller = $this
+            ->getMockBuilder('\Cake\Controller\Controller')
+            ->setMethods(null)
+            ->setConstructorArgs([null, null, 'Countries'])
+            ->enableOriginalConstructor()
+            ->getMock();
+
+        $event = $this
+            ->getMockBuilder('\Cake\Event\Event')
+            ->disableOriginalConstructor()
+            ->setMethods(['subject'])
+            ->getMock();
+
+        $subject = $this
+            ->getMockBuilder('\Crud\Event\Subject')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $event
+            ->expects($this->any())
+            ->method('subject')
+            ->will($this->returnValue($subject));
+
+        $listener = $this
+            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->disableOriginalConstructor()
+            ->setMethods(['_controller'])
+            ->getMock();
+
+        $listener
+            ->expects($this->any())
+            ->method('_controller')
+            ->will($this->returnValue($controller));
+
+        $this->setReflectionClassInstance($listener);
+
+        // Check if Vatican has supercountry (self-referenced tables)
+        $table = TableRegistry::get('Countries');
+        $entity = $table->get(4);
+        $subject->entity = $entity;
+
+        $this->assertArrayHasKey('name', $subject->entity);
+        $this->assertArrayNotHasKey('supercountry', $subject->entity);
+
+        $this->callProtectedMethod('_insertBelongsToDataIntoEventFindResult', [$event], $listener);
+
+        $this->assertArrayHasKey('name', $subject->entity);
+        $this->assertArrayHasKey('supercountry', $subject->entity);
+    }
+
+    /**
      * Make sure render() works with find data
      *
      * @return void
@@ -980,6 +1038,16 @@ class JsonApiListenerTest extends TestCase
         $table->hasMany('Cultures');
         $table->hasMany('NationalCities');
 
+        $table->hasMany('SubCountries', [
+            'className' => 'Countries',
+            'propertyName' => 'subcountry'
+        ]);
+
+        $table->belongsTo('SuperCountries', [
+            'className' => 'Countries',
+            'propertyName' => 'supercountry'
+        ]);
+
         $associations = [];
         foreach ($table->associations() as $association) {
             $associations[strtolower($association->name())] = [
@@ -1007,6 +1075,8 @@ class JsonApiListenerTest extends TestCase
             'NationalCapitals' => $table->NationalCapitals->target(),
             'Cultures' => $table->Cultures->target(),
             'NationalCities' => $table->NationalCities->target(),
+            'SubCountries' => $table->SubCountries->target(),
+            'SuperCountries' => $table->SuperCountries->target()
         ];
 
         $this->assertSame($expected, $result);
@@ -1051,23 +1121,25 @@ class JsonApiListenerTest extends TestCase
             'national_capital',
             'cultures',
             'national_cities',
+            'subcountries',
+            'supercountry'
         ];
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
         $this->assertSame($expected, $result);
 
         unset($associations['currencies']['children']['countries']);
-        $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities'], array_keys($associations));
+        $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'national_capital', 'cultures', 'national_cities'], $result);
+        $this->assertSame(['currency', 'national_capital', 'cultures', 'national_cities', 'subcountries', 'supercountry'], $result);
 
         // assert the include list is still auto-generated if an association is
         // removed from the AssociationsCollection
         unset($associations['cultures']);
-        $this->assertSame(['currencies', 'nationalcapitals', 'nationalcities'], array_keys($associations));
+        $this->assertSame(['currencies', 'nationalcapitals', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'national_capital', 'national_cities'], $result);
+        $this->assertSame(['currency', 'national_capital', 'national_cities', 'subcountries', 'supercountry'], $result);
 
         // assert user specified listener config option is returned as-is (no magic)
         $userSpecifiedIncludes = [

@@ -1,15 +1,15 @@
 {
     "meta": {
-        "record_count": 2,
-        "page_count": 1,
+        "record_count": 4,
+        "page_count": 2,
         "page_limit": null
     },
     "links": {
         "self": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
         "first": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
-        "last": "\/countries?page=1&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
+        "last": "\/countries?page=2&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals",
         "prev": null,
-        "next": null
+        "next": "\/countries?page=2&sort=countries.code%2Cnational_capitals.name&include=currencies%2Cnational_capitals"
     },
     "data": [
         {
@@ -42,6 +42,38 @@
             },
             "links": {
                 "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                },
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
             }
         },
         {
@@ -98,6 +130,17 @@
             },
             "links": {
                 "self": "\/national-capitals\/2"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "4",
+            "attributes": {
+                "name": "Rome",
+                "description": "National capital of Italy"
+            },
+            "links": {
+                "self": "\/national-capitals\/4"
             }
         },
         {
