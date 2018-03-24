@@ -27,8 +27,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "code": "BE",
-                "name": "Belgium"
+                "code": "BG",
+                "name": "Bulgaria"
             },
             "links": {
                 "self": "\/countries\/2"

@@ -37,7 +37,7 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "name": "Belgium"
+                "name": "Bulgaria"
             },
             "relationships": {
                 "currency": {

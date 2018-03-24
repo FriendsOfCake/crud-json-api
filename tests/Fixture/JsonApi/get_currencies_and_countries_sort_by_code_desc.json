@@ -89,8 +89,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "code": "BE",
-                "name": "Belgium",
+                "code": "BG",
+                "name": "Bulgaria",
                 "dummy-counter": 22222
             },
             "links": {

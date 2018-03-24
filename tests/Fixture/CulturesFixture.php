@@ -17,7 +17,7 @@ class CulturesFixture extends TestFixture
 
     public $records = [
         ['code' => 'nl-NL', 'name' => 'Dutch', 'another_dummy_counter' => 11111, 'country_id' => 1],
-        ['code' => 'nl-BE', 'name' => 'Dutch (Belgium)', 'another_dummy_counter' => 22222, 'country_id' => 2],
-        ['code' => 'fr-BE', 'name' => 'French (Belgium)', 'another_dummy_counter' => 22222, 'country_id' => 2],
+        ['code' => 'bg-BG', 'name' => 'Bulgarian', 'another_dummy_counter' => 22222, 'country_id' => 2],
+        ['code' => 'tr-BG', 'name' => 'Turkish (Bulgarian)', 'another_dummy_counter' => 22222, 'country_id' => 2],
     ];
 }
