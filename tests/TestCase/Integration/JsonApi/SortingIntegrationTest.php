@@ -26,6 +26,10 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
                 '/currencies?sort=-code',
                 'get_currencies_sort_by_code_desc.json',
             ],
+            'sort primary data by related resource (single field)' => [
+                '/countries?include=national-capitals&sort=national-capitals.name&limit=10',
+                'sorting/sort_primary_data_by_related_resource_single_field.json',
+            ],
             'unsorted with include' => [
                 '/currencies?include=countries',
                 'get_currencies_and_countries_no_sort.json',

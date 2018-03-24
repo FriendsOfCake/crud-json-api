@@ -1,0 +1,143 @@
+{
+    "meta": {
+        "record_count": 4,
+        "page_count": 1,
+        "page_limit": 10
+    },
+    "links": {
+        "self": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
+        "first": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
+        "last": "\/countries?page=1&sort=national-capitals.name&limit=10&include=national-capitals",
+        "prev": null,
+        "next": null
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "name": "The Netherlands",
+                "dummy-counter": 11111
+            },
+            "relationships": {
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BG",
+                "name": "Bulgaria",
+                "dummy-counter": 22222
+            },
+            "relationships": {
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "relationships": {
+                "national-capital": {
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    },
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/4"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "national-capitals",
+            "id": "1",
+            "attributes": {
+                "name": "Amsterdam",
+                "description": "National capital of the Netherlands"
+            },
+            "links": {
+                "self": "\/national-capitals\/1"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "4",
+            "attributes": {
+                "name": "Rome",
+                "description": "National capital of Italy"
+            },
+            "links": {
+                "self": "\/national-capitals\/4"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "2",
+            "attributes": {
+                "name": "Sofia",
+                "description": "National capital of Bulgaria"
+            },
+            "links": {
+                "self": "\/national-capitals\/2"
+            }
+        }
+    ]
+}
