@@ -23,7 +23,7 @@ To sort in descending order:
 Multi Field Sorting
 ^^^^^^^^^^^^^^^^^^^
 
-To sort by multiple fields simply pass them as comma-separated sort fields
+To sort by multiple fields simply pass comma-separated sort fields
 in the order you want them applied:
 
 - ``/currencies?sort=code,name``
