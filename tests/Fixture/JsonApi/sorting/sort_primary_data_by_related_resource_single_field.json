@@ -119,6 +119,17 @@
         },
         {
             "type": "national-capitals",
+            "id": "2",
+            "attributes": {
+                "name": "Sofia",
+                "description": "National capital of Bulgaria"
+            },
+            "links": {
+                "self": "\/national-capitals\/2"
+            }
+        },
+        {
+            "type": "national-capitals",
             "id": "4",
             "attributes": {
                 "name": "Rome",
@@ -130,13 +141,13 @@
         },
         {
             "type": "national-capitals",
-            "id": "2",
+            "id": "5",
             "attributes": {
-                "name": "Sofia",
-                "description": "National capital of Bulgaria"
+                "name": "Vatican",
+                "description": "National capital of Vatican"
             },
             "links": {
-                "self": "\/national-capitals\/2"
+                "self": "\/national-capitals\/5"
             }
         }
     ]
