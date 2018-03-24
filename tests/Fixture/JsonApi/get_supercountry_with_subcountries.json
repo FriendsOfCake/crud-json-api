@@ -8,15 +8,6 @@
             "dummy-counter": 33333
         },
         "relationships": {
-            "currency": {
-                "data": {
-                    "type": "currencies",
-                    "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
-                }
-            },
             "subcountries": {
                 "data": [
                     {
