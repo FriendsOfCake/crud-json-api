@@ -340,7 +340,7 @@ class JsonApiListener extends ApiListener
             if ($include === Inflector::tableize($repository->alias())) {
                 $aliasFields = array_map(function ($val) use ($repository, $columns) {
                     if (!in_array($val, $columns)) {
-                        return;
+                        return null;
                     }
 
                     return $repository->aliasField($val);
