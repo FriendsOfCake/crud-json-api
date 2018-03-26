@@ -450,6 +450,9 @@ class JsonApiListener extends ApiListener
                             ],
                         ]
                     ]);
+                    $subject->query->leftJoinWith($association->alias());
+
+                    $order[$association->aliasField($field)] = $direction;
                 }
                 continue;
             } else {
