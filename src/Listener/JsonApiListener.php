@@ -443,11 +443,16 @@ class JsonApiListener extends ApiListener
                     if ($association->property() !== $include) {
                         continue;
                     }
+
+                    if ($association->type() !== Association::MANY_TO_ONE && $association->type() !== Association::ONE_TO_ONE) {
+                        throw new \UnexpectedValueException("Unsupported join type: " . $association->type());
+                    }
                     $subject->query->contain([
                         $association->alias() => [
                             'sort' => [
                                 $association->aliasField($field) => $direction,
                             ],
+                            'strategy' => 'select',
                         ]
                     ]);
                     $subject->query->leftJoinWith($association->alias());
