@@ -47,6 +47,18 @@
             "links": {
                 "self": "\/countries\/4"
             }
+        },
+        {
+            "type": "countries",
+            "id": "5",
+            "attributes": {
+                "code": "US",
+                "name": "United States of America",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/countries\/5"
+            }
         }
     ]
 }

@@ -31,7 +31,7 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
                 'sorting/sort_single_field_ascending.json',
             ],
             'sort primary data by related resource (single field)' => [
-                '/countries?include=national-capitals&sort=national-capitals.name&limit=10',
+                '/countries?include=national_capital&sort=national_capital.name&limit=10',
                 'sorting/sort_primary_data_by_related_resource_single_field.json',
             ],
             'unsorted with include' => [
@@ -39,20 +39,25 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
                 'get_currencies_and_countries_no_sort.json',
             ],
             'sorted with include' => [
-                '/currencies?include=countries&sort=countries.code',
-                'get_currencies_and_countries_sort_by_code.json',
+                '/countries?include=currency&sort=code',
+                'sorting/sorted_with_include.json',
+            ],
+            'sorted with include page 2' => [
+                '/countries?include=currency&sort=code&page=2',
+                'sorting/sorted_with_include_page_2.json',
             ],
             'sorted desc with include' => [
-                '/currencies?include=countries&sort=-countries.code',
-                'get_currencies_and_countries_sort_by_code_desc.json',
+                '/countries?include=currency&sort=-code',
+                'sorting/sorted_desc_with_include.json'
             ],
             'multi fields sorting' => [
-                '/currencies?include=countries&sort=code,countries.code',
-                'get_currencies_and_countries_sort_by_code.json',
+                '/countries?include=currency&sort=dummy_counter,code',
+                'sorting/multi_fields_sorting.json'
             ],
             'multi fields sorting with direction' => [
-                '/currencies?include=countries&sort=code,-countries.code',
-                'get_currencies_and_countries_sort_by_code_desc.json',
+                '/countries?include=currency&sort=-dummy_counter,-code',
+                //'get_currencies_and_countries_sort_by_code_desc.json',
+                'sorting/multi_fields_sorting_with_direction.json'
             ],
             'view with multi fields sorting with direction' => [
                 '/currencies/1?include=countries&sort=code,-countries.code',

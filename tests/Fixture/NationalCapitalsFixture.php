@@ -19,5 +19,6 @@ class NationalCapitalsFixture extends TestFixture
         ['name' => 'Wellington', 'description' => 'National capital of New Zealand'],
         ['name' => 'Rome', 'description' => 'National capital of Italy'],
         ['name' => 'Vatican', 'description' => 'National capital of Vatican'],
+        ['name' => 'Washington', 'description' => 'National capital of the US'],
     ];
 }

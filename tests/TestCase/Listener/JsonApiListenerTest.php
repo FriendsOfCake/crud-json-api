@@ -1496,8 +1496,8 @@ class JsonApiListenerTest extends TestCase
             ->method('repository')
             ->willReturn(TableRegistry::get('Countries'));
 
-        $sort = 'code,currencies.code';
-        $listener->config('include', ['currencies', 'national_capitals']);
+        $sort = 'code,currency.code';
+        $listener->config('include', ['currency', 'national_capitals']);
 
         $this->callProtectedMethod('_sortParameter', [$sort, $subject, []], $listener);
     }
