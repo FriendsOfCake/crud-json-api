@@ -440,7 +440,7 @@ class JsonApiListener extends ApiListener
 
                 $associations = $repository->associations();
                 foreach ($associations as $association) {
-                    if (Inflector::tableize($association->alias()) !== $include) {
+                    if ($association->property() !== $include) {
                         continue;
                     }
                     $subject->query->contain([
