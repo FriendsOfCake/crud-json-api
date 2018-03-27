@@ -443,10 +443,6 @@ class JsonApiListener extends ApiListener
                     if ($association->property() !== $include) {
                         continue;
                     }
-
-                    if ($association->type() !== Association::MANY_TO_ONE && $association->type() !== Association::ONE_TO_ONE) {
-                        throw new \UnexpectedValueException("Unsupported join type: " . $association->type());
-                    }
                     $subject->query->contain([
                         $association->alias() => [
                             'sort' => [
@@ -676,6 +672,23 @@ class JsonApiListener extends ApiListener
     protected function _getFindResult($subject)
     {
         if (!empty($subject->entities)) {
+
+            if (isset($subject->query)) {
+                // filter out duplicates that might have come from joins
+                $resultSet = clone $subject->entities;
+                $ids = [];
+                $keys = (array)$subject->query->repository()->primaryKey();
+                foreach ($subject->entities as $entity) {
+                    $id = $entity->extract($keys);
+                    if (!in_array($id, $ids)) {
+                        $entities[] = $entity;
+                        $ids[] = $id;
+                    }
+                }
+                $resultSet->unserialize(serialize($entities));
+                $subject->entities = $resultSet;
+            }
+
             return $subject->entities;
         }
 

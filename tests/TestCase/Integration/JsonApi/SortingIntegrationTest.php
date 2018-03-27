@@ -59,6 +59,12 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
                 //'get_currencies_and_countries_sort_by_code_desc.json',
                 'sorting/multi_fields_sorting_with_direction.json'
             ],
+
+            'hasMany - index with multi fields sorting with direction' => [
+                '/currencies?include=countries&sort=code,-countries.code&limit=5',
+                'sorting/has_many_index_with_multi_fields_sorting_with_direction.json',
+            ],
+
             'view with multi fields sorting with direction' => [
                 '/currencies/1?include=countries&sort=code,-countries.code',
                 'get_currency_and_countries_sort_by_code_desc.json',
