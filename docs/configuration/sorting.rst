@@ -12,11 +12,11 @@ be descending.
 Single Field Sorting
 ^^^^^^^^^^^^^^^^^^^^
 
-To sort by a single field passing in in ascending order:
+To sort by a single field using ascending order:
 
 ``/currencies?sort=code``
 
-To sort in descending order:
+To sort descending:
 
 ``/currencies?sort=-code``
 
@@ -34,29 +34,17 @@ in the order you want them applied:
 Sorting By Related Data
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-You may want to sort your primary data using fields in the related data. In this case
-all ``currencies`` (the primary data) would be sorted using the ``code`` field of the
-associated ``countries``.
+You can also sort your primary data using fields in the related data. In this case
+all ``currencies`` (the primary data) would be sorted using the ascending order of the
+``code`` field in ``countries`` (the associated data).
 
 - ``/currencies?include=countries&sort=countries.code``
 - ``/currencies?include=countries&sort=-countries.code``
 
-Sorting Included Data
-^^^^^^^^^^^^^^^^^^^^^
-
-Does this still apply?
-
-
 Combined Sorts
 ^^^^^^^^^^^^^^
 
-You may also choose to combine sorts. In this case ``currencies`` will be sorted using the ``name`` field
-whereas all data inside the ``included`` node will be sorted using their ``code`` field.
+CrudJsonApi supports any combination of the above sorts. E.g.
 
-``/currencies?include=countries&sort=name,countries.code``
-
-Other variations may include:
-
-``/currencies?include=countries&sort=name,-countries.code``
-
-
+- ``/currencies?include=countries&sort=name,countries.code``
+- ``/currencies?include=countries&sort=name,-countries.code``
