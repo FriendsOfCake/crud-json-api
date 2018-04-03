@@ -663,6 +663,28 @@ class JsonApiListener extends ApiListener
     }
 
     /**
+     * Deduplicate resultset from rows that might have come from joins
+     *
+     * @param \Crud\Event\Subject $subject Subject
+     * @return ORM\ResultSet
+     */
+    protected function _deduplicateResultSet($subject)
+    {
+        $resultSet = clone $subject->entities;
+        $ids = [];
+        $keys = (array)$subject->query->repository()->primaryKey();
+        foreach ($subject->entities as $entity) {
+            $id = $entity->extract($keys);
+            if (!in_array($id, $ids)) {
+                $entities[] = $entity;
+                $ids[] = $id;
+            }
+        }
+        $resultSet->unserialize(serialize($entities));
+        return $resultSet;
+    }
+
+    /**
      * Helper function to easily retrieve `find()` result from Crud subject
      * regardless of current action.
      *
@@ -674,19 +696,7 @@ class JsonApiListener extends ApiListener
         if (!empty($subject->entities)) {
 
             if (isset($subject->query)) {
-                // filter out duplicates that might have come from joins
-                $resultSet = clone $subject->entities;
-                $ids = [];
-                $keys = (array)$subject->query->repository()->primaryKey();
-                foreach ($subject->entities as $entity) {
-                    $id = $entity->extract($keys);
-                    if (!in_array($id, $ids)) {
-                        $entities[] = $entity;
-                        $ids[] = $id;
-                    }
-                }
-                $resultSet->unserialize(serialize($entities));
-                $subject->entities = $resultSet;
+                $subject->entities = $this->_deduplicateResultSet($subject);
             }
 
             return $subject->entities;
