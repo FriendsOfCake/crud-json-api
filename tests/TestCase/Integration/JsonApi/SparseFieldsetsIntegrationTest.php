@@ -50,7 +50,7 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
             ],
             'multi-field sparse for included index data' => [
                 '/countries?include=currencies&fields[currencies]=id,name,code',
-                'sparse-fieldsets/index_single_field_sparse_for_included_data.json'
+                'sparse-fieldsets/index_multi_field_sparse_for_included_data.json'
             ],
             'combined multi-field sparse index (both primary and included data)' => [
                 '/countries?fields[countries]=code,name,currency&include=currencies&fields[currencies]=id,code,name',
