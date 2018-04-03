@@ -42,7 +42,6 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 'sparse-fieldsets/view_single_field_sparse_for_primary_and_included_data.json'
             ],
 
-
             // assert "multi-field" sparse for index actions
             'multi-field sparse index' => [
                 '/countries?fields[countries]=name,code',

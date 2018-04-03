@@ -686,6 +686,7 @@ class JsonApiListener extends ApiListener
             }
         }
         $resultSet->unserialize(serialize($entities));
+
         return $resultSet;
     }
 
@@ -699,7 +700,6 @@ class JsonApiListener extends ApiListener
     protected function _getFindResult($subject)
     {
         if (!empty($subject->entities)) {
-
             if (isset($subject->query)) {
                 $subject->entities = $this->_deduplicateResultSet($subject);
             }
