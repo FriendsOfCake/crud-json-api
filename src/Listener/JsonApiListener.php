@@ -333,11 +333,16 @@ class JsonApiListener extends ApiListener
         $repository = $subject->query->repository();
         $associations = $repository->associations();
 
-        $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        $nodeName = Inflector::tableize($repository->alias());
+        if (empty($fieldSets[$nodeName])) {
+            $selectFields = [];
+        } else {
+            $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        }
         $columns = $repository->schema()->columns();
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
-            if ($include === Inflector::tableize($repository->alias())) {
+            if ($include === $nodeName) {
                 $aliasFields = array_map(function ($val) use ($repository, $columns) {
                     if (!in_array($val, $columns)) {
                         return null;
