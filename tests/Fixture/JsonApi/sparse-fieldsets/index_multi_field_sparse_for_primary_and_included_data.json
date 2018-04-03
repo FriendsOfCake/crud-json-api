@@ -1,15 +1,15 @@
 {
     "meta": {
-        "record_count": 4,
+        "record_count": 5,
         "page_count": 2,
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
-        "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
-        "last": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
+        "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
+        "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
+        "last": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
         "prev": null,
-        "next": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname&fields%5Bcurrencies%5D=id%2Ccode%2Cname"
+        "next": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname"
     },
     "data": [
         {
