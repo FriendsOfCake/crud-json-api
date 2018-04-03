@@ -1,0 +1,101 @@
+{
+    "meta": {
+        "record_count": 5,
+        "page_count": 2,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=1&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "first": "\/countries?page=1&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "last": "\/countries?page=2&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "prev": null,
+        "next": "\/countries?page=2&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname"
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "name": "Vatican"
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/4"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "5",
+            "attributes": {
+                "name": "United States of America"
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
+                    },
+                    "links": {
+                        "self": "\/currencies\/2"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/5"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "name": "The Netherlands"
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "currencies",
+            "id": "2",
+            "attributes": {
+                "name": "US Dollar"
+            },
+            "links": {
+                "self": "\/currencies\/2"
+            }
+        }
+    ]
+}

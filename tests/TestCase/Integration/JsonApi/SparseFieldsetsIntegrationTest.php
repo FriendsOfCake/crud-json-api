@@ -70,6 +70,15 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries/1?fields[countries]=name,code,currency&include=currencies&fields[currencies]=id,code,name',
                 'sparse-fieldsets/view_multi_field_sparse_for_primary_and_included_data.json'
             ],
+
+            'sparse fieldsets - index with include and sort' => [
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,name&sort=name',
+                'sparse-fieldsets/index_with_include_and_sort.json',
+            ],
+            'sparse fieldsets - index with include and sort desc' => [
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,name&sort=-name',
+                'sparse-fieldsets/index_with_include_and_sort_desc.json',
+            ],
         ];
     }
 
