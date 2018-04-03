@@ -19,12 +19,12 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries?fields[countries]=name',
                 'sparse-fieldsets/index_single_field_sparse.json',
             ],
-            'single-field sparse for included index data' => [  // FAILING: primary node does not contain any attributes
+            'single-field sparse for included index data' => [
                 '/countries?include=currencies&fields[currencies]=id,name',
                 'sparse-fieldsets/index_single_field_sparse_for_included_data.json',
             ],
-            'combined single-field sparse index (both primary and included data)' => [ // FAILING: `relationships` node missing from primary data
-                '/countries?fields[countries]=name&include=currencies&fields[currencies]=id,code',
+            'combined single-field sparse index (both primary and included data)' => [
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
                 'sparse-fieldsets/index_single_field_sparse_for_primary_and_included_data.json'
             ],
 
@@ -33,12 +33,12 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries/1?fields[countries]=name',
                 'sparse-fieldsets/view_single_field_sparse.json',
             ],
-            'single-field sparse for included view data' => [ // FAILING: does not contain attributes for primary data
+            'single-field sparse for included view data' => [
                 '/countries/1?include=currencies&fields[currencies]=id,name',
                 'sparse-fieldsets/view_single_field_sparse_for_included_data.json',
             ],
-            'combined single-field sparse view (both primary and included data)' => [ // FAILING: `relationships` node missing from primary data
-                '/countries/1?fields[countries]=name&include=currencies&fields[currencies]=id,code',
+            'combined single-field sparse view (both primary and included data)' => [
+                '/countries/1?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
                 'sparse-fieldsets/view_single_field_sparse_for_primary_and_included_data.json'
             ],
 
@@ -48,12 +48,12 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries?fields[countries]=name,code',
                 'sparse-fieldsets/index_multi_field_sparse.json',
             ],
-            'multi-field sparse for included index data' => [  // FAILING: does not contain attributes for primary data
+            'multi-field sparse for included index data' => [
                 '/countries?include=currencies&fields[currencies]=id,name,code',
                 'sparse-fieldsets/index_single_field_sparse_for_included_data.json'
             ],
-            'combined multi-field sparse index (both primary and included data)' => [ // FAILING: `relationships` node missing from primary data
-                '/countries?fields[countries]=code,name&include=currencies&fields[currencies]=id,code,name',
+            'combined multi-field sparse index (both primary and included data)' => [
+                '/countries?fields[countries]=code,name,currency&include=currencies&fields[currencies]=id,code,name',
                 'sparse-fieldsets/index_multi_field_sparse_for_primary_and_included_data.json'
             ],
 
@@ -62,12 +62,12 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries/1?fields[countries]=name,code',
                 'sparse-fieldsets/view_multi_field_sparse.json',
             ],
-            'multi-field sparse for included view data' => [ // FAILING: does not contain attributes for primary data
+            'multi-field sparse for included view data' => [
                 '/countries/1?include=currencies&fields[currencies]=id,name,code',
                 'sparse-fieldsets/view_multi_field_sparse_for_included_data.json',
             ],
-            'combined multi-field sparse view (both primary and included data)' => [ // FAILING: `relationships` node missing from primary data
-                '/countries/1?fields[countries]=name,code&include=currencies&fields[currencies]=id,code,name',
+            'combined multi-field sparse view (both primary and included data)' => [
+                '/countries/1?fields[countries]=name,code,currency&include=currencies&fields[currencies]=id,code,name',
                 'sparse-fieldsets/view_multi_field_sparse_for_primary_and_included_data.json'
             ],
         ];
