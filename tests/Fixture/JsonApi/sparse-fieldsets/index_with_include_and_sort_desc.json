@@ -5,20 +5,18 @@
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "first": "\/countries?page=1&sort=code%2Cnational_capitals.name&include=currencies",
-        "last": "\/countries?page=2&sort=code%2Cnational_capitals.name&include=currencies",
+        "self": "\/countries?page=1&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "first": "\/countries?page=1&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "last": "\/countries?page=2&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
         "prev": null,
-        "next": "\/countries?page=2&sort=code%2Cnational_capitals.name&include=currencies"
+        "next": "\/countries?page=2&sort=-name&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname"
     },
     "data": [
         {
             "type": "countries",
-            "id": "2",
+            "id": "4",
             "attributes": {
-                "code": "BG",
-                "name": "Bulgaria",
-                "dummy-counter": 22222
+                "name": "Vatican"
             },
             "relationships": {
                 "currency": {
@@ -32,39 +30,35 @@
                 }
             },
             "links": {
-                "self": "\/countries\/2"
+                "self": "\/countries\/4"
             }
         },
         {
             "type": "countries",
-            "id": "3",
+            "id": "5",
             "attributes": {
-                "code": "IT",
-                "name": "Italy",
-                "dummy-counter": 33333
+                "name": "United States of America"
             },
             "relationships": {
                 "currency": {
                     "data": {
                         "type": "currencies",
-                        "id": "1"
+                        "id": "2"
                     },
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/currencies\/2"
                     }
                 }
             },
             "links": {
-                "self": "\/countries\/3"
+                "self": "\/countries\/5"
             }
         },
         {
             "type": "countries",
             "id": "1",
             "attributes": {
-                "code": "NL",
-                "name": "The Netherlands",
-                "dummy-counter": 11111
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {
@@ -87,11 +81,20 @@
             "type": "currencies",
             "id": "1",
             "attributes": {
-                "code": "EUR",
                 "name": "Euro"
             },
             "links": {
                 "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "currencies",
+            "id": "2",
+            "attributes": {
+                "name": "US Dollar"
+            },
+            "links": {
+                "self": "\/currencies\/2"
             }
         }
     ]

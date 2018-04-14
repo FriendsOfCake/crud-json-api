@@ -43,6 +43,19 @@
                 "code": "USD",
                 "name": "US Dollar"
             },
+            "relationships": {
+                "countries": {
+                    "data": [
+                        {
+                            "type": "countries",
+                            "id": "5"
+                        }
+                    ],
+                    "links": {
+                        "self": "\/countries?currency_id=2"
+                    }
+                }
+            },
             "links": {
                 "self": "\/currencies\/2"
             }
@@ -65,8 +78,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "code": "BE",
-                "name": "Belgium",
+                "code": "BG",
+                "name": "Bulgaria",
                 "dummy-counter": 22222
             },
             "links": {
@@ -95,6 +108,18 @@
             },
             "links": {
                 "self": "\/countries\/4"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "5",
+            "attributes": {
+                "code": "US",
+                "name": "United States of America",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/countries\/5"
             }
         }
     ]

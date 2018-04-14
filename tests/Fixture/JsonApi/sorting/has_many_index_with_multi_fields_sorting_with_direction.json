@@ -12,11 +12,7 @@
                     "data": [
                         {
                             "type": "countries",
-                            "id": "2"
-                        },
-                        {
-                            "type": "countries",
-                            "id": "3"
+                            "id": "4"
                         },
                         {
                             "type": "countries",
@@ -24,7 +20,11 @@
                         },
                         {
                             "type": "countries",
-                            "id": "4"
+                            "id": "3"
+                        },
+                        {
+                            "type": "countries",
+                            "id": "2"
                         }
                     ],
                     "links": {
@@ -43,6 +43,19 @@
                 "code": "USD",
                 "name": "US Dollar"
             },
+            "relationships": {
+                "countries": {
+                    "data": [
+                        {
+                            "type": "countries",
+                            "id": "5"
+                        }
+                    ],
+                    "links": {
+                        "self": "\/countries?currency_id=2"
+                    }
+                }
+            },
             "links": {
                 "self": "\/currencies\/2"
             }
@@ -51,26 +64,14 @@
     "included": [
         {
             "type": "countries",
-            "id": "2",
+            "id": "4",
             "attributes": {
-                "code": "BE",
-                "name": "Belgium",
-                "dummy-counter": 22222
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
             },
             "links": {
-                "self": "\/countries\/2"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "3",
-            "attributes": {
-                "code": "IT",
-                "name": "Italy",
-                "dummy-counter": 33333
-            },
-            "links": {
-                "self": "\/countries\/3"
+                "self": "\/countries\/4"
             }
         },
         {
@@ -87,14 +88,38 @@
         },
         {
             "type": "countries",
-            "id": "4",
+            "id": "3",
             "attributes": {
-                "code": "VT",
-                "name": "Vatican",
-                "dummy-counter": 44444
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
             },
             "links": {
-                "self": "\/countries\/4"
+                "self": "\/countries\/3"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BG",
+                "name": "Bulgaria",
+                "dummy-counter": 22222
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "5",
+            "attributes": {
+                "code": "US",
+                "name": "United States of America",
+                "dummy-counter": 33333
+            },
+            "links": {
+                "self": "\/countries\/5"
             }
         }
     ]

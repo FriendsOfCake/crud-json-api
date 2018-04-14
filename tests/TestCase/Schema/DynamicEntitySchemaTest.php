@@ -94,7 +94,7 @@ class DynamicEntitySchemaTest extends TestCase
         // assert method
         $result = $this->callProtectedMethod('getAttributes', [$entity], $schema);
 
-        $this->assertSame('BE', $result['code']);
+        $this->assertSame('BG', $result['code']);
         $this->assertArrayNotHasKey('id', $result);
         $this->assertArrayNotHasKey('currency', $result); // relationships should be removed
         $this->assertArrayNotHasKey('cultures', $result);

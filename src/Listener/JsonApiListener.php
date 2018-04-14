@@ -333,11 +333,16 @@ class JsonApiListener extends ApiListener
         $repository = $subject->query->repository();
         $associations = $repository->associations();
 
-        $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        $nodeName = Inflector::tableize($repository->alias());
+        if (empty($fieldSets[$nodeName])) {
+            $selectFields = [];
+        } else {
+            $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        }
         $columns = $repository->schema()->columns();
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
-            if ($include === Inflector::tableize($repository->alias())) {
+            if ($include === $nodeName) {
                 $aliasFields = array_map(function ($val) use ($repository, $columns) {
                     if (!in_array($val, $columns)) {
                         return null;
@@ -440,7 +445,7 @@ class JsonApiListener extends ApiListener
 
                 $associations = $repository->associations();
                 foreach ($associations as $association) {
-                    if (Inflector::tableize($association->alias()) !== $include) {
+                    if ($association->property() !== $include) {
                         continue;
                     }
                     $subject->query->contain([
@@ -448,8 +453,12 @@ class JsonApiListener extends ApiListener
                             'sort' => [
                                 $association->aliasField($field) => $direction,
                             ],
+                            'strategy' => 'select',
                         ]
                     ]);
+                    $subject->query->leftJoinWith($association->alias());
+
+                    $order[$association->aliasField($field)] = $direction;
                 }
                 continue;
             } else {
@@ -659,6 +668,29 @@ class JsonApiListener extends ApiListener
     }
 
     /**
+     * Deduplicate resultset from rows that might have come from joins
+     *
+     * @param \Crud\Event\Subject $subject Subject
+     * @return ORM\ResultSet
+     */
+    protected function _deduplicateResultSet($subject)
+    {
+        $resultSet = clone $subject->entities;
+        $ids = [];
+        $keys = (array)$subject->query->repository()->primaryKey();
+        foreach ($subject->entities as $entity) {
+            $id = $entity->extract($keys);
+            if (!in_array($id, $ids)) {
+                $entities[] = $entity;
+                $ids[] = $id;
+            }
+        }
+        $resultSet->unserialize(serialize($entities));
+
+        return $resultSet;
+    }
+
+    /**
      * Helper function to easily retrieve `find()` result from Crud subject
      * regardless of current action.
      *
@@ -668,6 +700,10 @@ class JsonApiListener extends ApiListener
     protected function _getFindResult($subject)
     {
         if (!empty($subject->entities)) {
+            if (isset($subject->query)) {
+                $subject->entities = $this->_deduplicateResultSet($subject);
+            }
+
             return $subject->entities;
         }
 

@@ -1,21 +1,22 @@
 {
     "meta": {
-        "record_count": 4,
+        "record_count": 5,
         "page_count": 2,
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
-        "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
-        "last": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname",
+        "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
+        "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
+        "last": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname",
         "prev": null,
-        "next": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Cname"
+        "next": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=code%2Cname%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode%2Cname"
     },
     "data": [
         {
             "type": "countries",
             "id": "1",
             "attributes": {
+                "code": "NL",
                 "name": "The Netherlands"
             },
             "relationships": {
@@ -37,7 +38,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "name": "Belgium"
+                "code": "BG",
+                "name": "Bulgaria"
             },
             "relationships": {
                 "currency": {
@@ -58,6 +60,7 @@
             "type": "countries",
             "id": "3",
             "attributes": {
+                "code": "IT",
                 "name": "Italy"
             },
             "relationships": {
@@ -81,6 +84,7 @@
             "type": "currencies",
             "id": "1",
             "attributes": {
+                "code": "EUR",
                 "name": "Euro"
             },
             "links": {

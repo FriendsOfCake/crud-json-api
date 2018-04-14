@@ -1,6 +1,6 @@
 {
     "meta": {
-        "record_count": 4,
+        "record_count": 5,
         "page_count": 2,
         "page_limit": null
     },
@@ -16,8 +16,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "code": "BE",
-                "name": "Belgium",
+                "code": "BG",
+                "name": "Bulgaria",
                 "dummy-counter": 22222
             },
             "relationships": {
@@ -125,8 +125,8 @@
             "type": "national-capitals",
             "id": "2",
             "attributes": {
-                "name": "Brussels",
-                "description": "National capital of Belgium"
+                "name": "Sofia",
+                "description": "National capital of Bulgaria"
             },
             "links": {
                 "self": "\/national-capitals\/2"

@@ -15,9 +15,10 @@ class NationalCapitalsFixture extends TestFixture
 
     public $records = [
         ['name' => 'Amsterdam', 'description' => 'National capital of the Netherlands'],
-        ['name' => 'Brussels', 'description' => 'National capital of Belgium'],
+        ['name' => 'Sofia', 'description' => 'National capital of Bulgaria'],
         ['name' => 'Wellington', 'description' => 'National capital of New Zealand'],
         ['name' => 'Rome', 'description' => 'National capital of Italy'],
         ['name' => 'Vatican', 'description' => 'National capital of Vatican'],
+        ['name' => 'Washington', 'description' => 'National capital of the US'],
     ];
 }
