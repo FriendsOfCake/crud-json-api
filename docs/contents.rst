@@ -38,7 +38,6 @@ Contents
     Sparse Fieldsets<configuration/sparse-fieldsets>
     Sorting<configuration/sorting>
     Schemas <configuration/schemas>
-    Sorting <configuration/sorting>
 
 .. _additional-information-docs:
 
