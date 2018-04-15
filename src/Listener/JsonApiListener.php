@@ -76,7 +76,7 @@ class JsonApiListener extends ApiListener
         // make sure the listener does absolutely nothing unless
         // the application/vnd.api+json Accept header is used.
         if (!$this->_checkRequestType('jsonapi')) {
-            return null;
+            return;
         }
 
         // accept body data posted with Content-Type `application/vnd.api+json`

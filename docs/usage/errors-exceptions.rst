@@ -27,7 +27,7 @@ exceptions:
 
 Please note that the ``debug`` node with the stack trace will only be included if ``debug`` is true.
 
-Validation errors
+Validation Errors
 ^^^^^^^^^^^^^^^^^
 
 The listener will produce validation error (422) responses

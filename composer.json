@@ -29,7 +29,7 @@
         }
     ],
     "require":{
-        "cakephp/cakephp": "^3.2.2",
+        "cakephp/cakephp": "<3.6.0",
         "friendsofcake/crud": "*",
         "neomerx/json-api": "^1.0"
     },
