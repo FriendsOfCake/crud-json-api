@@ -84,6 +84,7 @@ class PaginationListener extends BaseListener
         $defaultUrl += [
             'include' => $request->query('include'),
             'fields' => $request->query('fields'),
+            'filter' => $request->query('filter'),
         ];
 
         if ($this->_controller()->Crud->config('listeners.jsonApi.absoluteLinks') === true) {
