@@ -619,8 +619,10 @@ class DocumentValidator extends BaseObject
     {
         $entity = new Entity();
 
-        $entity->errors('CrudJsonApiListener', [
-            'NeoMerxErrorCollection' => $this->_errorCollection
+        $entity->setErrors([
+            'CrudJsonApiListener' => [
+                'NeoMerxErrorCollection' => $this->_errorCollection
+            ]
         ]);
 
         return $entity;

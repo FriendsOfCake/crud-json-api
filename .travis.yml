@@ -36,7 +36,7 @@ before_script:
 
   - if [[ $DB = 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:"2.*"; fi
+  - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:"^3.0"; fi
 
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi

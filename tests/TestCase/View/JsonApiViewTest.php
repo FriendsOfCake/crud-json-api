@@ -58,19 +58,19 @@ class JsonApiViewTest extends TestCase
         parent::setUp();
 
         $listener = new JsonApiListener(new Controller());
-        $this->_defaultViewVars = $listener->config();
+        $this->_defaultViewVars = $listener->getConfig();
 
         $this->_defaultViewVars = [
-            '_urlPrefix' => $listener->config('urlPrefix'),
-            '_withJsonApiVersion' => $listener->config('withJsonApiVersion'),
-            '_meta' => $listener->config('meta'),
-            '_absoluteLinks' => $listener->config('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $listener->config('jsonApiBelongsToLinks'),
-            '_include' => $listener->config('include'),
-            '_fieldSets' => $listener->config('fieldSets'),
-            '_jsonOptions' => $listener->config('jsonOptions'),
-            '_debugPrettyPrint' => $listener->config('debugPrettyPrint'),
-            '_inflect' => $listener->config('inflect')
+            '_urlPrefix' => $listener->getConfig('urlPrefix'),
+            '_withJsonApiVersion' => $listener->getConfig('withJsonApiVersion'),
+            '_meta' => $listener->getConfig('meta'),
+            '_absoluteLinks' => $listener->getConfig('absoluteLinks'),
+            '_jsonApiBelongsToLinks' => $listener->getConfig('jsonApiBelongsToLinks'),
+            '_include' => $listener->getConfig('include'),
+            '_fieldSets' => $listener->getConfig('fieldSets'),
+            '_jsonOptions' => $listener->getConfig('jsonOptions'),
+            '_debugPrettyPrint' => $listener->getConfig('debugPrettyPrint'),
+            '_inflect' => $listener->getConfig('inflect')
         ];
 
         // override some defaults to create more DRY tests
@@ -136,12 +136,12 @@ class JsonApiViewTest extends TestCase
         }
 
         // still here, create view with viewVars for response with resource(s)
-        $controller->name = $tableName; // e.g. Countries
+        $controller->setName($tableName); // e.g. Countries
         $table = $controller->loadModel(); // table object
 
         // fetch data from test viewVar normally found in subject
         $subject = new Subject(new Event('Crud.beforeHandle'));
-        $findResult = $viewVars[$table->table()];
+        $findResult = $viewVars[$table->getTable()];
         if (is_a($findResult, '\Cake\ORM\ResultSet')) {
             $subject->entities = $findResult;
         } else {
@@ -158,7 +158,7 @@ class JsonApiViewTest extends TestCase
             ->getMock();
 
         $this->setReflectionClassInstance($listener);
-        $associations = $this->callProtectedMethod('_getContainedAssociations', [$table, $subject->query->contain()], $listener);
+        $associations = $this->callProtectedMethod('_getContainedAssociations', [$table, $subject->query->getContain()], $listener);
         $repositories = $this->callProtectedMethod('_getRepositoryList', [$table, $associations], $listener);
 
         $viewVars['_repositories'] = $repositories;
@@ -199,7 +199,7 @@ class JsonApiViewTest extends TestCase
      */
     public function testEncodeWithGenericEntity()
     {
-        TableRegistry::get('Countries')->entityClass(Entity::class);
+        TableRegistry::get('Countries')->setEntityClass(Entity::class);
 
         // test collection of entities without relationships
         $countries = TableRegistry::get('Countries')

@@ -124,7 +124,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'validation_error.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
 
-        $result = json_decode($result->body(), true);
+        $result = json_decode($result->getBody(), true);
         unset($result['query']);
 
         $this->assertSame($jsonApiArray, $result);

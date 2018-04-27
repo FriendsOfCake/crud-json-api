@@ -44,7 +44,7 @@ class PaginationListener extends BaseListener
     {
         $request = $this->_request();
 
-        if (empty($request->paging)) {
+        if (empty($request->getParam('paging'))) {
             return;
         }
 

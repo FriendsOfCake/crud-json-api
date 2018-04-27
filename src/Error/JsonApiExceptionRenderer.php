@@ -10,6 +10,7 @@ use Crud\Listener\ApiQueryLogListener;
 use Neomerx\JsonApi\Document\Error;
 use Neomerx\JsonApi\Encoder\Encoder;
 use Neomerx\JsonApi\Exceptions\ErrorCollection;
+use Zend\Diactoros\Stream;
 
 /**
  * Exception renderer for the JsonApiListener
@@ -35,7 +36,8 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $viewVars = $this->controller->viewVars;
 
         $code = $viewVars['code']; // e.g. 404
-        $title = $this->controller->response->httpCodes($code)[$code]; // e,g. Not Found
+
+        $title = $this->controller->response->getReasonPhrase($code); // e,g. Not Found
 
         // Only set JSON API `detail` field if `message` viewVar field is not
         // identical to the CakePHP HTTP Status Code description.
@@ -64,9 +66,14 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
             $json = $this->_addQueryLogsNode($json);
         }
 
-        // send response
-        $this->controller->response->type('jsonapi');
-        $this->controller->response->body($json);
+        # create stream as required by `response->withBody()`
+        $stream = new Stream('php://memory', 'wb+');
+        $stream->write($json);
+
+        // set up the response
+        $this->controller->response
+            ->withType('jsonapi')
+            ->withBody($stream);
 
         return $this->controller->response;
     }
@@ -87,10 +94,13 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $status = $exception->getCode();
 
         try {
-            $this->controller->response->statusCode($status);
+            #$this->controller->response->statusCode($status);
+            $this->controller->response->withStatus($status);
+
         } catch (Exception $e) {
             $status = 422;
-            $this->controller->response->statusCode($status);
+            $this->controller->response->withStatus($status);
+            #$this->controller->response->statusCode($status);
         }
 
         $errorCollection = $this->_getNeoMerxErrorCollection($exception->getValidationErrors());
@@ -103,9 +113,14 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
             $json = $this->_addQueryLogsNode($json);
         }
 
-        // set data and send response
-        $this->controller->response->type('jsonapi');
-        $this->controller->response->body($json);
+        # create stream as required by `response->withBody()`
+        $stream = new Stream('php://memory', 'wb+');
+        $stream->write($json);
+
+        // set up the response
+        $this->controller->response
+            ->withType('jsonapi')
+            ->withBody($stream);
 
         return $this->controller->response;
     }

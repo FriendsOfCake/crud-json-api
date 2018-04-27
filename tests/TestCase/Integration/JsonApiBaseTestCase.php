@@ -35,6 +35,8 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      */
     public function setUp()
     {
+        $this->useHttpServer(true);
+
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
         Router::scope('/', function ($routes) {

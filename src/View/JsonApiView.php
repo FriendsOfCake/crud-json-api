@@ -35,7 +35,7 @@ class JsonApiView extends View
         parent::__construct($request, $response, $eventManager, $viewOptions);
 
         if ($response && $response instanceof Response) {
-            $response->type('jsonapi');
+            $response->getType('jsonapi');
         }
     }
 
@@ -212,11 +212,11 @@ class JsonApiView extends View
     {
         $schemas = [];
         foreach ($repositories as $repositoryName => $repository) {
-            if (isset($schemas[$repository->entityClass()])) {
+            if (isset($schemas[$repository->getEntityClass()])) {
                 continue;
             }
 
-            $entityClass = $repository->entityClass();
+            $entityClass = $repository->getEntityClass();
 
             if ($entityClass === Entity::class) {
                 throw new CrudException(sprintf('Entity classes must not be the generic "%s" class for repository "%s"', $entityClass, $repositoryName));
@@ -258,7 +258,7 @@ class JsonApiView extends View
             };
 
             // Add generated schema to the collection before processing next
-            $schemas[$repository->entityClass()] = $schema;
+            $schemas[$repository->getEntityClass()] = $schema;
         }
 
         return $schemas;
