@@ -1421,18 +1421,6 @@ class JsonApiListenerTest extends TestCase
                 ],
                 ['cultures', 'currency']
             ],
-            'blacklist everything' => [
-                'cultures,currencies.countries',
-                ['blacklist' => true, 'whitelist' => ['cultures', 'currencies.countries']],
-                [],
-                []
-            ],
-            'whitelist nothing' => [
-                'cultures,currencies.countries',
-                ['blacklist' => false, 'whitelist' => false],
-                [],
-                []
-            ],
         ];
     }
 
@@ -1456,6 +1444,54 @@ class JsonApiListenerTest extends TestCase
 
         $subject->query = $query;
         $subject->query
+            ->expects($this->any())
+            ->method('repository')
+            ->willReturn(TableRegistry::get('Countries'));
+
+        $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
+        $this->assertSame($expectedInclude, $listener->config('include'));
+    }
+
+    public function includeQueryBadRequestProvider()
+    {
+        return [
+            'blacklist everything' => [
+                'cultures,currencies.countries',
+                ['blacklist' => true, 'whitelist' => ['cultures', 'currencies.countries']],
+                [],
+                []
+            ],
+            'whitelist nothing' => [
+                'cultures,currencies.countries',
+                ['blacklist' => false, 'whitelist' => false],
+                [],
+                []
+            ],
+        ];
+    }
+
+    /**
+     * Ensure that the whiteList nothing or blackList everything do not accept any include parameter, and responds with
+     * BadRequestException
+     *
+     * @return void
+     * @dataProvider includeQueryBadRequestProvider
+     * @expectedException \Cake\Network\Exception\BadRequestException
+     */
+    public function testIncludeQueryBadRequest($include, $options, $expectedContain, $expectedInclude)
+    {
+        $listener = new JsonApiListener(new Controller());
+        $this->setReflectionClassInstance($listener);
+
+        $subject = new Subject();
+
+        $query = $this
+            ->getMockBuilder(Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject->query = $query;
+        $subject->query
             ->expects($options['blacklist'] !== true && $options['whitelist'] !== false ? $this->once() : $this->never())
             ->method('contain')
             ->with($expectedContain);
@@ -1465,7 +1501,6 @@ class JsonApiListenerTest extends TestCase
             ->willReturn(TableRegistry::get('Countries'));
 
         $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
-        $this->assertSame($expectedInclude, $listener->config('include'));
     }
 
     /**

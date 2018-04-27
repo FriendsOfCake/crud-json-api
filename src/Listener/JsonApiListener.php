@@ -292,8 +292,12 @@ class JsonApiListener extends ApiListener
         }
         $includes = Hash::filter((array)$includes);
 
-        if (empty($includes) || $options['blacklist'] === true || $options['whitelist'] === false) {
+        if (empty($includes)) {
             return;
+        }
+
+        if($options['blacklist'] === true || $options['whitelist'] === false) {
+            throw new BadRequestException("The include parameter is not supported");
         }
 
         $this->config('include', []);
