@@ -296,7 +296,7 @@ class JsonApiListener extends ApiListener
             return;
         }
 
-        if($options['blacklist'] === true || $options['whitelist'] === false) {
+        if ($options['blacklist'] === true || $options['whitelist'] === false) {
             throw new BadRequestException("The include parameter is not supported");
         }
 
