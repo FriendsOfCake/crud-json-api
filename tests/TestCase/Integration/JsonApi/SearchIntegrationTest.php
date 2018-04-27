@@ -21,7 +21,7 @@ class SearchIntegrationTest extends JsonApiBaseTestCase
             ],
             'single field partial search-key' => [
                 '/countries?filter=Nether',
-                'search_single_field.json',
+                'search_single_field_partial.json',
             ]
         ];
     }
