@@ -290,11 +290,16 @@ class JsonApiListener extends ApiListener
         }
         $includes = Hash::filter((array)$includes);
 
-        if (empty($includes) || $options['blacklist'] === true || $options['whitelist'] === false) {
+        if (empty($includes)) {
             return;
         }
 
+        if ($options['blacklist'] === true || $options['whitelist'] === false) {
+            throw new BadRequestException("The include parameter is not supported");
+        }
+
         $this->setConfig('include', []);
+
         $includes = Hash::expand(Hash::normalize($includes));
         $blacklist = is_array($options['blacklist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true))) : $options['blacklist'];
         $whitelist = is_array($options['whitelist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true))) : $options['whitelist'];

@@ -1415,6 +1415,40 @@ class JsonApiListenerTest extends TestCase
                 ],
                 ['cultures', 'currency']
             ],
+        ];
+    }
+
+    /**
+     * Make sure that the include query correct splits include string into a containable format
+     *
+     * @return void
+     * @dataProvider includeQueryProvider
+     */
+    public function testIncludeQuery($include, $options, $expectedContain, $expectedInclude)
+    {
+        $listener = new JsonApiListener(new Controller());
+        $this->setReflectionClassInstance($listener);
+
+        $subject = new Subject();
+
+        $query = $this
+            ->getMockBuilder(Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject->query = $query;
+        $subject->query
+            ->expects($this->any())
+            ->method('repository')
+            ->willReturn(TableRegistry::get('Countries'));
+
+        $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
+        $this->assertSame($expectedInclude, $listener->config('include'));
+    }
+
+    public function includeQueryBadRequestProvider()
+    {
+        return [
             'blacklist everything' => [
                 'cultures,currencies.countries',
                 ['blacklist' => true, 'whitelist' => ['cultures', 'currencies.countries']],
@@ -1431,12 +1465,14 @@ class JsonApiListenerTest extends TestCase
     }
 
     /**
-     * Make sure that the include query correct splits include string into a containable format
+     * Ensure that the whiteList nothing or blackList everything do not accept any include parameter, and responds with
+     * BadRequestException
      *
      * @return void
-     * @dataProvider includeQueryProvider
+     * @dataProvider includeQueryBadRequestProvider
+     * @expectedException \Cake\Network\Exception\BadRequestException
      */
-    public function testIncludeQuery($include, $options, $expectedContain, $expectedInclude)
+    public function testIncludeQueryBadRequest($include, $options, $expectedContain, $expectedInclude)
     {
         $listener = new JsonApiListener(new Controller());
         $this->setReflectionClassInstance($listener);
