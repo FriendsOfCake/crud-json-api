@@ -25,7 +25,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      * Method used for all non-validation errors.
      *
      * @param string $template Name of template to use (ignored for jsonapi)
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _outputMessage($template)
     {
@@ -71,7 +71,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $stream->write($json);
 
         // set up the response
-        $this->controller->response
+        $this->controller->response = $this->controller->response
             ->withType('jsonapi')
             ->withBody($stream);
 
@@ -83,7 +83,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      * validation errors and JSON API (request data) documents.
      *
      * @param \Crud\Error\Exception\ValidationException $exception Exception
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function validation($exception)
     {
@@ -94,13 +94,11 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $status = $exception->getCode();
 
         try {
-            #$this->controller->response->statusCode($status);
-            $this->controller->response->withStatus($status);
+            $this->controller->response = $this->controller->response->withStatus($status);
 
         } catch (Exception $e) {
             $status = 422;
-            $this->controller->response->withStatus($status);
-            #$this->controller->response->statusCode($status);
+            $this->controller->response = $this->controller->response->withStatus($status);
         }
 
         $errorCollection = $this->_getNeoMerxErrorCollection($exception->getValidationErrors());
@@ -118,7 +116,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $stream->write($json);
 
         // set up the response
-        $this->controller->response
+        $this->controller->response = $this->controller->response
             ->withType('jsonapi')
             ->withBody($stream);
 

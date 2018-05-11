@@ -85,7 +85,7 @@ class IncludeQueryIntegrationTest extends JsonApiBaseTestCase
     {
         EventManager::instance()
             ->on('Crud.beforeFind', function (Event $event) {
-                $event->subject()->query->contain([
+                $event->getSubject()->query->contain([
                     'Currencies',
                     'Cultures',
                 ]);
