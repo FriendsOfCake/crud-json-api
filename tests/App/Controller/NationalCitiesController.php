@@ -33,7 +33,7 @@ class NationalCitiesController extends Controller
 
     public function beforeFilter(Event $event)
     {
-        $this->Crud->config('listeners.jsonApi.absoluteLinks', true);
+        $this->Crud->setConfig('listeners.jsonApi.absoluteLinks', true);
         parent::beforeFilter($event);
     }
 }

@@ -22,6 +22,7 @@ class DocumentValidatorTest extends TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         $this->_validator = new DocumentValidator([], []);
         $this->setReflectionClassInstance($this->_validator);
 
@@ -36,6 +37,7 @@ class DocumentValidatorTest extends TestCase
      */
     public function tearDown()
     {
+        parent::tearDown();
         unset($this->_validator);
     }
 

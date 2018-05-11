@@ -52,11 +52,11 @@ class PaginationListener extends BaseListener
 
         list(, $modelClass) = pluginSplit($controller->modelClass);
 
-        if (!array_key_exists($modelClass, $request->paging)) {
+        if (!array_key_exists($modelClass, $request->getParam('paging'))) {
             return;
         }
 
-        $pagination = $request->paging[$modelClass];
+        $pagination = $request->getParam('paging')[$modelClass];
         if (empty($pagination)) {
             return;
         }
@@ -82,31 +82,31 @@ class PaginationListener extends BaseListener
 
         $request = $this->_request();
         $defaultUrl += [
-            'include' => $request->query('include'),
-            'fields' => $request->query('fields'),
-            'filter' => $request->query('filter'),
+            'include' => $request->getQuery('include'),
+            'fields' => $request->getQuery('fields'),
+            'filter' => $request->getQuery('filter'),
         ];
 
-        if ($this->_controller()->Crud->config('listeners.jsonApi.absoluteLinks') === true) {
+        if ($this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks') === true) {
             $routerMethod = 'url'; // produce absolute links
         }
 
         $self = Router::$routerMethod([
-            'controller' => $this->_controller()->name,
+            'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => $pagination['page'],
             '_method' => 'GET',
         ] + $defaultUrl, true);
 
         $first = Router::$routerMethod([
-            'controller' => $this->_controller()->name,
+            'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => 1,
             '_method' => 'GET',
         ] + $defaultUrl, true);
 
         $last = Router::$routerMethod([
-            'controller' => $this->_controller()->name,
+            'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
@@ -115,7 +115,7 @@ class PaginationListener extends BaseListener
         $prev = null;
         if ($pagination['prevPage']) {
             $prev = Router::$routerMethod([
-                'controller' => $this->_controller()->name,
+                'controller' => $this->_controller()->getName(),
                 'action' => 'index',
                 'page' => $pagination['page'] - 1,
                 '_method' => 'GET',
@@ -125,7 +125,7 @@ class PaginationListener extends BaseListener
         $next = null;
         if ($pagination['nextPage']) {
             $next = Router::$routerMethod([
-                'controller' => $this->_controller()->name,
+                'controller' => $this->_controller()->getName(),
                 'action' => 'index',
                 'page' => $pagination['page'] + 1,
                 '_method' => 'GET',

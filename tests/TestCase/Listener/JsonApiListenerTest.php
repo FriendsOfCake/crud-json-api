@@ -1520,10 +1520,10 @@ class JsonApiListenerTest extends TestCase
         $subject->query = $query;
         $subject->query
             ->expects($this->once())
-            ->method('contain');
+            ->method('getContain');
         $subject->query
             ->expects($this->any())
-            ->method('repository')
+            ->method('getRepository')
             ->willReturn(TableRegistry::get('Countries'));
 
         $sort = 'code,currency.code';

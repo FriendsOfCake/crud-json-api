@@ -333,7 +333,7 @@ class JsonApiListener extends ApiListener
             return explode(',', $val);
         }, $fieldSets);
 
-        $repository = $subject->query->repository();
+        $repository = $subject->query->getRepository();
         $associations = $repository->associations();
 
         $nodeName = Inflector::tableize($repository->getAlias());
@@ -342,7 +342,7 @@ class JsonApiListener extends ApiListener
         } else {
             $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
         }
-        $columns = $repository->schema()->columns();
+        $columns = $repository->getSchema()->columns();
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
             if ($include === $nodeName) {
@@ -404,7 +404,7 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException('Invalid callable supplied for query parameter ' . $parameter);
             }
 
-            $options['callable']($this->_request()->query($parameter), $event->getSubject(), $options);
+            $options['callable']($this->_request()->getQuery($parameter), $event->getSubject(), $options);
         }
     }
 
@@ -426,7 +426,7 @@ class JsonApiListener extends ApiListener
 
         $order = [];
         $includes = $this->getConfig('include');
-        $repository = $subject->query->repository();
+        $repository = $subject->query->getRepository();
         foreach ($sortFields as $sortField) {
             $direction = 'ASC';
             if ($sortField[0] == '-') {
@@ -573,7 +573,7 @@ class JsonApiListener extends ApiListener
         $repository = $this->_controller()->loadModel(); // Default model class
 
         if (isset($subject->query)) {
-            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->contain());
+            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->getContain());
         } else {
             $entity = $this->_getSingleEntity($subject);
             $usedAssociations = $this->_extractEntityAssociations($repository, $entity);
@@ -680,7 +680,7 @@ class JsonApiListener extends ApiListener
     {
         $resultSet = clone $subject->entities;
         $ids = [];
-        $keys = (array)$subject->query->repository()->primaryKey();
+        $keys = (array)$subject->query->getRepository()->getPrimaryKey();
         foreach ($subject->entities as $entity) {
             $id = $entity->extract($keys);
             if (!in_array($id, $ids)) {
@@ -892,10 +892,8 @@ class JsonApiListener extends ApiListener
             $validator->validateUpdateDocument();
         }
 
-        # to use deprecation replacement `withData` here we should probably update `_convertJsonApiDocumentArray()
-        # so it no longer returns the hash-key `data` (and we can thus set `data` as the first param for `withData`)
-        $this->_controller()->request->data = $this->_convertJsonApiDocumentArray($requestData);
-        #$this->_controller()->request->withData('data', $this->_convertJsonApiDocumentArray($requestData));
+        $this->_controller()->request = $this->_controller()->request->withParsedBody($this->_convertJsonApiDocumentArray($requestData));
+
     }
 
     /**
