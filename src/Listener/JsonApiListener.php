@@ -4,7 +4,7 @@ namespace CrudJsonApi\Listener;
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
-use Cake\Network\Exception\BadRequestException;
+use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
@@ -37,7 +37,7 @@ class JsonApiListener extends ApiListener
         ],
         'exception' => [
             'type' => 'default',
-            'class' => 'Cake\Network\Exception\BadRequestException',
+            'class' => 'Cake\Http\Exception\BadRequestException',
             'message' => 'Unknown error',
             'code' => 0,
         ],
@@ -153,12 +153,12 @@ class JsonApiListener extends ApiListener
         }
 
         if ($event->getSubject()->created) {
-            $this->_controller()->response->statusCode(201);
+            $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
 
         $this->_insertBelongsToDataIntoEventFindResult($event);
 
-        $this->render($event->subject);
+        $this->render($event->getSubject());
     }
 
     /**
@@ -177,7 +177,7 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        $this->_controller()->response->statusCode(204);
+        $this->_controller()->response = $this->_controller()->response->withStatus(204);
     }
 
     /**
@@ -225,7 +225,7 @@ class JsonApiListener extends ApiListener
      * @param \Cake\ORM\Table|null $repository The repository
      * @param array $path Include path
      * @return string
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      */
     protected function _parseIncludes($includes, $blacklist, $whitelist, Table $repository = null, $path = [])
     {
@@ -303,12 +303,12 @@ class JsonApiListener extends ApiListener
         $includes = Hash::expand(Hash::normalize($includes));
         $blacklist = is_array($options['blacklist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true))) : $options['blacklist'];
         $whitelist = is_array($options['whitelist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true))) : $options['whitelist'];
-        $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->repository());
+        $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->getRepository());
 
         $subject->query->contain($contains);
 
         $this->setConfig('include', []);
-        $associations = $this->_getContainedAssociations($subject->query->repository(), $contains);
+        $associations = $this->_getContainedAssociations($subject->query->getRepository(), $contains);
         $include = $this->_getIncludeList($associations);
 
         $this->setConfig('include', $include);
@@ -527,12 +527,12 @@ class JsonApiListener extends ApiListener
      * Set required viewVars before rendering the JsonApiView.
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function render(Subject $subject)
     {
         $controller = $this->_controller();
-        $controller->viewBuilder()->className('CrudJsonApi.JsonApi');
+        $controller->viewBuilder()->setClassName('CrudJsonApi.JsonApi');
 
         // render a JSON API response with resource(s) if data is found
         if (isset($subject->entity) || isset($subject->entities)) {
@@ -545,7 +545,7 @@ class JsonApiListener extends ApiListener
     /**
      * Renders a resource-less JSON API response.
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _renderWithoutResources()
     {
@@ -566,7 +566,7 @@ class JsonApiListener extends ApiListener
      * Renders a JSON API response with top-level data node holding resource(s).
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _renderWithResources($subject)
     {
@@ -648,7 +648,7 @@ class JsonApiListener extends ApiListener
     /**
      * Override ApiListener method to enforce required JSON API request methods.
      *
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      * @return bool
      */
     protected function _checkRequestMethods()

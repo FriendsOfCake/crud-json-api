@@ -6,8 +6,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest as Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
@@ -126,7 +126,7 @@ class JsonApiViewTest extends TestCase
         $controller = new Controller($request, $response, $tableName);
 
         $builder = $controller->viewBuilder();
-        $builder->className('\CrudJsonApi\View\JsonApiView');
+        $builder->setClassName('\CrudJsonApi\View\JsonApiView');
 
         // create view with viewVars for resource-less response
         if (!$tableName) {
