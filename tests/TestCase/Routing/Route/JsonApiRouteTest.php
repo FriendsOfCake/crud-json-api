@@ -33,6 +33,7 @@ class JsonApiRouteTest extends TestCase
      */
     public function setup()
     {
+        parent::setUp();
         $this->_route = $this
             ->getMockBuilder('\CrudJsonApi\Routing\Route\JsonApiRoute')
             ->disableOriginalConstructor()
@@ -49,7 +50,6 @@ class JsonApiRouteTest extends TestCase
      */
     public function testParse()
     {
-        $this->markTestSkipped('cake36: need assistance fixing deprecation');
 
         $this->assertFalse($this->_route->parse('http://my.app/dogs/1/relationships/cat'));
 
@@ -73,7 +73,6 @@ class JsonApiRouteTest extends TestCase
      */
     public function testBelongsToRelationshipSelfLink()
     {
-        $this->markTestSkipped('cake36: need assistance fixing deprecation');
 
         // assert non-matching routes are ignored
         $this->assertFalse($this->callProtectedMethod('_belongsToRelationshipSelfLink', ['/countries'], $this->_route));
