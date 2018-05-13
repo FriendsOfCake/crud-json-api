@@ -1221,7 +1221,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
         // assert null if there is no request data
-        $controller->request->withData(null, []);
+        $controller->request = $controller->request->withParsedBody([]);
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
         // assert POST is processed
