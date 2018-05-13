@@ -6,7 +6,7 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest as Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use CrudJsonApi\Listener\JsonApiListener;
@@ -845,7 +845,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsSuccess()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json');
         $response = new Response();
         $controller = new Controller($request, $response);
@@ -855,7 +855,7 @@ class JsonApiListenerTest extends TestCase
         $this->setReflectionClassInstance($listener);
         $this->callProtectedMethod('_checkRequestMethods', [], $listener);
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
             ->withEnv('CONTENT_TYPE', 'application/vnd.api+json');
         $response = new Response();
@@ -875,7 +875,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsFailContentHeader()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
             ->withEnv('CONTENT_TYPE', 'application/json');
         $response = new Response();
@@ -896,7 +896,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsFailOnPutMethod()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
             ->withEnv('REQUEST_METHOD', 'PUT');
         $response = new Response();

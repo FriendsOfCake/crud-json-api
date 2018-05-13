@@ -7,7 +7,7 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest as Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
@@ -121,7 +121,7 @@ class JsonApiViewTest extends TestCase
         }
 
         // create required (but non user configurable) viewVars next
-        $request = new Request();
+        $request = new ServerRequest();
         $response = new Response();
         $controller = new Controller($request, $response, $tableName);
 

@@ -6,7 +6,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest as Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Crud\Error\Exception\ValidationException;
 use Crud\TestSuite\TestCase;
@@ -45,7 +45,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]
@@ -100,7 +100,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]
@@ -148,7 +148,7 @@ class JsonApiExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
 
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]

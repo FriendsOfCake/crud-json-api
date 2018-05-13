@@ -6,7 +6,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest as Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use Cake\View\View;
@@ -21,13 +21,13 @@ class JsonApiView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Http\ServerRequest $request Request
+     * @param \Cake\Http\ServerRequest $request ServerRequest
      * @param \Cake\Http\Response $response Response
      * @param \Cake\Event\EventManager $eventManager EventManager
      * @param array $viewOptions An array of view options
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
