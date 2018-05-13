@@ -1520,7 +1520,7 @@ class JsonApiListenerTest extends TestCase
         $subject->query = $query;
         $subject->query
             ->expects($this->once())
-            ->method('getContain');
+            ->method('contain');
         $subject->query
             ->expects($this->any())
             ->method('getRepository')
