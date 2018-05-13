@@ -24,7 +24,7 @@ class Application extends BaseApplication
 
     public function fixBase()
     {
-        return function($request, $response, $next) {
+        return function ($request, $response, $next) {
 
             if ($request->getAttribute('base')) {
                 $request = $request->withAttribute('base', '');
