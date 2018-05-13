@@ -1168,28 +1168,28 @@ class JsonApiListenerTest extends TestCase
 
         $request = $this
             ->getMockBuilder('\Cake\Http\ServerRequest')
-            ->setMethods(['contentType', 'method'])
+            ->setMethods(['contentType', 'getMethod'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $request
             ->expects($this->at(0))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('GET'));
 
         $request
             ->expects($this->at(1))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('POST'));
 
         $request
             ->expects($this->at(2))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('POST'));
 
         $request
             ->expects($this->at(3))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('PATCH'));
 
         $controller->request = $request;

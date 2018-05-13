@@ -204,16 +204,18 @@ class JsonApiListener extends ApiListener
         }
         $associationName = Inflector::camelize($include, $delimiter);
 
-        $association = $repository->getAssociation($associationName);//First check base name
-
-        if ($association) {
-            return $association;
+        if ($repository->hasAssociation($associationName)) {//First check base name
+            return $repository->getAssociation($associationName);
         }
 
         //If base name doesn't work, try to pluralize it
         $associationName = Inflector::pluralize($associationName);
 
-        return $repository->getAssociation($associationName);
+        if ($repository->hasAssociation($associationName)) {
+            return $repository->getAssociation($associationName);
+        }
+
+        return null;
     }
 
     /**
