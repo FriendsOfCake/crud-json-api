@@ -80,7 +80,6 @@ class JsonApiRouteTest extends TestCase
             'Disabled for Cake 36'
         );
 
-
         // assert non-matching routes are ignored
         $this->assertFalse($this->callProtectedMethod('_belongsToRelationshipSelfLink', ['/countries'], $this->_route));
         $this->assertFalse($this->callProtectedMethod('_belongsToRelationshipSelfLink', ['/countries?page=1'], $this->_route));

@@ -13,12 +13,15 @@ class Application extends BaseApplication
         $middlewareQueue
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(AssetMiddleware::class)
+
             ->add($this->fixBase())
+
             // Add routing middleware.
             ->add(new RoutingMiddleware($this));
 
         return $middlewareQueue;
     }
+
     public function fixBase()
     {
         return function($request, $response, $next){
@@ -26,6 +29,7 @@ class Application extends BaseApplication
         if ($request->getAttribute('base')) {
             $request = $request->withAttribute('base','');
         }
+
         $response = $next($request, $response);
 
         return $response;

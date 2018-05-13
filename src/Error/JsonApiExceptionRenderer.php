@@ -95,7 +95,6 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
 
         try {
             $this->controller->response = $this->controller->response->withStatus($status);
-
         } catch (Exception $e) {
             $status = 422;
             $this->controller->response = $this->controller->response->withStatus($status);

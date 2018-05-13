@@ -895,7 +895,6 @@ class JsonApiListener extends ApiListener
         }
 
         $this->_controller()->request = $this->_controller()->request->withParsedBody($this->_convertJsonApiDocumentArray($requestData));
-
     }
 
     /**
