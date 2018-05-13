@@ -71,7 +71,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $stream->write($json);
 
         // set up the response
-        $this->controller->setResponse($this->controller->getResponse())
+        $this->controller->response = $this->controller->response
             ->withType('jsonapi')
             ->withBody($stream);
 

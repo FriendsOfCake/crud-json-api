@@ -22,15 +22,15 @@ class JsonApiRoute extends Route
      * @param string $method The HTTP method of the request being parsed
      * @return mixed URL parameter array on success, false otherwise
      */
-    public function parse($url, $method = '')
-    {
-        $params = $this->_belongsToRelationshipSelfLink($url);
-        if (is_array($params)) {
-            return $params;
-        }
+    // public function parse($url, $method = '')
+    // {
+    //     $params = $this->_belongsToRelationshipSelfLink($url);
+    //     if (is_array($params)) {
+    //         return $params;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     /**
      * Detects JSON API relationship `self` links with belongsTo relationship.
@@ -53,49 +53,49 @@ class JsonApiRoute extends Route
      * @param string $url URL to parse
      * @return mixed bool|array Params array for matching URLs, false otherwise
      */
-    protected function _belongsToRelationshipSelfLink($url)
-    {
-        $url = $this->_getUrlObject($url);
-        if (!$url) {
-            return false;
-        };
+    // protected function _belongsToRelationshipSelfLink($url)
+    // {
+    //     $url = $this->_getUrlObject($url);
+    //     if (!$url) {
+    //         return false;
+    //     };
 
-        if ($url->relationship !== 'belongsTo') {
-            return false;
-        }
+    //     if ($url->relationship !== 'belongsTo') {
+    //         return false;
+    //     }
 
-        // try fetching parent resource from the database
-        $table = TableRegistry::get($url->parentController);
+    //     // try fetching parent resource from the database
+    //     $table = TableRegistry::get($url->parentController);
 
-        try {
-            $result = $table
-                ->find()
-                ->where([
-                    'id' => $url->parentId
-                ])
-                ->first();
-        } catch (Exception $e) {
-            return false;
-        }
+    //     try {
+    //         $result = $table
+    //             ->find()
+    //             ->where([
+    //                 'id' => $url->parentId
+    //             ])
+    //             ->first();
+    //     } catch (Exception $e) {
+    //         return false;
+    //     }
 
-        // no further action if main record or foreign key does not exist
-        if (empty($result)) {
-            return false;
-        }
+    //     // no further action if main record or foreign key does not exist
+    //     if (empty($result)) {
+    //         return false;
+    //     }
 
-        if (!isset($result[$url->relationshipForeignKeyField])) {
-            return false;
-        }
+    //     if (!isset($result[$url->relationshipForeignKeyField])) {
+    //         return false;
+    //     }
 
-        // all good, return params to redirect user to related record
-        return [
-            'controller' => $url->relationshipController,
-            'action' => 'view',
-            'pass' => [
-                $result[$url->relationshipForeignKeyField]
-            ]
-        ];
-    }
+    //     // all good, return params to redirect user to related record
+    //     return [
+    //         'controller' => $url->relationshipController,
+    //         'action' => 'view',
+    //         'pass' => [
+    //             $result[$url->relationshipForeignKeyField]
+    //         ]
+    //     ];
+    // }
 
     /**
      * Returns an object with detailed analysis properties for any given URL
@@ -116,63 +116,63 @@ class JsonApiRoute extends Route
      * @param string $url URL to analyse
      * @return bool|stdClass False if the regex did not match.
      */
-    protected function _getUrlObject($url)
-    {
-        $object = new stdClass();
+    // protected function _getUrlObject($url)
+    // {
+    //     $object = new stdClass();
 
-        // Parse URI as described at https://tools.ietf.org/html/rfc3986#appendix-B
-        $regex = '/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/';
+    //     // Parse URI as described at https://tools.ietf.org/html/rfc3986#appendix-B
+    //     $regex = '/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/';
 
-        preg_match($regex, $url, $matches);
+    //     preg_match($regex, $url, $matches);
 
-        $object->url = $url;
-        $object->scheme = $matches[2];
-        $object->authority = $matches[4];
-        $object->path = $matches[5];
+    //     $object->url = $url;
+    //     $object->scheme = $matches[2];
+    //     $object->authority = $matches[4];
+    //     $object->path = $matches[5];
 
-        $object->query = null;
-        if (isset($matches[7])) {
-            $object->query = $matches[7];
-        }
+    //     $object->query = null;
+    //     if (isset($matches[7])) {
+    //         $object->query = $matches[7];
+    //     }
 
-        //
-        // Regex if path matches a valid JSON API relationship `self` link:.
-        //
-        // $1 parentPath (e.g. /prefix/controller/action
-        // $2 parentId (e.g. 1)
-        // $4 relationship (either singular or plural)
-        //
-        $regex = '/\/(.+)\/(.+)\/(relationships)\/(\w+)(\?.+)?$/';
+    //     //
+    //     // Regex if path matches a valid JSON API relationship `self` link:.
+    //     //
+    //     // $1 parentPath (e.g. /prefix/controller/action
+    //     // $2 parentId (e.g. 1)
+    //     // $4 relationship (either singular or plural)
+    //     //
+    //     $regex = '/\/(.+)\/(.+)\/(relationships)\/(\w+)(\?.+)?$/';
 
-        if (!preg_match($regex, $object->path, $matches)) {
-            return false;
-        }
+    //     if (!preg_match($regex, $object->path, $matches)) {
+    //         return false;
+    //     }
 
-        $object->parentPath = $matches[1];
-        $object->parentController = Router::parse($object->parentPath)['controller'];
-        $object->parentId = $matches[2];
+    //     $object->parentPath = $matches[1];
+    //     $object->parentController = Router::parse($object->parentPath)['controller'];
+    //     $object->parentId = $matches[2];
 
-        $relationship = $matches[4];
+    //     $relationship = $matches[4];
 
-        // belongsTo relationship
-        if (Inflector::singularize($relationship) === $relationship) {
-            $object->relationship = 'belongsTo';
+    //     // belongsTo relationship
+    //     if (Inflector::singularize($relationship) === $relationship) {
+    //         $object->relationship = 'belongsTo';
 
-            $object->relationshipController = Inflector::classify($relationship);
-            $object->relationshipController = Inflector::pluralize($object->relationshipController);
+    //         $object->relationshipController = Inflector::classify($relationship);
+    //         $object->relationshipController = Inflector::pluralize($object->relationshipController);
 
-            $object->relationshipForeignKeyField = $relationship . '_id';
+    //         $object->relationshipForeignKeyField = $relationship . '_id';
 
-            return $object;
-        }
+    //         return $object;
+    //     }
 
-        // hasMany relationship
-        $object->relationship = 'hasMany';
-        $object->relationshipController = Inflector::camelize($relationship);
+    //     // hasMany relationship
+    //     $object->relationship = 'hasMany';
+    //     $object->relationshipController = Inflector::camelize($relationship);
 
-        $object->relationshipSearchField = Inflector::tableize($object->parentController);
-        $object->relationshipSearchField = Inflector::singularize($object->relationshipSearchField) . '_id';
+    //     $object->relationshipSearchField = Inflector::tableize($object->parentController);
+    //     $object->relationshipSearchField = Inflector::singularize($object->relationshipSearchField) . '_id';
 
-        return $object;
-    }
+    //     return $object;
+    // }
 }

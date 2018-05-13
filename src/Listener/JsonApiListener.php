@@ -196,7 +196,7 @@ class JsonApiListener extends ApiListener
      * @param string $include The association include path
      * @return \Cake\ORM\Association|null
      */
-    protected function _getAssociation(RepositoryInterface $repository, $include)
+    protected function _findAssociation(RepositoryInterface $repository, $include)
     {
         $delimiter = '-';
         if (strpos($include, '_') !== false) {
@@ -204,7 +204,7 @@ class JsonApiListener extends ApiListener
         }
         $associationName = Inflector::camelize($include, $delimiter);
 
-        $association = $repository->getAssociation($associationName);//First check base name
+        $association = $repository->findAssociation($associationName);//First check base name
 
         if ($association) {
             return $association;
@@ -253,7 +253,7 @@ class JsonApiListener extends ApiListener
             $association = null;
 
             if ($repository !== null) {
-                $association = $this->_getAssociation($repository, $include);
+                $association = $this->_findAssociation($repository, $include);
                 if ($association === null) {
                     throw new BadRequestException("Invalid relationship path '{$includeDotPath}' supplied in include parameter");
                 }
