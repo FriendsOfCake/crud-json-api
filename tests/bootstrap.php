@@ -83,3 +83,6 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
     'url' => getenv('db_dsn'),
     'timezone' => 'UTC'
 ]);
+
+// Fix multiple http/server requests in a single test method.
+$_SERVER['PHP_SELF'] = '/';
