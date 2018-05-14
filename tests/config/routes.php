@@ -20,9 +20,6 @@ Router::scope('/', function ($routes) {
                 '_method' => 'GET',
                 'action' => 'view',
                 'from' => 'Countries',
-            ],
-            [
-                'routeClass' => 'CrudJsonApi.JsonApiRoute',
             ]
         );
 
