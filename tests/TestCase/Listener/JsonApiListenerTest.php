@@ -185,7 +185,7 @@ class JsonApiListenerTest extends TestCase
             ->method('_checkRequestData')
             ->will($this->returnValue(true));
 
-        $listener->beforeHandle(new Event('Crud.beforeHandle'));
+            $this->assertNull($listener->beforeHandle(new Event('Crud.beforeHandle')));
     }
 
     /**
@@ -503,7 +503,7 @@ class JsonApiListenerTest extends TestCase
         $subject->query = $query;
         $subject->entity = new Country();
 
-        $listener->render($subject);
+        $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
     }
 
     /**
@@ -534,7 +534,7 @@ class JsonApiListenerTest extends TestCase
             ->getMockBuilder('\Crud\Event\Subject')
             ->getMock();
 
-        $listener->render($subject);
+            $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
     }
 
     /**
@@ -555,7 +555,7 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -576,7 +576,7 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -619,7 +619,7 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -662,7 +662,7 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -705,7 +705,7 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -864,7 +864,7 @@ class JsonApiListenerTest extends TestCase
         $listener->setupDetectors();
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_checkRequestMethods', [], $listener);
+        $this->assertTrue($this->callProtectedMethod('_checkRequestMethods', [], $listener));
     }
 
     /**
