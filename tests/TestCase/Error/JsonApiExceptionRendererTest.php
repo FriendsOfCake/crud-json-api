@@ -155,17 +155,17 @@ class JsonApiExceptionRendererTest extends TestCase
         ]);
 
         $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['statusCode'])
+            ->setMethods(['withStatus'])
             ->getMock();
         $response
             ->expects($this->at(0))
-            ->method('statusCode')
-            ->with()
+            ->method('withStatus')
+            ->with(422)
             ->will($this->throwException(new Exception('woot')));
         $response
             ->expects($this->at(1))
-            ->method('statusCode')
-            ->with()
+            ->method('withStatus')
+            ->with(422)
             ->will($this->returnValue('422'));
 
         $controller->response = $response;
