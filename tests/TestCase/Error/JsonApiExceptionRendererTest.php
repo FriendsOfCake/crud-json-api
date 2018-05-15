@@ -5,8 +5,8 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Crud\Error\Exception\ValidationException;
 use Crud\TestSuite\TestCase;
@@ -45,7 +45,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]
@@ -100,7 +100,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]
@@ -124,7 +124,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'validation_error.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
 
-        $result = json_decode($result->body(), true);
+        $result = json_decode($result->getBody(), true);
         unset($result['query']);
 
         $this->assertSame($jsonApiArray, $result);
@@ -148,25 +148,27 @@ class JsonApiExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
 
-        $controller->request = new Request([
+        $controller->request = new ServerRequest([
             'environment' => [
                 'HTTP_ACCEPT' => 'application/vnd.api+json'
             ]
         ]);
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
-            ->setMethods(['statusCode'])
+        $res = new Response();
+
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['withStatus'])
             ->getMock();
         $response
             ->expects($this->at(0))
-            ->method('statusCode')
-            ->with()
+            ->method('withStatus')
             ->will($this->throwException(new Exception('woot')));
         $response
             ->expects($this->at(1))
-            ->method('statusCode')
-            ->with()
-            ->will($this->returnValue('422'));
+            ->method('withStatus')
+            ->will($this->returnCallback(function ($input) use ($res) {
+                return $res->withStatus($input);
+            }));
 
         $controller->response = $response;
 
@@ -182,6 +184,7 @@ class JsonApiExceptionRendererTest extends TestCase
 
         $renderer->__construct($exception);
         $result = $renderer->render();
+        $this->assertEquals(422, $result->getStatusCode());
     }
 
     /**

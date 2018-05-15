@@ -35,6 +35,11 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      */
     public function setUp()
     {
+        parent::setUp();
+
+        // Enable PSR-7 integration testing
+        $this->useHttpServer(true);
+
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
         Router::scope('/', function ($routes) {

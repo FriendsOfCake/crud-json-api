@@ -5,8 +5,8 @@ use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use CrudJsonApi\Listener\JsonApiListener;
@@ -47,7 +47,7 @@ class JsonApiListenerTest extends TestCase
             ],
             'exception' => [
                 'type' => 'default',
-                'class' => 'Cake\Network\Exception\BadRequestException',
+                'class' => 'Cake\Http\Exception\BadRequestException',
                 'message' => 'Unknown error',
                 'code' => 0,
             ],
@@ -71,7 +71,7 @@ class JsonApiListenerTest extends TestCase
             'inflect' => 'dasherize'
         ];
 
-        $this->assertSame($expected, $listener->config());
+        $this->assertSame($expected, $listener->getConfig());
     }
 
     /**
@@ -149,17 +149,15 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $controller->request = $this
-            ->getMockBuilder('\Cake\Network\Request')
+            ->getMockBuilder('\Cake\Http\ServerRequest')
             ->setMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $controller->request->data = [
-            'data' => [
-                'type' => 'dummy',
-                'attributes' => [],
-            ]
-        ];
+        $controller->request = $controller->request->withData('data', [
+            'type' => 'dummy',
+            'attributes' => [],
+        ]);
 
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
@@ -187,7 +185,7 @@ class JsonApiListenerTest extends TestCase
             ->method('_checkRequestData')
             ->will($this->returnValue(true));
 
-        $listener->beforeHandle(new Event('Crud.beforeHandle'));
+            $this->assertNull($listener->beforeHandle(new Event('Crud.beforeHandle')));
     }
 
     /**
@@ -209,7 +207,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $response = $this
-            ->getMockBuilder('\Cake\Network\Response')
+            ->getMockBuilder('\Cake\Http\Response')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -232,7 +230,7 @@ class JsonApiListenerTest extends TestCase
         $event = $this
             ->getMockBuilder('\Cake\Event\Event')
             ->disableOriginalConstructor()
-            ->setMethods(['subject'])
+            ->setMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
@@ -243,19 +241,19 @@ class JsonApiListenerTest extends TestCase
 
         $event
             ->expects($this->any())
-            ->method('subject')
+            ->method('getSubject')
             ->will($this->returnValue($subject));
 
         $this->setReflectionClassInstance($listener);
 
         // assert nothing happens if `success` is false
-        $event->subject->success = false;
+        $event->getSubject()->success = false;
         $this->assertFalse($this->callProtectedMethod('afterSave', [$event], $listener));
 
         // assert nothing happens if `success` is true but both `created` and `id` are false
-        $event->subject->success = true;
-        $event->subject->created = false;
-        $event->subject->id = false;
+        $event->getSubject()->success = true;
+        $event->getSubject()->created = false;
+        $event->getSubject()->id = false;
         $this->assertFalse($this->callProtectedMethod('afterSave', [$event], $listener));
 
         // assert success
@@ -263,14 +261,14 @@ class JsonApiListenerTest extends TestCase
         $entity = $table->find()->first();
         $subject->entity = $entity;
 
-        $event->subject->success = true;
-        $event->subject->created = true;
-        $event->subject->id = false;
+        $event->getSubject()->success = true;
+        $event->getSubject()->created = true;
+        $event->getSubject()->id = false;
         $this->assertNull($this->callProtectedMethod('afterSave', [$event], $listener));
 
-        $event->subject->success = true;
-        $event->subject->created = false;
-        $event->subject->id = true;
+        $event->getSubject()->success = true;
+        $event->getSubject()->created = false;
+        $event->getSubject()->id = true;
         $this->assertNull($this->callProtectedMethod('afterSave', [$event], $listener));
     }
 
@@ -294,7 +292,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $response = $this
-            ->getMockBuilder('\Cake\Network\Response')
+            ->getMockBuilder('\Cake\Http\Response')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -314,7 +312,7 @@ class JsonApiListenerTest extends TestCase
         $event = $this
             ->getMockBuilder('\Cake\Event\Event')
             ->disableOriginalConstructor()
-            ->setMethods(['subject'])
+            ->setMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
@@ -325,16 +323,16 @@ class JsonApiListenerTest extends TestCase
 
         $event
             ->expects($this->any())
-            ->method('subject')
+            ->method('getSubject')
             ->will($this->returnValue($subject));
 
         $this->setReflectionClassInstance($listener);
 
         // assert nothing happens if `success` is false
-        $event->subject->success = false;
+        $event->getSubject()->success = false;
         $this->assertFalse($this->callProtectedMethod('afterDelete', [$event], $listener));
 
-        $event->subject->success = true;
+        $event->getSubject()->success = true;
         $this->assertNull($this->callProtectedMethod('afterDelete', [$event], $listener));
     }
 
@@ -369,7 +367,7 @@ class JsonApiListenerTest extends TestCase
         $event = $this
             ->getMockBuilder('\Cake\Event\Event')
             ->disableOriginalConstructor()
-            ->setMethods(['subject'])
+            ->setMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
@@ -380,7 +378,7 @@ class JsonApiListenerTest extends TestCase
 
         $event
             ->expects($this->any())
-            ->method('subject')
+            ->method('getSubject')
             ->will($this->returnValue($subject));
 
         $listener = $this
@@ -427,7 +425,7 @@ class JsonApiListenerTest extends TestCase
         $event = $this
             ->getMockBuilder('\Cake\Event\Event')
             ->disableOriginalConstructor()
-            ->setMethods(['subject'])
+            ->setMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
@@ -438,7 +436,7 @@ class JsonApiListenerTest extends TestCase
 
         $event
             ->expects($this->any())
-            ->method('subject')
+            ->method('getSubject')
             ->will($this->returnValue($subject));
 
         $listener = $this
@@ -505,7 +503,7 @@ class JsonApiListenerTest extends TestCase
         $subject->query = $query;
         $subject->entity = new Country();
 
-        $listener->render($subject);
+        $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
     }
 
     /**
@@ -536,7 +534,7 @@ class JsonApiListenerTest extends TestCase
             ->getMockBuilder('\Crud\Event\Subject')
             ->getMock();
 
-        $listener->render($subject);
+            $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
     }
 
     /**
@@ -552,12 +550,12 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'withJsonApiVersion' => true
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -573,12 +571,12 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'withJsonApiVersion' => ['array' => 'accepted']
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -595,7 +593,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'withJsonApiVersion' => 'string-not-accepted'
         ]);
 
@@ -616,12 +614,12 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'meta' => ['array' => 'accepted']
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -638,7 +636,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'meta' => 'string-not-accepted'
         ]);
 
@@ -659,12 +657,12 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'absoluteLinks' => true
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -681,7 +679,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'absoluteLinks' => 'string-not-accepted'
         ]);
 
@@ -702,12 +700,12 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'jsonApiBelongsToLinks' => true
         ]);
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
+        $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
     }
 
     /**
@@ -724,7 +722,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'jsonApiBelongsToLinks' => 'string-not-accepted'
         ]);
 
@@ -746,7 +744,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'include' => 'string-not-accepted'
         ]);
 
@@ -768,7 +766,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'fieldSets' => 'string-not-accepted'
         ]);
 
@@ -790,7 +788,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'jsonOptions' => 'string-not-accepted'
         ]);
 
@@ -812,7 +810,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'debugPrettyPrint' => 'string-not-accepted'
         ]);
 
@@ -833,7 +831,7 @@ class JsonApiListenerTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $listener->config([
+        $listener->setConfig([
             'queryParameters' => 'string-not-accepted'
         ]);
 
@@ -847,8 +845,8 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsSuccess()
     {
-        $request = new Request();
-        $request->env('HTTP_ACCEPT', 'application/vnd.api+json');
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json');
         $response = new Response();
         $controller = new Controller($request, $response);
         $listener = new JsonApiListener($controller);
@@ -857,29 +855,29 @@ class JsonApiListenerTest extends TestCase
         $this->setReflectionClassInstance($listener);
         $this->callProtectedMethod('_checkRequestMethods', [], $listener);
 
-        $request = new Request();
-        $request->env('HTTP_ACCEPT', 'application/vnd.api+json');
-        $request->env('CONTENT_TYPE', 'application/vnd.api+json');
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
+            ->withEnv('CONTENT_TYPE', 'application/vnd.api+json');
         $response = new Response();
         $controller = new Controller($request, $response);
         $listener = new JsonApiListener($controller);
         $listener->setupDetectors();
 
         $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_checkRequestMethods', [], $listener);
+        $this->assertTrue($this->callProtectedMethod('_checkRequestMethods', [], $listener));
     }
 
     /**
      * Make sure the listener fails on non JSON API request Content-Type header
      *
-     * @expectedException \Cake\Network\Exception\BadRequestException
+     * @expectedException \Cake\Http\Exception\BadRequestException
      * @expectedExceptionMessage JSON API requests with data require the "application/vnd.api+json" Content-Type header
      */
     public function testCheckRequestMethodsFailContentHeader()
     {
-        $request = new Request();
-        $request->env('HTTP_ACCEPT', 'application/vnd.api+json');
-        $request->env('CONTENT_TYPE', 'application/json');
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
+            ->withEnv('CONTENT_TYPE', 'application/json');
         $response = new Response();
         $controller = new Controller($request, $response);
         $listener = new JsonApiListener($controller);
@@ -893,14 +891,14 @@ class JsonApiListenerTest extends TestCase
      * Make sure the listener does not accept the PUT method (since the JSON
      * API spec only supports PATCH)
      *
-     * @expectedException \Cake\Network\Exception\BadRequestException
+     * @expectedException \Cake\Http\Exception\BadRequestException
      * @expectedExceptionMessage JSON API does not support the PUT method, use PATCH instead
      */
     public function testCheckRequestMethodsFailOnPutMethod()
     {
-        $request = new Request();
-        $request->env('HTTP_ACCEPT', 'application/vnd.api+json');
-        $request->env('REQUEST_METHOD', 'PUT');
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
+            ->withEnv('REQUEST_METHOD', 'PUT');
         $response = new Response();
         $controller = new Controller($request, $response);
         $listener = new JsonApiListener($controller);
@@ -1018,7 +1016,7 @@ class JsonApiListenerTest extends TestCase
         // make sure cultures are removed from AssociationCollection
         $listener = new JsonApiListener(new Controller());
         $this->setReflectionClassInstance($listener);
-        $associationsAfter = $this->callProtectedMethod('_getContainedAssociations', [$table, $query->contain()], $listener);
+        $associationsAfter = $this->callProtectedMethod('_getContainedAssociations', [$table, $query->getContain()], $listener);
 
         $this->assertNotEmpty($associationsAfter['currencies']);
         $this->assertArrayNotHasKey('cultures', $associationsAfter);
@@ -1050,7 +1048,7 @@ class JsonApiListenerTest extends TestCase
 
         $associations = [];
         foreach ($table->associations() as $association) {
-            $associations[strtolower($association->name())] = [
+            $associations[strtolower($association->getName())] = [
                 'association' => $association,
                 'children' => []
             ];
@@ -1071,12 +1069,12 @@ class JsonApiListenerTest extends TestCase
 
         $expected = [
             'Countries' => $table,
-            'Currencies' => $table->Currencies->target(),
-            'NationalCapitals' => $table->NationalCapitals->target(),
-            'Cultures' => $table->Cultures->target(),
-            'NationalCities' => $table->NationalCities->target(),
-            'SubCountries' => $table->SubCountries->target(),
-            'SuperCountries' => $table->SuperCountries->target()
+            'Currencies' => $table->Currencies->getTarget(),
+            'NationalCapitals' => $table->NationalCapitals->getTarget(),
+            'Cultures' => $table->Cultures->getTarget(),
+            'NationalCities' => $table->NationalCities->getTarget(),
+            'SubCountries' => $table->SubCountries->getTarget(),
+            'SuperCountries' => $table->SuperCountries->getTarget()
         ];
 
         $this->assertSame($expected, $result);
@@ -1099,12 +1097,12 @@ class JsonApiListenerTest extends TestCase
 
         // assert the include list is auto-generated for both belongsTo and
         // hasMany relations (if listener config option `include` is not set)
-        $this->assertEmpty($listener->config('include'));
+        $this->assertEmpty($listener->getConfig('include'));
 
         $table = TableRegistry::get('Countries');
         $associations = [];
         foreach ($table->associations() as $association) {
-            $associations[strtolower($association->name())] = [
+            $associations[strtolower($association->getName())] = [
                 'association' => $association,
                 'children' => []
             ];
@@ -1148,8 +1146,8 @@ class JsonApiListenerTest extends TestCase
             'associations-to-present-in-included-node'
         ];
 
-        $listener->config('include', $userSpecifiedIncludes);
-        $this->assertNotEmpty($listener->config('include'));
+        $listener->setConfig('include', $userSpecifiedIncludes);
+        $this->assertNotEmpty($listener->getConfig('include'));
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
 
         $this->assertSame($userSpecifiedIncludes, $result);
@@ -1169,29 +1167,29 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $request = $this
-            ->getMockBuilder('\Cake\Network\Request')
-            ->setMethods(['contentType', 'method'])
+            ->getMockBuilder('\Cake\Http\ServerRequest')
+            ->setMethods(['contentType', 'getMethod'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $request
             ->expects($this->at(0))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('GET'));
 
         $request
             ->expects($this->at(1))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('POST'));
 
         $request
             ->expects($this->at(2))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('POST'));
 
         $request
             ->expects($this->at(3))
-            ->method('method')
+            ->method('getMethod')
             ->will($this->returnValue('PATCH'));
 
         $controller->request = $request;
@@ -1223,27 +1221,23 @@ class JsonApiListenerTest extends TestCase
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
         // assert null if there is no request data
-        $controller->request->data = null;
+        $controller->request = $controller->request->withParsedBody([]);
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
         // assert POST is processed
-        $controller->request->data = [
-            'data' => [
-                'type' => 'dummy',
-                'attributes' => [],
-            ]
-        ];
+        $controller->request = $controller->request->withData('data', [
+            'type' => 'dummy',
+            'attributes' => [],
+        ]);
 
         $this->callProtectedMethod('_checkRequestData', [], $listener);
 
         // assert PATCH is processed
-        $controller->request->data = [
-            'data' => [
-                'id' => 'f083ea0b-9e48-44a6-af45-a814127a3a70',
-                'type' => 'dummy',
-                'attributes' => [],
-            ]
-        ];
+        $controller->request = $controller->request->withData('data', [
+            'id' => 'f083ea0b-9e48-44a6-af45-a814127a3a70',
+            'type' => 'dummy',
+            'attributes' => [],
+        ]);
 
         $this->callProtectedMethod('_checkRequestData', [], $listener);
     }
@@ -1445,11 +1439,11 @@ class JsonApiListenerTest extends TestCase
         $subject->query = $query;
         $subject->query
             ->expects($this->any())
-            ->method('repository')
+            ->method('getRepository')
             ->willReturn(TableRegistry::get('Countries'));
 
         $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
-        $this->assertSame($expectedInclude, $listener->config('include'));
+        $this->assertSame($expectedInclude, $listener->getConfig('include'));
     }
 
     public function includeQueryBadRequestProvider()
@@ -1476,7 +1470,7 @@ class JsonApiListenerTest extends TestCase
      *
      * @return void
      * @dataProvider includeQueryBadRequestProvider
-     * @expectedException \Cake\Network\Exception\BadRequestException
+     * @expectedException \Cake\Http\Exception\BadRequestException
      */
     public function testIncludeQueryBadRequest($include, $options, $expectedContain, $expectedInclude)
     {
@@ -1501,6 +1495,7 @@ class JsonApiListenerTest extends TestCase
             ->willReturn(TableRegistry::get('Countries'));
 
         $this->callProtectedMethod('_includeParameter', [$include, $subject, $options], $listener);
+        $this->assertSame($expectedInclude, $listener->getConfig('include'));
     }
 
     /**
@@ -1528,11 +1523,11 @@ class JsonApiListenerTest extends TestCase
             ->method('contain');
         $subject->query
             ->expects($this->any())
-            ->method('repository')
+            ->method('getRepository')
             ->willReturn(TableRegistry::get('Countries'));
 
         $sort = 'code,currency.code';
-        $listener->config('include', ['currency', 'national_capitals']);
+        $listener->setConfig('include', ['currency', 'national_capitals']);
 
         $this->callProtectedMethod('_sortParameter', [$sort, $subject, []], $listener);
     }

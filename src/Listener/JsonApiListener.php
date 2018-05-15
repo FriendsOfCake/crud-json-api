@@ -4,7 +4,7 @@ namespace CrudJsonApi\Listener;
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
-use Cake\Network\Exception\BadRequestException;
+use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
@@ -37,7 +37,7 @@ class JsonApiListener extends ApiListener
         ],
         'exception' => [
             'type' => 'default',
-            'class' => 'Cake\Network\Exception\BadRequestException',
+            'class' => 'Cake\Http\Exception\BadRequestException',
             'message' => 'Unknown error',
             'code' => 0,
         ],
@@ -80,10 +80,8 @@ class JsonApiListener extends ApiListener
         }
 
         // accept body data posted with Content-Type `application/vnd.api+json`
-        $this->_controller()->RequestHandler->config([
-            'inputTypeMap' => [
-                'jsonapi' => ['json_decode', true]
-            ]
+        $this->_controller()->RequestHandler->setConfig('inputTypeMap', [
+            'jsonapi' => ['json_decode', true]
         ]);
 
         return [
@@ -145,22 +143,22 @@ class JsonApiListener extends ApiListener
      */
     public function afterSave($event)
     {
-        if (!$event->subject()->success) {
+        if (!$event->getSubject()->success) {
             return false;
         }
 
         // `created` will be set for add actions, `id` for edit actions
-        if (!$event->subject()->created && !$event->subject()->id) {
+        if (!$event->getSubject()->created && !$event->getSubject()->id) {
             return false;
         }
 
-        if ($event->subject()->created) {
-            $this->_controller()->response->statusCode(201);
+        if ($event->getSubject()->created) {
+            $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
 
         $this->_insertBelongsToDataIntoEventFindResult($event);
 
-        $this->render($event->subject);
+        $this->render($event->getSubject());
     }
 
     /**
@@ -175,11 +173,11 @@ class JsonApiListener extends ApiListener
      */
     public function afterDelete(Event $event)
     {
-        if (!$event->subject()->success) {
+        if (!$event->getSubject()->success) {
             return false;
         }
 
-        $this->_controller()->response->statusCode(204);
+        $this->_controller()->response = $this->_controller()->response->withStatus(204);
     }
 
     /**
@@ -206,16 +204,18 @@ class JsonApiListener extends ApiListener
         }
         $associationName = Inflector::camelize($include, $delimiter);
 
-        $association = $repository->association($associationName);//First check base name
-
-        if ($association) {
-            return $association;
+        if ($repository->hasAssociation($associationName)) {//First check base name
+            return $repository->getAssociation($associationName);
         }
 
         //If base name doesn't work, try to pluralize it
         $associationName = Inflector::pluralize($associationName);
 
-        return $repository->association($associationName);
+        if ($repository->hasAssociation($associationName)) {
+            return $repository->getAssociation($associationName);
+        }
+
+        return null;
     }
 
     /**
@@ -227,7 +227,7 @@ class JsonApiListener extends ApiListener
      * @param \Cake\ORM\Table|null $repository The repository
      * @param array $path Include path
      * @return string
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      */
     protected function _parseIncludes($includes, $blacklist, $whitelist, Table $repository = null, $path = [])
     {
@@ -262,13 +262,13 @@ class JsonApiListener extends ApiListener
             }
 
             if (!empty($nestedIncludes)) {
-                $nestedContains = $this->_parseIncludes($nestedIncludes, $blacklist, $whitelist, $association ? $association->target() : null, $includePath);
+                $nestedContains = $this->_parseIncludes($nestedIncludes, $blacklist, $whitelist, $association ? $association->getTarget() : null, $includePath);
             }
 
             if (!empty($nestedContains)) {
-                $contains[$association->alias()] = $nestedContains;
+                $contains[$association->getAlias()] = $nestedContains;
             } else {
-                $contains[] = $association->alias();
+                $contains[] = $association->getAlias();
             }
         }
 
@@ -300,19 +300,20 @@ class JsonApiListener extends ApiListener
             throw new BadRequestException("The include parameter is not supported");
         }
 
-        $this->config('include', []);
+        $this->setConfig('include', []);
+
         $includes = Hash::expand(Hash::normalize($includes));
         $blacklist = is_array($options['blacklist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true))) : $options['blacklist'];
         $whitelist = is_array($options['whitelist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true))) : $options['whitelist'];
-        $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->repository());
+        $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->getRepository());
 
         $subject->query->contain($contains);
 
-        $this->config('include', []);
-        $associations = $this->_getContainedAssociations($subject->query->repository(), $contains);
+        $this->setConfig('include', []);
+        $associations = $this->_getContainedAssociations($subject->query->getRepository(), $contains);
         $include = $this->_getIncludeList($associations);
 
-        $this->config('include', $include);
+        $this->setConfig('include', $include);
     }
 
     /**
@@ -334,16 +335,16 @@ class JsonApiListener extends ApiListener
             return explode(',', $val);
         }, $fieldSets);
 
-        $repository = $subject->query->repository();
+        $repository = $subject->query->getRepository();
         $associations = $repository->associations();
 
-        $nodeName = Inflector::tableize($repository->alias());
+        $nodeName = Inflector::tableize($repository->getAlias());
         if (empty($fieldSets[$nodeName])) {
             $selectFields = [];
         } else {
             $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
         }
-        $columns = $repository->schema()->columns();
+        $columns = $repository->getSchema()->columns();
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
             if ($include === $nodeName) {
@@ -359,7 +360,7 @@ class JsonApiListener extends ApiListener
 
             $association = $associations->get($include);
             if (!empty($association)) {
-                $contains[$association->alias()] = [
+                $contains[$association->getAlias()] = [
                     'fields' => $fields,
                 ];
             }
@@ -370,7 +371,7 @@ class JsonApiListener extends ApiListener
             $subject->query->contain($contains);
         }
 
-        $this->config('fieldSets', $fieldSets);
+        $this->setConfig('fieldSets', $fieldSets);
     }
 
     /**
@@ -382,7 +383,7 @@ class JsonApiListener extends ApiListener
     public function beforeFind(Event $event)
     {
         //Inject default query handlers
-        $queryParameters = Hash::merge($this->config('queryParameters'), [
+        $queryParameters = Hash::merge($this->getConfig('queryParameters'), [
             'sort' => [
                 'callable' => [$this, '_sortParameter'],
             ],
@@ -405,7 +406,7 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException('Invalid callable supplied for query parameter ' . $parameter);
             }
 
-            $options['callable']($this->_request()->query($parameter), $event->subject(), $options);
+            $options['callable']($this->_request()->getQuery($parameter), $event->getSubject(), $options);
         }
     }
 
@@ -426,8 +427,8 @@ class JsonApiListener extends ApiListener
         $sortFields = array_filter((array)$sortFields);
 
         $order = [];
-        $includes = $this->config('include');
-        $repository = $subject->query->repository();
+        $includes = $this->getConfig('include');
+        $repository = $subject->query->getRepository();
         foreach ($sortFields as $sortField) {
             $direction = 'ASC';
             if ($sortField[0] == '-') {
@@ -438,7 +439,7 @@ class JsonApiListener extends ApiListener
             if (strpos($sortField, '.') !== false) {
                 list ($include, $field) = explode('.', $sortField);
 
-                if ($include === Inflector::tableize($repository->alias())) {
+                if ($include === Inflector::tableize($repository->getAlias())) {
                     $order[$repository->aliasField($field)] = $direction;
                     continue;
                 }
@@ -449,18 +450,18 @@ class JsonApiListener extends ApiListener
 
                 $associations = $repository->associations();
                 foreach ($associations as $association) {
-                    if ($association->property() !== $include) {
+                    if ($association->getProperty() !== $include) {
                         continue;
                     }
                     $subject->query->contain([
-                        $association->alias() => [
+                        $association->getAlias() => [
                             'sort' => [
                                 $association->aliasField($field) => $direction,
                             ],
                             'strategy' => 'select',
                         ]
                     ]);
-                    $subject->query->leftJoinWith($association->alias());
+                    $subject->query->leftJoinWith($association->getAlias());
 
                     $order[$association->aliasField($field)] = $direction;
                 }
@@ -484,20 +485,20 @@ class JsonApiListener extends ApiListener
      */
     protected function _insertBelongsToDataIntoEventFindResult($event)
     {
-        $entity = $event->subject()->entity;
+        $entity = $event->getSubject()->entity;
         $repository = $this->_controller()->loadModel();
         $associations = $repository->associations();
 
         foreach ($associations as $association) {
             $type = $association->type();
             if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
-                $associationTable = $association->target();
-                $foreignKey = $association->foreignKey();
+                $associationTable = $association->getTarget();
+                $foreignKey = $association->getForeignKey();
 
                 $result = $associationTable
                     ->find()
                     ->select(['id'])
-                    ->where([$association->name() . '.id' => $entity->$foreignKey])
+                    ->where([$association->getName() . '.id' => $entity->$foreignKey])
                     ->first();
 
                 // Unfortunately, _propertyName is protected. We have got serious reason to use it though.
@@ -508,32 +509,32 @@ class JsonApiListener extends ApiListener
 
                 // There are cases when _propertyName is not set and we go default then
                 if (!$key) {
-                    $key = Inflector::tableize($association->name());
+                    $key = Inflector::tableize($association->getName());
                     $key = Inflector::singularize($key);
                 }
 
                 $entity->$key = $result;
 
                 //Also insert the contained associations into the query
-                if (isset($event->subject()->query)) {
-                    $event->subject()->query->contain($association->name());
+                if (isset($event->getSubject()->query)) {
+                    $event->getSubject()->query->contain($association->getName());
                 }
             }
         }
 
-        $event->subject()->entity = $entity;
+        $event->getSubject()->entity = $entity;
     }
 
     /**
      * Set required viewVars before rendering the JsonApiView.
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function render(Subject $subject)
     {
         $controller = $this->_controller();
-        $controller->viewBuilder()->className('CrudJsonApi.JsonApi');
+        $controller->viewBuilder()->setClassName('CrudJsonApi.JsonApi');
 
         // render a JSON API response with resource(s) if data is found
         if (isset($subject->entity) || isset($subject->entities)) {
@@ -546,17 +547,17 @@ class JsonApiListener extends ApiListener
     /**
      * Renders a resource-less JSON API response.
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _renderWithoutResources()
     {
         $this->_controller()->set([
-            '_withJsonApiVersion' => $this->config('withJsonApiVersion'),
-            '_meta' => $this->config('meta'),
-            '_absoluteLinks' => $this->config('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $this->config('jsonApiBelongsToLinks'),
-            '_jsonOptions' => $this->config('jsonOptions'),
-            '_debugPrettyPrint' => $this->config('debugPrettyPrint'),
+            '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
+            '_meta' => $this->getConfig('meta'),
+            '_absoluteLinks' => $this->getConfig('absoluteLinks'),
+            '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
+            '_jsonOptions' => $this->getConfig('jsonOptions'),
+            '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             '_serialize' => true,
         ]);
 
@@ -567,14 +568,14 @@ class JsonApiListener extends ApiListener
      * Renders a JSON API response with top-level data node holding resource(s).
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _renderWithResources($subject)
     {
         $repository = $this->_controller()->loadModel(); // Default model class
 
         if (isset($subject->query)) {
-            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->contain());
+            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->getContain());
         } else {
             $entity = $this->_getSingleEntity($subject);
             $usedAssociations = $this->_extractEntityAssociations($repository, $entity);
@@ -582,18 +583,18 @@ class JsonApiListener extends ApiListener
 
         // Set data before rendering the view
         $this->_controller()->set([
-            '_withJsonApiVersion' => $this->config('withJsonApiVersion'),
-            '_meta' => $this->config('meta'),
-            '_absoluteLinks' => $this->config('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $this->config('jsonApiBelongsToLinks'),
-            '_jsonOptions' => $this->config('jsonOptions'),
-            '_debugPrettyPrint' => $this->config('debugPrettyPrint'),
+            '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
+            '_meta' => $this->getConfig('meta'),
+            '_absoluteLinks' => $this->getConfig('absoluteLinks'),
+            '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
+            '_jsonOptions' => $this->getConfig('jsonOptions'),
+            '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             '_repositories' => $this->_getRepositoryList($repository, $usedAssociations),
             '_include' => $this->_getIncludeList($usedAssociations),
-            '_fieldSets' => $this->config('fieldSets'),
-            Inflector::tableize($repository->alias()) => $this->_getFindResult($subject),
+            '_fieldSets' => $this->getConfig('fieldSets'),
+            Inflector::tableize($repository->getAlias()) => $this->_getFindResult($subject),
             '_serialize' => true,
-            '_inflect' => $this->config('inflect')
+            '_inflect' => $this->getConfig('inflect')
         ]);
 
         return $this->_controller()->render();
@@ -607,41 +608,41 @@ class JsonApiListener extends ApiListener
      */
     protected function _validateConfigOptions()
     {
-        if ($this->config('withJsonApiVersion')) {
-            if (!is_bool($this->config('withJsonApiVersion')) && !is_array($this->config('withJsonApiVersion'))) {
+        if ($this->getConfig('withJsonApiVersion')) {
+            if (!is_bool($this->getConfig('withJsonApiVersion')) && !is_array($this->getConfig('withJsonApiVersion'))) {
                 throw new CrudException('JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array');
             }
         }
 
-        if (!is_array($this->config('meta'))) {
+        if (!is_array($this->getConfig('meta'))) {
             throw new CrudException('JsonApiListener configuration option `meta` only accepts an array');
         }
 
-        if (!is_bool($this->config('absoluteLinks'))) {
+        if (!is_bool($this->getConfig('absoluteLinks'))) {
             throw new CrudException('JsonApiListener configuration option `absoluteLinks` only accepts a boolean');
         }
 
-        if (!is_bool($this->config('jsonApiBelongsToLinks'))) {
+        if (!is_bool($this->getConfig('jsonApiBelongsToLinks'))) {
             throw new CrudException('JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean');
         }
 
-        if (!is_array($this->config('include'))) {
+        if (!is_array($this->getConfig('include'))) {
             throw new CrudException('JsonApiListener configuration option `include` only accepts an array');
         }
 
-        if (!is_array($this->config('fieldSets'))) {
+        if (!is_array($this->getConfig('fieldSets'))) {
             throw new CrudException('JsonApiListener configuration option `fieldSets` only accepts an array');
         }
 
-        if (!is_array($this->config('jsonOptions'))) {
+        if (!is_array($this->getConfig('jsonOptions'))) {
             throw new CrudException('JsonApiListener configuration option `jsonOptions` only accepts an array');
         }
 
-        if (!is_bool($this->config('debugPrettyPrint'))) {
+        if (!is_bool($this->getConfig('debugPrettyPrint'))) {
             throw new CrudException('JsonApiListener configuration option `debugPrettyPrint` only accepts a boolean');
         }
 
-        if (!is_array($this->config('queryParameters'))) {
+        if (!is_array($this->getConfig('queryParameters'))) {
             throw new CrudException('JsonApiListener configuration option `queryParameters` only accepts an array');
         }
     }
@@ -649,7 +650,7 @@ class JsonApiListener extends ApiListener
     /**
      * Override ApiListener method to enforce required JSON API request methods.
      *
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      * @return bool
      */
     protected function _checkRequestMethods()
@@ -681,7 +682,7 @@ class JsonApiListener extends ApiListener
     {
         $resultSet = clone $subject->entities;
         $ids = [];
-        $keys = (array)$subject->query->repository()->primaryKey();
+        $keys = (array)$subject->query->getRepository()->getPrimaryKey();
         foreach ($subject->entities as $entity) {
             $id = $entity->extract($keys);
             if (!in_array($id, $ids)) {
@@ -753,7 +754,7 @@ class JsonApiListener extends ApiListener
                 continue;
             }
 
-            $associationKey = strtolower($association->name());
+            $associationKey = strtolower($association->getName());
 
             $associations[$associationKey] = [
                 'association' => $association,
@@ -761,7 +762,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if (!empty($nestedContains)) {
-                $associations[$associationKey]['children'] = $this->_getContainedAssociations($association->target(), $nestedContains);
+                $associations[$associationKey]['children'] = $this->_getContainedAssociations($association->getTarget(), $nestedContains);
             }
         }
 
@@ -782,12 +783,12 @@ class JsonApiListener extends ApiListener
         $associationCollection = $repository->associations();
         $associations = [];
         foreach ($associationCollection as $association) {
-            $associationKey = strtolower($association->name());
-            $entityKey = $association->property();
+            $associationKey = strtolower($association->getName());
+            $entityKey = $association->getProperty();
             if (!empty($entity->$entityKey)) {
                 $associations[$associationKey] = [
                     'association' => $association,
-                    'children' => $this->_extractEntityAssociations($association->target(), $entity->$entityKey)
+                    'children' => $this->_extractEntityAssociations($association->getTarget(), $entity->$entityKey)
                 ];
             }
         }
@@ -806,7 +807,7 @@ class JsonApiListener extends ApiListener
     protected function _getRepositoryList(RepositoryInterface $repository, $associations)
     {
         $repositories = [
-            $repository->registryAlias() => $repository
+            $repository->getRegistryAlias() => $repository
         ];
 
         foreach ($associations as $association) {
@@ -819,7 +820,7 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException("Association {$name} does not have an association object set");
             }
 
-            $associationRepository = $association['association']->target();
+            $associationRepository = $association['association']->getTarget();
 
             $repositories += $this->_getRepositoryList($associationRepository, $association['children'] ?: []);
         }
@@ -840,8 +841,8 @@ class JsonApiListener extends ApiListener
      */
     protected function _getIncludeList($associations, $last = true)
     {
-        if (!empty($this->config('include'))) {
-            return $this->config('include');
+        if (!empty($this->getConfig('include'))) {
+            return $this->getConfig('include');
         }
 
         $result = [];
@@ -855,7 +856,7 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException("Association {$name} does not have an association object set");
             }
 
-            $result[$association['association']->property()] = $this->_getIncludeList($association['children'], false);
+            $result[$association['association']->getProperty()] = $this->_getIncludeList($association['children'], false);
         }
 
         return $last ? array_keys(Hash::flatten($result)) : $result;
@@ -871,19 +872,19 @@ class JsonApiListener extends ApiListener
      */
     protected function _checkRequestData()
     {
-        $requestMethod = $this->_controller()->request->method();
+        $requestMethod = $this->_controller()->request->getMethod();
 
         if ($requestMethod !== 'POST' && $requestMethod !== 'PATCH') {
             return;
         }
 
-        $requestData = $this->_controller()->request->data();
+        $requestData = $this->_controller()->request->getData();
 
         if (empty($requestData)) {
             return;
         }
 
-        $validator = new DocumentValidator($requestData, $this->config());
+        $validator = new DocumentValidator($requestData, $this->getConfig());
 
         if ($requestMethod === 'POST') {
             $validator->validateCreateDocument();
@@ -893,7 +894,7 @@ class JsonApiListener extends ApiListener
             $validator->validateUpdateDocument();
         }
 
-        $this->_controller()->request->data = $this->_convertJsonApiDocumentArray($requestData);
+        $this->_controller()->request = $this->_controller()->request->withParsedBody($this->_convertJsonApiDocumentArray($requestData));
     }
 
     /**
@@ -919,7 +920,7 @@ class JsonApiListener extends ApiListener
             $result = array_merge_recursive($result, $document['data']['attributes']);
 
             // dasherize attribute keys if need be
-            if ($this->config('inflect') === 'dasherize') {
+            if ($this->getConfig('inflect') === 'dasherize') {
                 foreach ($result as $key => $value) {
                     $underscoredKey = Inflector::underscore($key);
 
@@ -948,7 +949,7 @@ class JsonApiListener extends ApiListener
                         $relationResult = array_merge_recursive($relationResult, $relationData['attributes']);
 
                         // dasherize attribute keys if need be
-                        if ($this->config('inflect') === 'dasherize') {
+                        if ($this->getConfig('inflect') === 'dasherize') {
                             foreach ($relationResult as $resultKey => $value) {
                                 $underscoredKey = Inflector::underscore($resultKey);
                                 if (!array_key_exists($underscoredKey, $relationResult)) {

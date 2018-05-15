@@ -14,7 +14,7 @@ trait JsonApiTrait
      */
     protected function _getRepositoryRoutingParameters($repository)
     {
-        list(, $controllerName) = pluginSplit($repository->registryAlias());
+        list(, $controllerName) = pluginSplit($repository->getRegistryAlias());
 
         return [
             'controller' => $controllerName,

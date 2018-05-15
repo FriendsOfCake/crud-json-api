@@ -5,8 +5,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use Cake\View\View;
@@ -21,13 +21,13 @@ class JsonApiView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request $request Request
-     * @param \Cake\Network\Response $response Response
+     * @param \Cake\Http\ServerRequest $request ServerRequest
+     * @param \Cake\Http\Response $response Response
      * @param \Cake\Event\EventManager $eventManager EventManager
      * @param array $viewOptions An array of view options
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
@@ -35,7 +35,7 @@ class JsonApiView extends View
         parent::__construct($request, $response, $eventManager, $viewOptions);
 
         if ($response && $response instanceof Response) {
-            $response->type('jsonapi');
+            $this->response = $response->withType('jsonapi');
         }
     }
 
@@ -212,11 +212,11 @@ class JsonApiView extends View
     {
         $schemas = [];
         foreach ($repositories as $repositoryName => $repository) {
-            if (isset($schemas[$repository->entityClass()])) {
+            if (isset($schemas[$repository->getEntityClass()])) {
                 continue;
             }
 
-            $entityClass = $repository->entityClass();
+            $entityClass = $repository->getEntityClass();
 
             if ($entityClass === Entity::class) {
                 throw new CrudException(sprintf('Entity classes must not be the generic "%s" class for repository "%s"', $entityClass, $repositoryName));
@@ -258,7 +258,7 @@ class JsonApiView extends View
             };
 
             // Add generated schema to the collection before processing next
-            $schemas[$repository->entityClass()] = $schema;
+            $schemas[$repository->getEntityClass()] = $schema;
         }
 
         return $schemas;

@@ -55,7 +55,7 @@ class DynamicEntitySchema extends SchemaProvider
 
         // NeoMerx required property holding lowercase singular or plural resource name
         if (!isset($this->resourceType)) {
-            list (, $entityName) = pluginSplit($repository->registryAlias());
+            list (, $entityName) = pluginSplit($repository->getRegistryAlias());
             $method = isset($view->viewVars['_inflect']) ? $view->viewVars['_inflect'] : 'dasherize';
             $this->resourceType = Inflector::$method($entityName);
         }
@@ -72,7 +72,7 @@ class DynamicEntitySchema extends SchemaProvider
      */
     public function getId($entity)
     {
-        return (string)$entity->get($this->_repository->primaryKey());
+        return (string)$entity->get($this->_repository->getPrimaryKey());
     }
 
     /**
@@ -96,18 +96,18 @@ class DynamicEntitySchema extends SchemaProvider
     public function getAttributes($entity)
     {
         if ($entity->has($this->idField)) {
-            $hidden = array_merge($entity->hiddenProperties(), [$this->idField]);
-            $entity->hiddenProperties($hidden);
+            $hidden = array_merge($entity->getHidden(), [$this->idField]);
+            $entity->setHidden($hidden);
         }
 
         $attributes = $entity->toArray();
 
         // remove associated data so it won't appear inside jsonapi `attributes`
         foreach ($this->_repository->associations() as $association) {
-            $propertyName = $association->property();
+            $propertyName = $association->getProperty();
 
             if ($association->type() === Association::MANY_TO_ONE) {
-                $foreignKey = $association->foreignKey();
+                $foreignKey = $association->getForeignKey();
                 unset($attributes[$foreignKey]);
             }
 
@@ -145,7 +145,7 @@ class DynamicEntitySchema extends SchemaProvider
         $relations = [];
 
         foreach ($this->_repository->associations() as $association) {
-            $property = $association->property();
+            $property = $association->getProperty();
 
             $data = $entity->get($property);
             if (!$data) {
@@ -184,7 +184,7 @@ class DynamicEntitySchema extends SchemaProvider
         return Router::url($this->_getRepositoryRoutingParameters($this->_repository) + [
             '_method' => 'GET',
             'action' => 'view',
-            $entity->get($this->_repository->primaryKey()),
+            $entity->get($this->_repository->getPrimaryKey()),
         ], $this->_view->viewVars['_absoluteLinks']);
     }
 
@@ -209,19 +209,19 @@ class DynamicEntitySchema extends SchemaProvider
         }
 
         $association = $this->_repository->associations()->getByProperty($name);
-        $relatedRepository = $association->target();
+        $relatedRepository = $association->getTarget();
 
         // generate link for belongsTo relationship
         if (in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE])) {
             if ($this->_view->viewVars['_jsonApiBelongsToLinks'] === true) {
-                list(, $controllerName) = pluginSplit($this->_repository->registryAlias());
+                list(, $controllerName) = pluginSplit($this->_repository->getRegistryAlias());
                 $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
                 $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
                     '_method' => 'GET',
                     'action' => 'view',
                     $sourceName . '_id' => $entity->id,
-                    'from' => $this->_repository->registryAlias(),
+                    'from' => $this->_repository->getRegistryAlias(),
                     'type' => $name,
                 ], $this->_view->viewVars['_absoluteLinks']);
             } else {
@@ -231,7 +231,7 @@ class DynamicEntitySchema extends SchemaProvider
                 $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
                     '_method' => 'GET',
                     'action' => 'view',
-                    $relatedEntity->get($relatedRepository->primaryKey()),
+                    $relatedEntity->get($relatedRepository->getPrimaryKey()),
                 ], $this->_view->viewVars['_absoluteLinks']);
             }
 
@@ -241,7 +241,7 @@ class DynamicEntitySchema extends SchemaProvider
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
             '_method' => 'GET',
             'action' => 'index',
-            '?' => [$association->foreignKey() => $entity->id]
+            '?' => [$association->getForeignKey() => $entity->id]
         ], $this->_view->viewVars['_absoluteLinks']);
 
         return new Link($url, $meta, $treatAsHref);
@@ -255,7 +255,7 @@ class DynamicEntitySchema extends SchemaProvider
      */
     public function getIncludedResourceLinks($entity)
     {
-        $repositoryName = $entity->source();
+        $repositoryName = $entity->getSource();
         if (!isset($this->_view->viewVars['_repositories'][$repositoryName])) {
             return [];
         }
@@ -264,7 +264,7 @@ class DynamicEntitySchema extends SchemaProvider
         $url = Router::url($this->_getRepositoryRoutingParameters($repository) + [
             '_method' => 'GET',
             'action' => 'view',
-            $entity->get($repository->primaryKey()),
+            $entity->get($repository->getPrimaryKey()),
         ], $this->_view->viewVars['_absoluteLinks']);
 
         $links = [

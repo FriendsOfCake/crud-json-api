@@ -22,6 +22,7 @@ class DocumentValidatorTest extends TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         $this->_validator = new DocumentValidator([], []);
         $this->setReflectionClassInstance($this->_validator);
 
@@ -36,6 +37,7 @@ class DocumentValidatorTest extends TestCase
      */
     public function tearDown()
     {
+        parent::tearDown();
         unset($this->_validator);
     }
 
@@ -643,7 +645,7 @@ class DocumentValidatorTest extends TestCase
         $result = $this->callProtectedMethod('_getErrorCollectionEntity', [], $this->_validator);
         $this->assertInstanceOf('\Cake\ORM\Entity', $result);
 
-        $errors = $result->errors();
+        $errors = $result->getErrors();
         $this->assertArrayHasKey('CrudJsonApiListener', $errors);
         $this->assertArrayHasKey('NeoMerxErrorCollection', $errors['CrudJsonApiListener']);
         $this->assertInstanceOf('\Neomerx\JsonApi\Exceptions\ErrorCollection', $errors['CrudJsonApiListener']['NeoMerxErrorCollection']);
