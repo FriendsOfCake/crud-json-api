@@ -166,8 +166,8 @@
             "type": "national-capitals",
             "id": "5",
             "attributes": {
-                "name": "Vatican",
-                "description": "National capital of Vatican"
+                "name": "Vatican City",
+                "description": "National capital of the Vatican"
             },
             "links": {
                 "self": "\/national-capitals\/5"
