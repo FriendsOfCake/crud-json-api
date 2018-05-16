@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class DefaultEditActionIntegrationTest extends JsonApiBaseTestCase
+class PatchRequestIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Make sure successful PATCH requests return HTTP Status Code 200.

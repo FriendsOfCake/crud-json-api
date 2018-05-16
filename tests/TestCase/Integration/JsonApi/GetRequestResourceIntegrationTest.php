@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class DefaultIndexActionIntegrationTest extends JsonApiBaseTestCase
+class GetRequestResourceIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Test most basic `index` action
@@ -12,12 +12,12 @@ class DefaultIndexActionIntegrationTest extends JsonApiBaseTestCase
      */
     public function testGet()
     {
-        $this->get('/countries');
+        $this->get('/countries/1');
 
         $this->assertResponseOk();
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseCode(200);
         $this->assertResponseNotEmpty();
-        $this->assertResponseEquals($this->_getExpected('default_get_countries_with_pagination.json'));
+        $this->assertResponseEquals($this->_getExpected('get_country_no_relationships.json'));
     }
 }

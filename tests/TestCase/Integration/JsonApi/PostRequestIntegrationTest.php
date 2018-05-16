@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class DefaultAddActionIntegrationTest extends JsonApiBaseTestCase
+class PostRequestIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Make sure successful POST requests return HTTP Status Code 201.

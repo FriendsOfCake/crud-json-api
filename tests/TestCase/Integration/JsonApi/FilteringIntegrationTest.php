@@ -5,7 +5,7 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class SearchIntegrationTest extends JsonApiBaseTestCase
+class FilteringIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * @return array
