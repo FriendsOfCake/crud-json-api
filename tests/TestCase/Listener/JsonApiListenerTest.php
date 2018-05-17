@@ -1270,7 +1270,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, no relationships)
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_no_relationships.json');
+        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS . 'post_country_no_relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1281,7 +1281,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, multiple relationships, hasMany ignored for now)
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_multiple_relationships.json');
+        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS . 'post_country_multiple_relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1300,7 +1300,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success for relationships with null/empty data
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_multiple_relationships.json');
+        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS . 'post_country_multiple_relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $jsonApiArray['data']['relationships']['cultures']['data'] = null;
         $jsonApiArray['data']['relationships']['currency']['data'] = null;

@@ -121,7 +121,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $result = $renderer->render();
 
         // assert expected exception is generated
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'validation_error.json');
+        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS . 'validation_error.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
 
         $result = json_decode($result->getBody(), true);

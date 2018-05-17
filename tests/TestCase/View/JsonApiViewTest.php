@@ -78,7 +78,7 @@ class JsonApiViewTest extends TestCase
         $this->_defaultViewVars['_serialize'] = true;
 
         // store path the the json fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS;
+        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS;
     }
 
     /**
