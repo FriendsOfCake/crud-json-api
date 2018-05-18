@@ -242,7 +242,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'GetResourceRequests' . DS . 'get-country.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
     }
@@ -387,7 +387,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'GetResourceRequests' . DS . 'get-country.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
 

@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class GetResourceRequestIntegrationTest extends JsonApiBaseTestCase
+class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * PhpUnit Data Provider for testing (only) successful GET requests.
@@ -41,6 +41,6 @@ class GetResourceRequestIntegrationTest extends JsonApiBaseTestCase
         $this->get($url);
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected('GetResourceRequests' . DS . $expectedResponseFile));
+        $this->assertResponseEquals($this->_getExpected('FetchingResources' . DS . $expectedResponseFile));
     }
 }
