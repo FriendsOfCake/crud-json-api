@@ -14,6 +14,12 @@ use Neomerx\JsonApi\Exceptions\ErrorCollection;
 
 class JsonApiExceptionRendererTest extends TestCase
 {
+    /**
+     * Path to directory holding the JSON API response fixtures
+     *
+     * @var
+     */
+    protected $_JsonDir;
 
     /**
      * fixtures property
@@ -31,6 +37,9 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         parent::setUp();
         Configure::write('debug', true);
+
+        // set path to the JSON API response fixtures
+        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -121,7 +130,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $result = $renderer->render();
 
         // assert expected exception is generated
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS . 'validation_error.json');
+        $jsonApiFixture = new File($this->_JsonDir . DS . 'Errors' . DS . 'validation-error-multiple-reasons.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
 
         $result = json_decode($result->getBody(), true);
