@@ -13,10 +13,6 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
     public function viewProvider()
     {
         return [
-            'no relations' => [
-                '/countries/1',
-                'get_country_no_relationships.json',
-            ],
             // assert single-word associations
             'include currency belongsTo plural' => [
                 '/countries/1?include=currencies',
@@ -75,7 +71,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedFile));
+        $this->assertResponseEquals($this->_getExpected("Inclusion" .DS . $expectedFile));
     }
 
     /**
@@ -93,7 +89,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
         $this->get('/countries/1');
 
         $this->assertResponseSuccess();
-        $this->assertResponseEquals($this->_getExpected('get_country_include_currency_and_culture.json'));
+        $this->assertResponseEquals($this->_getExpected('Inclusion' . DS . 'get_country_include_currency_and_culture.json'));
         EventManager::instance()->off('Crud.beforeFind');
     }
 

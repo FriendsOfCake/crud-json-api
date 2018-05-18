@@ -67,7 +67,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
         ]);
 
         // store path the the json fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS;
+        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -96,6 +96,6 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      */
     protected function _getExpected($file)
     {
-        return trim((new File($this->_JsonDir . $file))->read());
+        return trim((new File($this->_JsonDir . DS . $file))->read());
     }
 }
