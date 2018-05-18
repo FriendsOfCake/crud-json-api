@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class PatchRequestIntegrationTest extends JsonApiBaseTestCase
+class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
 
     /**
@@ -38,7 +38,7 @@ class PatchRequestIntegrationTest extends JsonApiBaseTestCase
                         ]
                     ]
                 ],
-                'PatchRequest/patched-single-word-resource.json',
+                'PatchRequest/patch-single-word-resource.json',
             ],
 
             #
@@ -55,7 +55,7 @@ class PatchRequestIntegrationTest extends JsonApiBaseTestCase
                         ]
                     ]
                 ],
-                'PatchRequest/patched-multi-word-resource',
+                'PatchRequest/patch-multi-word-resource',
             ],
 
         ];
