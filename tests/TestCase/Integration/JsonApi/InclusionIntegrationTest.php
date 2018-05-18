@@ -10,7 +10,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
     /**
      * @return array
      */
-    public function viewProvider()
+    public function inclusionProvider()
     {
         return [
             // assert single-word associations
@@ -63,9 +63,9 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
      * @param string $url The endpoint to hit
      * @param string $expectedFile The file to find the expected result in
      * @return void
-     * @dataProvider viewProvider
+     * @dataProvider inclusionProvider
      */
-    public function testView($url, $expectedFile)
+    public function testInclusion($url, $expectedFile)
     {
         $this->get($url);
 

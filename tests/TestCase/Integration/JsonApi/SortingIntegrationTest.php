@@ -11,7 +11,7 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
     /**
      * @return array
      */
-    public function viewProvider()
+    public function sortProvider()
     {
         return [
             'unsorted' => [
@@ -106,7 +106,7 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
      * @param string $url The endpoint to hit
      * @param string $expectedFile The file to find the expected result in
      * @return void
-     * @dataProvider viewProvider
+     * @dataProvider sortProvider
      */
     public function testView($url, $expectedFile)
     {
