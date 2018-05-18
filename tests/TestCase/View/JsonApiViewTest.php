@@ -37,7 +37,7 @@ class JsonApiViewTest extends TestCase
     ];
 
     /**
-     * Path to directory holding json fixtures with trailing slash
+     * Path to directory holding the JSON API response fixtures.
      *
      * @var
      */
@@ -77,7 +77,7 @@ class JsonApiViewTest extends TestCase
         $this->_defaultViewVars['_jsonOptions'] = [JSON_PRETTY_PRINT];
         $this->_defaultViewVars['_serialize'] = true;
 
-        // store path the the json fixtures
+        // set path the the JSON API response fixtures
         $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 

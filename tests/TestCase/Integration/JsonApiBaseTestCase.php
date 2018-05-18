@@ -24,7 +24,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
     ];
 
     /**
-     * Path to directory holding json fixtures with trailing slash
+     * Path to directory holding the JSON API response fixtures.
      *
      * @var
      */
@@ -66,7 +66,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
             ]
         ]);
 
-        // store path the the json fixtures
+        // set path to the JSON API response fixtures
         $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
