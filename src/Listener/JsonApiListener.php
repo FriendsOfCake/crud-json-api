@@ -152,6 +152,7 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
+        // created resource MUST respond with HTTP Status Code 201
         if ($event->getSubject()->created) {
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }

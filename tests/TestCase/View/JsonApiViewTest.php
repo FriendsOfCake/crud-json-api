@@ -78,7 +78,7 @@ class JsonApiViewTest extends TestCase
         $this->_defaultViewVars['_serialize'] = true;
 
         // store path the the json fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses' . DS;
+        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -231,7 +231,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_countries_no_relationships.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'get_countries_no_relationships.json'))->read()),
             $view->render()
         );
 
@@ -242,7 +242,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_country_no_relationships.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'GetResourceRequests' . DS . 'get-country.json'))->read()),
             $view->render()
         );
     }
@@ -268,7 +268,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'response_without_resources_meta.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'response_without_resources_meta.json'))->read()),
             $view->render()
         );
     }
@@ -387,7 +387,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_country_no_relationships.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'GetResourceRequests' . DS . 'get-country.json'))->read()),
             $view->render()
         );
 
