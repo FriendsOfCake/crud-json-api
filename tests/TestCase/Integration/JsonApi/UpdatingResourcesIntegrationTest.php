@@ -63,6 +63,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 
     /**
      * @param string $url The endpoint to hit
+     * @param string $body JSON API body in CakePHP array format
      * @param string $expectedResponseFile The file to find the expected jsonapi response in
      * @return void
      * @dataProvider patchProvider
