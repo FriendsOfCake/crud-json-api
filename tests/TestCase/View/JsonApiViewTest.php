@@ -231,7 +231,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'get_countries_no_relationships.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
             $view->render()
         );
 

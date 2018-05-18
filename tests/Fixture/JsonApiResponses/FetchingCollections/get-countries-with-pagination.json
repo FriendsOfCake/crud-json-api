@@ -1,15 +1,15 @@
 {
     "meta": {
-        "record_count": 4,
-        "page_count": 1,
+        "record_count": 5,
+        "page_count": 2,
         "page_limit": null
     },
     "links": {
         "self": "\/countries?page=1",
         "first": "\/countries?page=1",
-        "last": "\/countries?page=1",
+        "last": "\/countries?page=2",
         "prev": null,
-        "next": null
+        "next": "\/countries?page=2"
     },
     "data": [
         {
@@ -17,7 +17,8 @@
             "id": "1",
             "attributes": {
                 "code": "NL",
-                "name": "The Netherlands"
+                "name": "The Netherlands",
+                "dummy-counter": 11111
             },
             "links": {
                 "self": "\/countries\/1"
@@ -28,7 +29,8 @@
             "id": "2",
             "attributes": {
                 "code": "BG",
-                "name": "Bulgaria"
+                "name": "Bulgaria",
+                "dummy-counter": 22222
             },
             "links": {
                 "self": "\/countries\/2"
@@ -44,18 +46,6 @@
             },
             "links": {
                 "self": "\/countries\/3"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "4",
-            "attributes": {
-                "code": "VT",
-                "name": "Vatican",
-                "dummy-counter": 33333
-            },
-            "links": {
-                "self": "\/countries\/4"
             }
         }
     ]

@@ -6,18 +6,41 @@ use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 class FetchingCollectionsIntegrationTest extends JsonApiBaseTestCase
 {
     /**
-     * Test most basic `index` action
+     * PhpUnit Data Provider for testing (only) successful GET requests.
      *
-     * @return void
+     * @return array
      */
-    public function testGet()
+    public function getProvider()
     {
-        $this->get('/countries');
+        return [
+            #
+            # Test fetching a single-word collection.
+            #
+            'fetch-single-word-collection' => [
+                '/countries',
+                'get-countries-with-pagination.json'
+            ],
+        ];
+    }
 
-        $this->assertResponseOk();
-        $this->_assertJsonApiResponseHeaders();
+    /**
+     * @param string $url The endpoint to hit
+     * @param string $expectedResponseFile The file to find the expected jsonapi response in
+     * @return void
+     * @dataProvider getProvider
+     */
+    public function testGet($url, $expectedResponseFile)
+    {
+        $this->configRequest([
+            'headers' => [
+                'Accept' => 'application/vnd.api+json'
+            ]
+        ]);
+
+        # execute the GET request
+        $this->get($url);
         $this->assertResponseCode(200);
-        $this->assertResponseNotEmpty();
-        $this->assertResponseEquals($this->_getExpected('default_get_countries_with_pagination.json'));
+        $this->_assertJsonApiResponseHeaders();
+        $this->assertResponseEquals($this->_getExpected('FetchingCollections' . DS . $expectedResponseFile));
     }
 }
