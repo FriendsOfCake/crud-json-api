@@ -28,11 +28,11 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
             ],
             'sort single field ascending (default)' => [
                 '/countries?sort=name',
-                'sorting/sort_single_field_ascending.json',
+                'sort_single_field_ascending.json',
             ],
             'sort primary data by related resource (single field)' => [
                 '/countries?include=national_capital&sort=national_capital.name&limit=10',
-                'sorting/sort_primary_data_by_related_resource_single_field.json',
+                'sort_primary_data_by_related_resource_single_field.json',
             ],
             'unsorted with include' => [
                 '/currencies?include=countries',
@@ -40,29 +40,29 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
             ],
             'sorted with include' => [
                 '/countries?include=currency&sort=code',
-                'sorting/sorted_with_include.json',
+                'sorted_with_include.json',
             ],
             'sorted with include page 2' => [
                 '/countries?include=currency&sort=code&page=2',
-                'sorting/sorted_with_include_page_2.json',
+                'sorted_with_include_page_2.json',
             ],
             'sorted desc with include' => [
                 '/countries?include=currency&sort=-code',
-                'sorting/sorted_desc_with_include.json'
+                'sorted_desc_with_include.json'
             ],
             'multi fields sorting' => [
                 '/countries?include=currency&sort=dummy_counter,code',
-                'sorting/multi_fields_sorting.json'
+                'multi_fields_sorting.json'
             ],
             'multi fields sorting with direction' => [
                 '/countries?include=currency&sort=-dummy_counter,-code',
                 //'get_currencies_and_countries_sort_by_code_desc.json',
-                'sorting/multi_fields_sorting_with_direction.json'
+                'multi_fields_sorting_with_direction.json'
             ],
 
             'hasMany - index with multi fields sorting with direction' => [
                 '/currencies?include=countries&sort=code,-countries.code&limit=5',
-                'sorting/has_many_index_with_multi_fields_sorting_with_direction.json',
+                'has_many_index_with_multi_fields_sorting_with_direction.json',
             ],
 
             'view with multi fields sorting with direction' => [
@@ -114,7 +114,7 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedFile));
+        $this->assertResponseEquals($this->_getExpected('Sorting' . DS . $expectedFile));
     }
 
     /**
@@ -130,6 +130,6 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedFile));
+        $this->assertResponseEquals($this->_getExpected('Sorting' . DS . $expectedFile));
     }
 }
