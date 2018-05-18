@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class GetRequestResourceIntegrationTest extends JsonApiBaseTestCase
+class GetResourceRequestIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Test most basic `index` action
@@ -18,6 +18,6 @@ class GetRequestResourceIntegrationTest extends JsonApiBaseTestCase
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseCode(200);
         $this->assertResponseNotEmpty();
-        $this->assertResponseEquals($this->_getExpected('get_country_no_relationships.json'));
+        $this->assertResponseEquals($this->_getExpected('GetResourceRequests' . DS . 'got-single-word-resource.json'));
     }
 }
