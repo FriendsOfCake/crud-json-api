@@ -29,7 +29,7 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                         ]
                     ]
                 ],
-                'get-countries-with-pagination.json'
+                'post-country.json'
             ],
         ];
     }
@@ -56,6 +56,9 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(201); # http://jsonapi.org/format/#crud-creating-responses-201
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseNotEmpty();
-        #$this->assertResponseEquals($this->_getExpected('CreatingResources' . DS . 'post-country.json'));
+
+        # This should be the actual test replacing NotEmpty
+        # Also the response now comes with all includes by default, this is NOT the intended behavior
+        # $this->assertResponseEquals($this->_getExpected('CreatingResources' . DS . 'post-country.json'));
     }
 }
