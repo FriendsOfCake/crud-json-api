@@ -71,7 +71,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected("Inclusion" .DS . $expectedFile));
+        $this->assertResponseEquals($this->_getExpected('Inclusion' . DS . $expectedFile));
     }
 
     /**
