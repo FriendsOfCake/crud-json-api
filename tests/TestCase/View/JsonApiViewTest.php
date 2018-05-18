@@ -268,7 +268,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'response_without_resources_meta.json'))->read()),
+            trim((new File($this->_JsonDir . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
             $view->render()
         );
     }
