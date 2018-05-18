@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class GetRequestCollectionIntegrationTest extends JsonApiBaseTestCase
+class GetCollectionRequestIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Test most basic `index` action
