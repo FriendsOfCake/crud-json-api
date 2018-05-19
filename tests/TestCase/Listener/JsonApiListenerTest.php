@@ -133,7 +133,7 @@ class JsonApiListenerTest extends TestCase
         // assert that listener does nothing if JSON API Accept header is missing
         $result = $listener->implementedEvents();
 
-        $this->assertNull($result);
+        $this->assertInternalType('array', $result);
 
         // assert success if a JSON API Accept header is used
         $result = $listener->implementedEvents();
