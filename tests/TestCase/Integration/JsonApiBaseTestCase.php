@@ -103,7 +103,6 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      */
     protected function _getResponseWithEmptyDebugNode($responseBody)
     {
-
         $pattern = '/("debug".+)}/s';
         $replacement = "\"debug\": {}\n}";
         $result = preg_replace($pattern, $replacement, $responseBody);
