@@ -1,0 +1,86 @@
+{
+    "meta": {
+        "record_count": 5,
+        "page_count": 2,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=2&sort=code&include=currency",
+        "first": "\/countries?page=1&sort=code&include=currency",
+        "last": "\/countries?page=2&sort=code&include=currency",
+        "prev": "\/countries?page=1&sort=code&include=currency",
+        "next": null
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "5",
+            "attributes": {
+                "code": "US",
+                "name": "United States of America",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
+                    },
+                    "links": {
+                        "self": "\/currencies\/2"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/5"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "relationships": {
+                "currency": {
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    },
+                    "links": {
+                        "self": "\/currencies\/1"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/4"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "2",
+            "attributes": {
+                "code": "USD",
+                "name": "US Dollar"
+            },
+            "links": {
+                "self": "\/currencies\/2"
+            }
+        },
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR",
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        }
+    ]
+}
