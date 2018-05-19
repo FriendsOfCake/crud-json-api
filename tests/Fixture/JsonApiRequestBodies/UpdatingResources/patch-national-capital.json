@@ -1,0 +1,12 @@
+{
+    "data": {
+        "type": "national-capitals",
+        "id": "1",
+        "attributes": {
+            "name": "Patched Amsterdam"
+        },
+        "links": {
+            "self": "\/national-capitals\/1"
+        }
+    }
+}

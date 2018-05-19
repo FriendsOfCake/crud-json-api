@@ -18,7 +18,6 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
     public function patchProvider()
     {
         return [
-            #
             # Test updating a single-word resource.
             #
             # By leaving out the `dummy-counter` attribute we also assert the following JSON API criteria:
@@ -26,38 +25,18 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
             #  interpret the missing attributes as if they were included with their current values.
             #  The server MUST NOT interpret missing attributes as null values."
             #
-            'patch-single-word-resource-only' => [
-                '/countries/1',
-                [
-                    'data' => [
-                        'type' => 'countries',
-                        'id' => '1',
-                        'attributes' => [
-                            'code' => 'NL',
-                            'name' => 'Patched Netherlands'
-                        ]
-                    ]
-                ],
-                'PatchRequest/patch-single-word-resource.json',
+            'patch-single-word-resource' => [
+                '/countries/1', // URL
+                'patch-country.json', // Fixtures/JsonApiRequestBodies
+                'patch-country.json' // Fixtures/JsonApiResponseBodies
             ],
 
-            #
             # Test updating a multi-word resource.
-            #
             'patch-multi-word-resource' => [
                 '/national-capitals/1',
-                [
-                    'data' => [
-                        'type' => 'national-capitals',
-                        'id' => '1',
-                        'attributes' => [
-                            'name' => 'Patched Amsterdam'
-                        ]
-                    ]
-                ],
-                'PatchRequest/patch-multi-word-resource',
+                'patch-national-capital.json',
+                'patch-national-capital.json'
             ],
-
         ];
     }
 
@@ -68,22 +47,22 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
      * @return void
      * @dataProvider patchProvider
      */
-    public function testPatch($url, $body, $expectedResponseFile)
+    public function testPatch($url, $requestBodyFile, $expectedResponseFile)
     {
-        $this->markTestSkipped("Awaiting PATCH analysis");
+        #$this->markTestSkipped("Awaiting PATCH analysis");
 
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/vnd.api+json',
                 'Content-Type' => 'application/vnd.api+json'
             ],
-            'input' => json_encode($body)
+            'input' => $this->_getJsonApiRequestBody('UpdatingResources' . DS . $requestBodyFile)
         ]);
 
         # execute the PATCH request
         $this->patch($url);
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody($expectedResponseFile));
+        #$this->assertResponseEquals($this->_getExpectedResponseBody('UpdatingResources' . DS . $expectedResponseFile));
     }
 }
