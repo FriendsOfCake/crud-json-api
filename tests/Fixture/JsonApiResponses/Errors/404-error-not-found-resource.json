@@ -1,0 +1,9 @@
+{
+    "errors": [
+        {
+            "code": "404",
+            "title": "Not Found",
+            "detail": "A route matching \"\/countries\/666\" could not be found."
+        }
+    ]
+}
