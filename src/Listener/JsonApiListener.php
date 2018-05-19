@@ -67,7 +67,7 @@ class JsonApiListener extends ApiListener
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return mixed array or null
+     * @return array
      */
     public function implementedEvents()
     {
@@ -76,7 +76,7 @@ class JsonApiListener extends ApiListener
         // make sure the listener does absolutely nothing unless
         // the application/vnd.api+json Accept header is used.
         if (!$this->_checkRequestType('jsonapi')) {
-            return;
+            return [];
         }
 
         // accept body data posted with Content-Type `application/vnd.api+json`
