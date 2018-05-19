@@ -19,7 +19,7 @@ class JsonApiExceptionRendererTest extends TestCase
      *
      * @var
      */
-    protected $_JsonDir;
+    protected $_JsonApiResponseFixtures;
 
     /**
      * fixtures property
@@ -39,7 +39,7 @@ class JsonApiExceptionRendererTest extends TestCase
         Configure::write('debug', true);
 
         // set path to the JSON API response fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
+        $this->_JsonApiResponseFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -130,7 +130,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $result = $renderer->render();
 
         // assert expected exception is generated
-        $jsonApiFixture = new File($this->_JsonDir . DS . 'Errors' . DS . 'validation-error-multiple-reasons.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseFixtures . DS . 'Errors' . DS . 'validation-error-multiple-reasons.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
 
         $result = json_decode($result->getBody(), true);

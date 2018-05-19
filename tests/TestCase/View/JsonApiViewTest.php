@@ -41,7 +41,7 @@ class JsonApiViewTest extends TestCase
      *
      * @var
      */
-    protected $_JsonDir;
+    protected $_JsonApiResponseFixtures;
 
     /**
      * Loaded with JsonApiListener default config settings on every setUp()
@@ -78,7 +78,7 @@ class JsonApiViewTest extends TestCase
         $this->_defaultViewVars['_serialize'] = true;
 
         // set path the the JSON API response fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
+        $this->_JsonApiResponseFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -231,7 +231,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
+            trim((new File($this->_JsonApiResponseFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
             $view->render()
         );
 
@@ -242,7 +242,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
+            trim((new File($this->_JsonApiResponseFixtures . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
     }
@@ -268,7 +268,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
+            trim((new File($this->_JsonApiResponseFixtures . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
             $view->render()
         );
     }
@@ -387,7 +387,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
+            trim((new File($this->_JsonApiResponseFixtures . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
 

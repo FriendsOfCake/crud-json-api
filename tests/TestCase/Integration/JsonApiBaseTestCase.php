@@ -28,7 +28,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      *
      * @var
      */
-    protected $_JsonDir;
+    protected $_JsonApiResponseFixtures;
 
     /**
      * Set up required RESTful resource routes.
@@ -67,7 +67,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
         ]);
 
         // set path to the JSON API response fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
+        $this->_JsonApiResponseFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
     }
 
     /**
@@ -96,6 +96,6 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      */
     protected function _getExpected($file)
     {
-        return trim((new File($this->_JsonDir . DS . $file))->read());
+        return trim((new File($this->_JsonApiResponseFixtures . DS . $file))->read());
     }
 }
