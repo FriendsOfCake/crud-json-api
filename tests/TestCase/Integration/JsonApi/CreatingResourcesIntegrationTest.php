@@ -15,8 +15,8 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         return [
             'create-single-word-resource' => [
                 '/countries', // URL
-                'post-country.json', // Fixtures/JsonApiRequestBodies
-                'post-country.json' // Fixtures/JsonApiResponseBodies
+                'post-country-with-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies
+                'post-country-with-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies
             ],
         ];
     }
