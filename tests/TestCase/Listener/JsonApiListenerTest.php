@@ -25,7 +25,7 @@ class JsonApiListenerTest extends TestCase
      *
      * @var
      */
-    protected $_JsonApiResponseFixtures;
+    protected $_JsonApiResponseBodyFixtures;
 
     /**
      * fixtures property
@@ -48,7 +48,7 @@ class JsonApiListenerTest extends TestCase
         parent::setUp();
 
         // set path to the JSON API response fixtures
-        $this->_JsonApiResponseFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
     }
 
     /**
@@ -1287,7 +1287,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, no relationships)
-        $jsonApiFixture = new File($this->_JsonApiResponseFixtures . DS . 'CreatingResources' . DS . 'post-country.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1298,7 +1298,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, multiple relationships, hasMany ignored for now)
-        $jsonApiFixture = new File($this->_JsonApiResponseFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1317,7 +1317,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success for relationships with null/empty data
-        $jsonApiFixture = new File($this->_JsonApiResponseFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $jsonApiArray['data']['relationships']['cultures']['data'] = null;
         $jsonApiArray['data']['relationships']['currency']['data'] = null;

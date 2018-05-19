@@ -38,6 +38,6 @@ class FilteringIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected('Filtering' . DS . $expectedFile));
+        $this->assertResponseEquals($this->_getJsonApiResponseBody('Filtering' . DS . $expectedFile));
     }
 }

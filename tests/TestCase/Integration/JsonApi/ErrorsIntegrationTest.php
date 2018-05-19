@@ -13,7 +13,7 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->get('/countries/666');
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
-        #$this->assertResponseEquals($this->_getExpected('Errors' . DS . '404-error-not-found-resource.json'));
+        #$this->assertResponseEquals($this->_getJsonApiResponseBody('Errors' . DS . '404-error-not-found-resource.json'));
     }
 
     /**
@@ -24,6 +24,6 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->get('/nonexistents');
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
-        #$this->assertResponseEquals($this->_getExpected('Errors' . DS . '404-error-not-found-collection.json'));
+        #$this->assertResponseEquals($this->_getJsonApiResponseBody('Errors' . DS . '404-error-not-found-collection.json'));
     }
 }

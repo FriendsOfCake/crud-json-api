@@ -13,23 +13,10 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
     public function postProvider()
     {
         return [
-            #
-            # Test creating a single-word resource.
-            #
-            'post-single-word-collection' => [
-                '/countries',
-                [
-                    'data' => [
-                        'type' => 'countries',
-                        'attributes' => [
-                            'code' => 'NZ',
-                            'name' => 'New Zealand',
-                            'currency_id' => 1,
-                            'national_capital_id' => 3
-                        ]
-                    ]
-                ],
-                'post-country.json'
+            'create-single-word-resource' => [
+                '/countries', // URL
+                'post-country.json', // Fixtures/JsonApiRequestBodies
+                'post-country.json' // Fixtures/JsonApiResponseBodies
             ],
         ];
     }
@@ -41,14 +28,14 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
      * @return void
      * @dataProvider postProvider
      */
-    public function testPost($url, $body, $expectedResponseFile)
+    public function testPost($url, $requestBodyFile, $expectedResponseFile)
     {
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/vnd.api+json',
                 'Content-Type' => 'application/vnd.api+json'
             ],
-            'input' => json_encode($body)
+            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . $requestBodyFile)
         ]);
 
         # execute the PATCH request
@@ -59,6 +46,6 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
 
         # This should be the actual test replacing NotEmpty
         # Also the response now comes with all includes by default, this is NOT the intended behavior
-        # $this->assertResponseEquals($this->_getExpected('CreatingResources' . DS . 'post-country.json'));
+        #$this->assertResponseEquals($this->_getJsonApiResponseBody('CreatingResources' . DS . 'post-country.json'));
     }
 }

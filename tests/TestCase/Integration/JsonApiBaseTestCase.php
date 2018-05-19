@@ -11,6 +11,20 @@ use CrudJsonApi\Error\JsonApiExceptionRenderer;
 abstract class JsonApiBaseTestCase extends IntegrationTestCase
 {
     /**
+     * Path to directory holding the JSON API request body fixtures.
+     *
+     * @var
+     */
+    protected $_JsonApiRequestBodyFixtures;
+
+    /**
+     * Path to directory holding the JSON API resonse body fixtures.
+     *
+     * @var
+     */
+    protected $_JsonApiResponseBodyFixtures;
+
+    /**
      * fixtures property
      *
      * @var array
@@ -22,13 +36,6 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
         'plugin.CrudJsonApi.national_capitals',
         'plugin.CrudJsonApi.national_cities',
     ];
-
-    /**
-     * Path to directory holding the JSON API response fixtures.
-     *
-     * @var
-     */
-    protected $_JsonApiResponseFixtures;
 
     /**
      * Set up required RESTful resource routes.
@@ -66,8 +73,9 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
             ]
         ]);
 
-        // set path to the JSON API response fixtures
-        $this->_JsonApiResponseFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponses';
+        // set path to the JSON API fixtures
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiRequestBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiRequestBodies';
     }
 
     /**
@@ -90,12 +98,24 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
     }
 
     /**
-     * Helper function to load a json file for use as `expected` in the assertions.
+     * Helper function to load `JsonApiRequestBodies` fixture from file for use as `ConfigRequest.input` in the assertions.
      *
      * return @void
      */
-    protected function _getExpected($file)
+    protected function _getJsonApiRequestBody($file)
     {
-        return trim((new File($this->_JsonApiResponseFixtures . DS . $file))->read());
+        $file = $this->_JsonApiRequestBodyFixtures . DS . $file;
+
+        return trim((new File($file))->read());
+    }
+
+    /**
+     * Helper function to load 'JsonApiResponseBodies` fixture from file for use as `expected` in the assertions.
+     *
+     * return @void
+     */
+    protected function _getJsonApiResponseBody($file)
+    {
+        return trim((new File($this->_JsonApiResponseBodyFixtures . DS . $file))->read());
     }
 }

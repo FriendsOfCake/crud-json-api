@@ -84,6 +84,6 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
         $this->patch($url);
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedResponseFile));
+        $this->assertResponseEquals($this->_getJsonApiResponseBody($expectedResponseFile));
     }
 }
