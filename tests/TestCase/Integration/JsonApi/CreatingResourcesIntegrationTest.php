@@ -46,6 +46,6 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
 
         # This should be the actual test replacing NotEmpty
         # Also the response now comes with all includes by default, this is NOT the intended behavior
-        #$this->assertResponseEquals($this->_getJsonApiResponseBody('CreatingResources' . DS . 'post-country.json'));
+        #$this->assertResponseEquals($this->_getExpectedResponseBody('CreatingResources' . DS . 'post-country.json'));
     }
 }

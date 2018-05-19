@@ -1,0 +1,9 @@
+{
+    "errors": [
+        {
+            "code": "404",
+            "title": "Not Found"
+        }
+    ],
+    "debug": {}
+}

@@ -114,7 +114,7 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getJsonApiResponseBody('Sorting' . DS . $expectedFile));
+        $this->assertResponseEquals($this->_getExpectedResponseBody('Sorting' . DS . $expectedFile));
     }
 
     /**
@@ -130,6 +130,6 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getJsonApiResponseBody('Sorting' . DS . $expectedFile));
+        $this->assertResponseEquals($this->_getExpectedResponseBody('Sorting' . DS . $expectedFile));
     }
 }

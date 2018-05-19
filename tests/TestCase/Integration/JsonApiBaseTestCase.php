@@ -98,6 +98,20 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
     }
 
     /**
+     * Helper function to remove content from the `debug` node in JSON API responses
+     *
+     */
+    protected function _getResponseWithEmptyDebugNode($responseBody)
+    {
+
+        $pattern = '/("debug".+)}/s';
+        $replacement = "\"debug\": {}\n}";
+        $result = preg_replace($pattern, $replacement, $responseBody);
+
+        return $result;
+    }
+
+    /**
      * Helper function to load `JsonApiRequestBodies` fixture from file for use as `ConfigRequest.input` in the assertions.
      *
      * return @void
@@ -114,7 +128,7 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      *
      * return @void
      */
-    protected function _getJsonApiResponseBody($file)
+    protected function _getExpectedResponseBody($file)
     {
         return trim((new File($this->_JsonApiResponseBodyFixtures . DS . $file))->read());
     }
