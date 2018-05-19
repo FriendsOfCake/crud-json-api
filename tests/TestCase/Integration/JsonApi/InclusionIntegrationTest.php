@@ -16,45 +16,45 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
             // assert single-word associations
             'include currency belongsTo plural' => [
                 '/countries/1?include=currencies',
-                'get_country_include_currency.json'
+                'get-country-include-currency.json'
             ],
             'include currency belongsTo singular' => [
                 '/countries/1?include=currency',
-                'get_country_include_currency.json'
+                'get-country-include-currency.json'
             ],
             'include culture hasMany' => [
                 '/countries/1?include=cultures',
-                'get_country_include_culture.json'
+                'get-country-include-culture.json'
             ],
             'include currency and culture' => [
                 '/countries/1?include=currencies,cultures',
-                'get_country_include_currency_and_culture.json'
+                'get-country-include-currency-and-culture.json'
             ],
             'include currency and deep countries' => [
                 '/countries/1?include=currencies.countries',
-                'get_country_include_currency_and_countries.json'
+                'get-country-include-currency-and-countries.json'
             ],
             // assert multi-word associations
             'include national-capital belongsTo singular' => [
                 '/countries/1?include=national-capital',
-                'get_country_include_national-capital.json'
+                'get-country-include-national-capital.json'
             ],
             'include national-capital belongsTo plural' => [
                 '/countries/1?include=national-capitals',
-                'get_country_include_national-capital.json'
+                'get-country-include-national-capital.json'
             ],
             'include national-cities hasMany' => [
                 '/countries/1?include=national-cities',
-                'get_country_include_national-cities.json'
+                'get-country-include-national-cities.json'
             ],
             // assert all of the above in a single request
             'include all supported associations (singular belongsTo)' => [
                 '/countries/1?include=currency,cultures,national-capital,national-cities',
-                'get_country_include_all_supported_associations.json'
+                'get-country-include-all-supported-associations.json'
             ],
             'include all supported associations (plural belongsTo)' => [
                 '/countries/1?include=currencies,cultures,national-capitals,national-cities',
-                'get_country_include_all_supported_associations.json'
+                'get-country-include-all-supported-associations.json'
             ],
         ];
     }
@@ -89,7 +89,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
         $this->get('/countries/1');
 
         $this->assertResponseSuccess();
-        $this->assertResponseEquals($this->_getExpected('Inclusion' . DS . 'get_country_include_currency_and_culture.json'));
+        $this->assertResponseEquals($this->_getExpected('Inclusion' . DS . 'get-country-include-currency-and-culture.json'));
         EventManager::instance()->off('Crud.beforeFind');
     }
 
