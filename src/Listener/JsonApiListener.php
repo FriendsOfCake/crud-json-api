@@ -67,7 +67,7 @@ class JsonApiListener extends ApiListener
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return mixed array or void
+     * @return mixed array or null
      */
     public function implementedEvents()
     {
