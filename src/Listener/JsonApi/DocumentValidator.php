@@ -596,7 +596,7 @@ class DocumentValidator extends stdClass
      * Helper method that displays aboutLink only if enabled in Listener config.
      *
      * @param string $url URL
-     * @return \Neomerx\JsonApi\Document\Link
+     * @return \Neomerx\JsonApi\Document\Link|null
      */
     protected function _getAboutLink($url)
     {

@@ -99,7 +99,7 @@ class JsonApiView extends View
     protected function _encodeWithoutSchemas()
     {
         if (empty($this->viewVars['_meta'])) {
-            return;
+            return null;
         }
 
         $encoder = Encoder::instance(

@@ -222,12 +222,12 @@ class JsonApiListener extends ApiListener
     /**
      * Takes a "include" string and converts it into a correct CakePHP ORM association alias
      *
-     * @param string $includes The relationships to include
+     * @param array $includes The relationships to include
      * @param array|bool $blacklist Blacklisted includes
      * @param array|bool $whitelist Whitelisted options
      * @param \Cake\ORM\Table|null $repository The repository
      * @param array $path Include path
-     * @return string
+     * @return array
      * @throws \Cake\Http\Exception\BadRequestException
      */
     protected function _parseIncludes($includes, $blacklist, $whitelist, Table $repository = null, $path = [])
@@ -236,6 +236,7 @@ class JsonApiListener extends ApiListener
         $wildcardWhitelist = Hash::get((array)$whitelist, $wildcard);
         $wildcardBlacklist = Hash::get((array)$blacklist, $wildcard);
         $contains = [];
+
         foreach ($includes as $include => $nestedIncludes) {
             $nestedContains = [];
             $includePath = array_merge($path, [$include]);
@@ -740,7 +741,7 @@ class JsonApiListener extends ApiListener
      *
      * @param \Cake\Datasource\RepositoryInterface $repository Repository
      * @param array $contains Array of contained associations
-     * @return \Cake\ORM\AssociationCollection
+     * @return array Array with \Cake\ORM\AssociationCollection
      */
     protected function _getContainedAssociations($repository, $contains)
     {
