@@ -350,7 +350,10 @@ class JsonApiView extends View
             foreach ($this->viewVars['_jsonOptions'] as $jsonOption) {
                 $jsonOptions = $jsonOptions | $jsonOption;
             }
-            $jsonOptions = $jsonOptions | $jsonOption;
+
+            if (isset($jsonOption)) {
+                $jsonOptions = $jsonOptions | $jsonOption;
+            }
         }
 
         if (Configure::read('debug') === false) {
