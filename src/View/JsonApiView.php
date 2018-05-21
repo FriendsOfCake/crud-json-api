@@ -306,7 +306,7 @@ class JsonApiView extends View
     /**
      * Returns data to be serialized.
      *
-     * @param array|string|bool $serialize The name(s) of the view variable(s) that
+     * @param array|string|bool|object $serialize The name(s) of the view variable(s) that
      *   need(s) to be serialized. If true all available view variables will be used.
      * @return mixed The data to serialize.
      */

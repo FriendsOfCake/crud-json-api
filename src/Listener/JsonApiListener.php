@@ -321,15 +321,16 @@ class JsonApiListener extends ApiListener
     /**
      * Parses out fields query parameter and apply it to the query
      *
-     * @param string|array $fieldSets The query data
+     * @param string|array|null $fieldSets The query data
      * @param \Crud\Event\Subject $subject The subject
      * @param array $options Array of options for includes.
      * @return void
      */
     protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
     {
+        // could be null for e.g. using integration tests
         if ($fieldSets === null) {
-            return;
+             return;
         }
 
         // format $fieldSets to array acceptable by listener config()
@@ -746,9 +747,9 @@ class JsonApiListener extends ApiListener
     protected function _getContainedAssociations($repository, $contains)
     {
         $associationCollection = $repository->associations();
-
         $associations = [];
-        foreach ((array)$contains as $contain => $nestedContains) {
+
+        foreach ($contains as $contain => $nestedContains) {
             if (is_string($nestedContains)) {
                 $contain = $nestedContains;
                 $nestedContains = [];
