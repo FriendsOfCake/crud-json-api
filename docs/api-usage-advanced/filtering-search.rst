@@ -1,13 +1,13 @@
-Filtering/Search
-================
+Filtering
+=========
 
 `JSON API Filtering <http://jsonapi.org/format/#fetching-filtering>`_
-requires:
+allow searching your API and requires:
 
 1. Composer installing `friendsofcake/search`
 2. Configuring the ``Crud SearchListener`` as `described here <http://crud.readthedocs.io/en/latest/listeners/search.html>`_
 
-Now simply create search aliases named ``filter`` in your tables like shown below:
+Now create search aliases named ``filter`` in your tables like shown below:
 
 .. code-block:: phpinline
 

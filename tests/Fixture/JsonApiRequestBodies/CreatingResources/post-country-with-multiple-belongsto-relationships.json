@@ -1,0 +1,24 @@
+{
+    "data": {
+        "type": "countries",
+        "attributes": {
+            "code": "NZ",
+            "name": "New Zealand",
+            "dummy-counter": 66666
+        },
+        "relationships": {
+            "currency": {
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
+                }
+            },
+            "national-capital": {
+                "data": {
+                    "type": "national-capitals",
+                    "id": "2"
+                }
+            }
+        }
+    }
+}

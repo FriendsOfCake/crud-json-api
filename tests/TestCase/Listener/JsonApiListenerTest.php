@@ -20,6 +20,12 @@ use Crud\TestSuite\TestCase;
  */
 class JsonApiListenerTest extends TestCase
 {
+    /**
+     * Path to directory holding the JSON API response fixtures
+     *
+     * @var
+     */
+    protected $_JsonApiResponseBodyFixtures;
 
     /**
      * fixtures property
@@ -33,6 +39,17 @@ class JsonApiListenerTest extends TestCase
         'plugin.CrudJsonApi.national_capitals',
         'plugin.CrudJsonApi.national_cities',
     ];
+
+    /**
+     * setUp().
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        // set path to the JSON API response fixtures
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+    }
 
     /**
      * Make sure we are testing with expected default configuration values.
@@ -116,7 +133,7 @@ class JsonApiListenerTest extends TestCase
         // assert that listener does nothing if JSON API Accept header is missing
         $result = $listener->implementedEvents();
 
-        $this->assertNull($result);
+        $this->assertInternalType('array', $result);
 
         // assert success if a JSON API Accept header is used
         $result = $listener->implementedEvents();
@@ -1270,7 +1287,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, no relationships)
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_no_relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1281,7 +1298,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, multiple relationships, hasMany ignored for now)
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_multiple_relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1300,7 +1317,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success for relationships with null/empty data
-        $jsonApiFixture = new File(Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS . 'post_country_multiple_relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $jsonApiArray['data']['relationships']['cultures']['data'] = null;
         $jsonApiArray['data']['relationships']['currency']['data'] = null;

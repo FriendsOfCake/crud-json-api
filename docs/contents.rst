@@ -14,30 +14,40 @@ Contents
     Installation <preface/installation>
     Setup <preface/setup>
 
-.. _usage-docs:
+.. _listener-configuration-docs:
 
 .. toctree::
    :maxdepth: 3
-   :caption: Usage
+   :caption: Listener Configuration
 
-    Fetching Data <usage/fetching-data>
-    Posting Data <usage/posting-data>
-    Deleting Data <usage/deleting-data>
-    Errors and Exceptions <usage/errors-exceptions>
+    Listener Options<listener-configuration/listener-options>
+    Debugging <listener-configuration/debugging>
+    Pagination <listener-configuration/pagination>
+    Schemas <listener-configuration/schemas>
 
-.. _configuration-docs:
+.. _api-usage-docs:
 
 .. toctree::
    :maxdepth: 3
-   :caption: Configuration
+   :caption: API Usage
 
-    Listener Options<configuration/listener-options>
-    Pagination <configuration/pagination>
-    Query Logs <configuration/query-logs>
-    Filtering/Search<configuration/filtering-search>
-    Sparse Fieldsets<configuration/sparse-fieldsets>
-    Sorting<configuration/sorting>
-    Schemas <configuration/schemas>
+    Fetching Collections <api-usage/fetching-collections>
+    Fetching Resources <api-usage/fetching-resources>
+    Creating Resources <api-usage/creating-resources>
+    Updating Resources <api-usage/updating-resources>
+    Deleting Resources <api-usage/deleting-resources>
+    Errors and Exceptions <api-usage/errors-exceptions>
+
+.. _api-usage-advanced-docs:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Advanced API Usage
+
+    Inclusion<advanced-usage/inclusion>
+    Sparse Fieldsets<advanced-usage/sparse-fieldsets>
+    Sorting<advanced-usage/sorting>
+    Filtering<advanced-usage/filtering>
 
 .. _additional-information-docs:
 
@@ -45,4 +55,5 @@ Contents
    :maxdepth: 3
    :caption: Additional Information
 
-    Missing Functionality <additional-information/missing-functionality>
+    Fixtures <additional-information/fixtures>
+    Contributing <additional-information/contributing>

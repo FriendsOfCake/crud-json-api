@@ -76,7 +76,7 @@ class JsonApiListener extends ApiListener
         // make sure the listener does absolutely nothing unless
         // the application/vnd.api+json Accept header is used.
         if (!$this->_checkRequestType('jsonapi')) {
-            return;
+            return [];
         }
 
         // accept body data posted with Content-Type `application/vnd.api+json`
@@ -152,6 +152,7 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
+        // created resource MUST respond with HTTP Status Code 201
         if ($event->getSubject()->created) {
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
@@ -919,7 +920,7 @@ class JsonApiListener extends ApiListener
         if (array_key_exists('attributes', $document['data'])) {
             $result = array_merge_recursive($result, $document['data']['attributes']);
 
-            // dasherize attribute keys if need be
+            // dasherize all attribute keys directly below the primary resource if need be
             if ($this->getConfig('inflect') === 'dasherize') {
                 foreach ($result as $key => $value) {
                     $underscoredKey = Inflector::underscore($key);
@@ -932,11 +933,32 @@ class JsonApiListener extends ApiListener
             }
         }
 
+        // no further action if there are no relationships
         if (!array_key_exists('relationships', $document['data'])) {
             return $result;
         }
 
+        // translate relationships into CakePHP array format
         foreach ($document['data']['relationships'] as $key => $details) {
+            if ($this->getConfig('inflect') === 'dasherize') {
+                $key = Inflector::underscore($key); // e.g. currency, national-capitals
+            }
+
+            // allow empty/null data node as per the JSON API specification
+            if (empty($details['data'])) {
+                continue;
+            }
+
+            // handle belongsTo relationships
+            if (!isset($details['data'][0])) {
+                $belongsToForeignKey = $key . '_id';
+                $belongsToId = $details['data']['id'];
+                $result[$belongsToForeignKey] = $belongsToId;
+
+                continue;
+            }
+
+            // handle hasMany relationships
             if (isset($details['data'][0])) {
                 $relationResults = [];
                 foreach ($details['data'] as $relationData) {
@@ -964,19 +986,7 @@ class JsonApiListener extends ApiListener
                 }
 
                 $result[$key] = $relationResults;
-
-                continue;
             }
-
-            // allow empty/null data node as per the JSON API specification
-            if (empty($details['data'])) {
-                continue;
-            }
-
-            // convert belongsTo to CakePHP `foreign_id` format
-            $foreignKey = Inflector::singularize($details['data']['type']) . '_id';
-            $foreignId = $details['data']['id'];
-            $result[$foreignKey] = $foreignId;
         }
 
         return $result;

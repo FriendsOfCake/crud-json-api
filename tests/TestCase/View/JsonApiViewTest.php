@@ -37,11 +37,11 @@ class JsonApiViewTest extends TestCase
     ];
 
     /**
-     * Path to directory holding json fixtures with trailing slash
+     * Path to directory holding the JSON API response fixtures.
      *
      * @var
      */
-    protected $_JsonDir;
+    protected $_JsonApiResponseBodyFixtures;
 
     /**
      * Loaded with JsonApiListener default config settings on every setUp()
@@ -77,8 +77,8 @@ class JsonApiViewTest extends TestCase
         $this->_defaultViewVars['_jsonOptions'] = [JSON_PRETTY_PRINT];
         $this->_defaultViewVars['_serialize'] = true;
 
-        // store path the the json fixtures
-        $this->_JsonDir = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApi' . DS;
+        // set path the the JSON API response fixtures
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
     }
 
     /**
@@ -231,7 +231,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_countries_no_relationships.json'))->read()),
+            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
             $view->render()
         );
 
@@ -242,7 +242,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_country_no_relationships.json'))->read()),
+            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
     }
@@ -268,7 +268,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'response_without_resources_meta.json'))->read()),
+            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
             $view->render()
         );
     }
@@ -387,7 +387,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            trim((new File($this->_JsonDir . 'get_country_no_relationships.json'))->read()),
+            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country.json'))->read()),
             $view->render()
         );
 

@@ -3,7 +3,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class SelfReferencedAssocIntegrationTest extends JsonApiBaseTestCase
+class SelfReferencedAssociationIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * @return array
@@ -34,6 +34,6 @@ class SelfReferencedAssocIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedFile));
+        $this->assertResponseEquals($this->_getExpectedResponseBody($expectedFile));
     }
 }

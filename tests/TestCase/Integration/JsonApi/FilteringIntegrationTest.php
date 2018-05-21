@@ -5,23 +5,23 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class SearchIntegrationTest extends JsonApiBaseTestCase
+class FilteringIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * @return array
      */
-    public function viewProvider()
+    public function filterProvider()
     {
         return [
             // assert single-field searches (case sensitive for now or
             //  Postgres CI tests will fail)
             'single field full search-key' => [
                 '/countries?filter=Netherlands',
-                'search_single_field.json',
+                'filter-single-field.json',
             ],
             'single field partial search-key' => [
                 '/countries?filter=Nether',
-                'search_single_field_partial.json',
+                'filter-single-field-partial.json',
             ]
         ];
     }
@@ -30,14 +30,14 @@ class SearchIntegrationTest extends JsonApiBaseTestCase
      * @param string $url The endpoint to hit
      * @param string $expectedFile The file to find the expected result in
      * @return void
-     * @dataProvider viewProvider
+     * @dataProvider filterProvider
      */
-    public function testView($url, $expectedFile)
+    public function testFilter($url, $expectedFile)
     {
         $this->get($url);
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpected($expectedFile));
+        $this->assertResponseEquals($this->_getExpectedResponseBody('Filtering' . DS . $expectedFile));
     }
 }

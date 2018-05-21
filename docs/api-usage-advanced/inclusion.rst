@@ -1,74 +1,5 @@
-Fetching Data
-=============
-
-HTTP GET (index)
-^^^^^^^^^^^^^^^^
-
-Requests to the ``index`` action **must** use:
-
-- the ``HTTP GET`` request type
-- an ``Accept`` header  set to ``application/vnd.api+json``
-
-A successful request will respond with HTTP response code ``200``
-and response body similar to this output produced by
-``http://example.com/countries``:
-
-.. code-block:: json
-
-  {
-    "data": [
-      {
-        "type": "countries",
-        "id": "1",
-        "attributes": {
-          "code": "NL",
-          "name": "The Netherlands"
-        },
-        "links": {
-          "self": "/countries/1"
-        }
-      },
-      {
-        "type": "countries",
-        "id": "2",
-        "attributes": {
-          "code": "BE",
-          "name": "Belgium"
-        },
-        "links": {
-          "self": "/countries/2"
-        }
-      }
-    ]
-  }
-
-HTTP GET (view)
-^^^^^^^^^^^^^^^
-
-Requests to the ``view`` action **must** use:
-
-- the ``HTTP GET`` request type
-- an ``Accept`` header  set to ``application/vnd.api+json``
-
-A successful request will respond with HTTP response code ``200``
-and response body similar to this output produced by
-````http://example.com/countries/1``:
-
-.. code-block:: json
-
-  {
-    "data": {
-      "type": "countries",
-      "id": "1",
-      "attributes": {
-        "code": "NL",
-        "name": "The Netherlands"
-      },
-      "links": {
-        "self": "/countries/1"
-      }
-    }
-  }
+Inclusion
+=========
 
 Associated Data
 ^^^^^^^^^^^^^^^
@@ -178,11 +109,19 @@ following JSON API response including all associated data:
 Include Parameter
 ^^^^^^^^^^^^^^^^^
 
-The listener also supports the ``include`` parameter to allow clients to
-customize related resources. Using that same example as above, the client
-might request ``/countries/2?include=cultures,currencies`` to achieve the
-same response. If the include parameter is provided, then only requested
-relationships will be included in the ``included`` schema.
+Crud-json-api fully supports the JSON API ``include`` request parameter which allows a client
+to specify which related/associated resources should be returned.
+
+As an example, a client could produce the exact same JSON API response as shown above by using
+``/countries/2?include=cultures,currencies``.
+
+.. note::
+
+If the ``include`` parameter is provided, then only the requested relationships will be included
+in the ``included`` schema.
+
+Whitelist/blacklist
+^^^^^^^^^^^^^^^^^^^
 
 It is possible to blacklist, or whitelist what the client is allowed to include.
 This is done using the listener configuration:
