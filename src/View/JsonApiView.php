@@ -94,7 +94,7 @@ class JsonApiView extends View
     /**
      * Generates a JSON API string without resource(s).
      *
-     * @return void|string
+     * @return null|string
      */
     protected function _encodeWithoutSchemas()
     {
