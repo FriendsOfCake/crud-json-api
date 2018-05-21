@@ -12,7 +12,6 @@ parameters:
         - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getPrimaryKey\(\)#'
         - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getRegistryAlias\(\)#'
         - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::hasAssociation\(\)#'
-        - '#Call to an undefined method Cake\\ORM\\Association::getAlias\(\)#'
 
         # Crud properties
         - '#Access to an undefined property object::\$created#'

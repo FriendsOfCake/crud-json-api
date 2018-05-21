@@ -268,9 +268,13 @@ class JsonApiListener extends ApiListener
             }
 
             if (!empty($nestedContains)) {
-                $contains[$association->getAlias()] = $nestedContains;
+                if (!empty($association)) {
+                    $contains[$association->getAlias()] = $nestedContains;
+                }
             } else {
-                $contains[] = $association->getAlias();
+                if (!empty($association)) {
+                    $contains[] = $association->getAlias();
+                }
             }
         }
 
