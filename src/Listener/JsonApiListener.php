@@ -677,7 +677,7 @@ class JsonApiListener extends ApiListener
      * Deduplicate resultset from rows that might have come from joins
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return ORM\ResultSet
+     * @return \Cake\ORM\ResultSet
      */
     protected function _deduplicateResultSet($subject)
     {
@@ -691,7 +691,10 @@ class JsonApiListener extends ApiListener
                 $ids[] = $id;
             }
         }
-        $resultSet->unserialize(serialize($entities));
+
+        if (isset($entities)) {
+            $resultSet->unserialize(serialize($entities));
+        }
 
         return $resultSet;
     }
@@ -818,7 +821,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new \InvalidArgumentException("Association {$name} does not have an association object set");
+                throw new \InvalidArgumentException("Association does not have an association object set");
             }
 
             $associationRepository = $association['association']->getTarget();
