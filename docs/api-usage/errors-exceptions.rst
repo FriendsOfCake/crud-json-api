@@ -52,5 +52,4 @@ Invalid Request Data
 
 Please be aware that the listener will also respond with (422) validation errors
 if request data is posted in a structure that does not comply with the
-JSON API specification. See :doc:`Posting Data </usage/posting-data>`
-for more information.
+JSON API specification.
