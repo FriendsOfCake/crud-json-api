@@ -11,7 +11,7 @@ use Crud\Error\Exception\ValidationException;
 use Neomerx\JsonApi\Document\Error;
 use Neomerx\JsonApi\Document\Link;
 use Neomerx\JsonApi\Exceptions\ErrorCollection;
-use StdClass;
+use stdClass;
 
 /**
  * Validates incoming JSON API documents against the specifications for
@@ -20,7 +20,7 @@ use StdClass;
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  */
-class DocumentValidator extends BaseObject
+class DocumentValidator extends stdClass
 {
     /**
      * RequestHandler decoded JSON API document array.
@@ -561,8 +561,8 @@ class DocumentValidator extends BaseObject
      * Helper method to create an object with consistent path strings from
      * given dot separated path.
      *
-     * @param string|stdClass $path Dot separated path or StdClass $path object
-     * @return \StdClass
+     * @param string|stdClass $path Dot separated path or stdClass $path object
+     * @return \stdClass
      */
     protected function _getPathObject($path)
     {
@@ -572,7 +572,7 @@ class DocumentValidator extends BaseObject
         }
 
         // create path object from given string
-        $obj = new StdClass();
+        $obj = new stdClass();
         $obj->dotted = $path;
 
         $parts = explode('.', $path);
