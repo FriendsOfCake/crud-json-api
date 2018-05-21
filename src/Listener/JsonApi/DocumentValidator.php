@@ -105,7 +105,7 @@ class DocumentValidator extends stdClass
      * http://jsonapi.org/examples/#error-objects-source-usage.
      *
      * @throws \Crud\Error\Exception\ValidationException
-     * @return @bool
+     * @return bool
      */
     protected function _documentMustHavePrimaryData()
     {
