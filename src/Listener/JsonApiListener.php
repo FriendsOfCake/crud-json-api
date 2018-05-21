@@ -159,7 +159,9 @@ class JsonApiListener extends ApiListener
 
         $this->_insertBelongsToDataIntoEventFindResult($event);
 
-        $this->render($event->getSubject());
+        /** @var \Crud\Event\Subject $subject */
+        $subject = $event->getSubject();
+        $this->render($subject);
     }
 
     /**
