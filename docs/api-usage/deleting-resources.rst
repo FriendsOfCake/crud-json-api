@@ -1,10 +1,7 @@
-Deleting Data
-=============
+Deleting Resources
+==================
 
-HTTP DELETE (delete)
-^^^^^^^^^^^^^^^^^^^^
-
-All requests to the ``delete`` action **must** use:
+Deleting an existing JSON API Resource is done by calling the ``delete`` action of your API with:
 
 - the ``HTTP DELETE`` request type
 - an ``Accept`` header  set to ``application/vnd.api+json``
