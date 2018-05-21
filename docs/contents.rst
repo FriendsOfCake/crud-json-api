@@ -44,10 +44,10 @@ Contents
    :maxdepth: 3
    :caption: Advanced API Usage
 
-    Inclusion<advanced-usage/inclusion>
-    Sparse Fieldsets<advanced-usage/sparse-fieldsets>
-    Sorting<advanced-usage/sorting>
-    Filtering<advanced-usage/filtering>
+    Inclusion<api-usage-advanced/inclusion>
+    Sparse Fieldsets<api-usage-advanced/sparse-fieldsets>
+    Sorting<api-usage-advanced/sorting>
+    Filtering<api-usage-advanced/filtering>
 
 .. _additional-information-docs:
 
