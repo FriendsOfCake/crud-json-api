@@ -55,4 +55,5 @@ Contents
    :maxdepth: 3
    :caption: Additional Information
 
+    Fixtures <additional-information/fixtures>
     Contributing <additional-information/contributing>
