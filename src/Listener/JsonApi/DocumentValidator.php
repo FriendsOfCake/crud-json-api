@@ -301,7 +301,7 @@ class DocumentValidator extends stdClass
     /**
      * Ensures a relationship object has a 'data' member.
      *
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipMustHaveData($path)
@@ -328,7 +328,7 @@ class DocumentValidator extends stdClass
      * Checks if relationship object has 'data' member set to null which is
      * allowed by the JSON API spec.
      *
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataIsNull($path)
@@ -346,7 +346,7 @@ class DocumentValidator extends stdClass
      * Ensures a relationship data has a 'type' member.
      *
      * @param string $relationship Singular or plural relationship name
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataMustHaveType($relationship, $path)
@@ -402,7 +402,7 @@ class DocumentValidator extends stdClass
      * Ensures relationship data has an 'id' member.
      *
      * @param string $relationship Singular or plural relationship name
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataMustHaveId($relationship, $path)
@@ -505,7 +505,7 @@ class DocumentValidator extends stdClass
      * Checks if document contains a given property (even when value
      * is `false` or `null`).
      *
-     * @param string $path Dot separated path of the property
+     * @param string|stdClass $path Dot separated path of the property or a path object
      * @return mixed|bool
      */
     protected function _hasProperty($path)
@@ -531,7 +531,7 @@ class DocumentValidator extends stdClass
     /**
      * Returns the value for a given document property.
      *
-     * @param string $path Dot separated path of the property
+     * @param string|stdClass $path Dot separated path of the property or path object
      * @throws \Crud\Error\Exception\CrudException
      * @return mixed
      */

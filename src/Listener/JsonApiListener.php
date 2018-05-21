@@ -840,7 +840,7 @@ class JsonApiListener extends ApiListener
      * `included` node in the json response UNLESS user has specified listener
      * config option 'include'.
      *
-     * @param \Cake\ORM\AssociationCollection $associations AssociationCollection
+     * @param array $associations Array with \Cake\ORM\AssociationCollection(s)
      * @param bool $last What does this do?
      * @return array
      * @throws \InvalidArgumentException
