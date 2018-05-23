@@ -11,7 +11,7 @@ use Crud\Error\Exception\ValidationException;
 use Neomerx\JsonApi\Document\Error;
 use Neomerx\JsonApi\Document\Link;
 use Neomerx\JsonApi\Exceptions\ErrorCollection;
-use StdClass;
+use stdClass;
 
 /**
  * Validates incoming JSON API documents against the specifications for
@@ -20,7 +20,7 @@ use StdClass;
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  */
-class DocumentValidator extends BaseObject
+class DocumentValidator extends stdClass
 {
     /**
      * RequestHandler decoded JSON API document array.
@@ -105,7 +105,7 @@ class DocumentValidator extends BaseObject
      * http://jsonapi.org/examples/#error-objects-source-usage.
      *
      * @throws \Crud\Error\Exception\ValidationException
-     * @return @bool
+     * @return bool
      */
     protected function _documentMustHavePrimaryData()
     {
@@ -301,7 +301,7 @@ class DocumentValidator extends BaseObject
     /**
      * Ensures a relationship object has a 'data' member.
      *
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipMustHaveData($path)
@@ -328,7 +328,7 @@ class DocumentValidator extends BaseObject
      * Checks if relationship object has 'data' member set to null which is
      * allowed by the JSON API spec.
      *
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataIsNull($path)
@@ -346,7 +346,7 @@ class DocumentValidator extends BaseObject
      * Ensures a relationship data has a 'type' member.
      *
      * @param string $relationship Singular or plural relationship name
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataMustHaveType($relationship, $path)
@@ -402,7 +402,7 @@ class DocumentValidator extends BaseObject
      * Ensures relationship data has an 'id' member.
      *
      * @param string $relationship Singular or plural relationship name
-     * @param string $path Dot separated path of relationship object
+     * @param string|stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
     protected function _relationshipDataMustHaveId($relationship, $path)
@@ -505,7 +505,7 @@ class DocumentValidator extends BaseObject
      * Checks if document contains a given property (even when value
      * is `false` or `null`).
      *
-     * @param string $path Dot separated path of the property
+     * @param string|stdClass $path Dot separated path of the property or a path object
      * @return mixed|bool
      */
     protected function _hasProperty($path)
@@ -531,7 +531,7 @@ class DocumentValidator extends BaseObject
     /**
      * Returns the value for a given document property.
      *
-     * @param string $path Dot separated path of the property
+     * @param string|stdClass $path Dot separated path of the property or path object
      * @throws \Crud\Error\Exception\CrudException
      * @return mixed
      */
@@ -561,8 +561,8 @@ class DocumentValidator extends BaseObject
      * Helper method to create an object with consistent path strings from
      * given dot separated path.
      *
-     * @param string|stdClass $path Dot separated path or StdClass $path object
-     * @return \StdClass
+     * @param string|stdClass $path Dot separated path or stdClass $path object
+     * @return \stdClass
      */
     protected function _getPathObject($path)
     {
@@ -572,7 +572,7 @@ class DocumentValidator extends BaseObject
         }
 
         // create path object from given string
-        $obj = new StdClass();
+        $obj = new stdClass();
         $obj->dotted = $path;
 
         $parts = explode('.', $path);
@@ -596,7 +596,7 @@ class DocumentValidator extends BaseObject
      * Helper method that displays aboutLink only if enabled in Listener config.
      *
      * @param string $url URL
-     * @return \Neomerx\JsonApi\Document\Link
+     * @return \Neomerx\JsonApi\Document\Link|null
      */
     protected function _getAboutLink($url)
     {

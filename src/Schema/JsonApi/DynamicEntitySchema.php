@@ -176,11 +176,15 @@ class DynamicEntitySchema extends SchemaProvider
     /**
      * NeoMerx override used to generate `self` links
      *
-     * @param \Cake\ORM\Entity $entity Entity
-     * @return string
+     * @param \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
+     * @return string|null
      */
     public function getSelfSubUrl($entity = null)
     {
+        if ($entity === null) {
+            return null;
+        }
+
         return Router::url($this->_getRepositoryRoutingParameters($this->_repository) + [
             '_method' => 'GET',
             'action' => 'view',

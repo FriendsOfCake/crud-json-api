@@ -517,7 +517,6 @@ class JsonApiListenerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $subject->query = $query;
         $subject->entity = new Country();
 
         $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));

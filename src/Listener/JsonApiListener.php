@@ -159,7 +159,9 @@ class JsonApiListener extends ApiListener
 
         $this->_insertBelongsToDataIntoEventFindResult($event);
 
-        $this->render($event->getSubject());
+        /** @var \Crud\Event\Subject $subject */
+        $subject = $event->getSubject();
+        $this->render($subject);
     }
 
     /**
@@ -222,12 +224,12 @@ class JsonApiListener extends ApiListener
     /**
      * Takes a "include" string and converts it into a correct CakePHP ORM association alias
      *
-     * @param string $includes The relationships to include
+     * @param array $includes The relationships to include
      * @param array|bool $blacklist Blacklisted includes
      * @param array|bool $whitelist Whitelisted options
      * @param \Cake\ORM\Table|null $repository The repository
      * @param array $path Include path
-     * @return string
+     * @return array
      * @throws \Cake\Http\Exception\BadRequestException
      */
     protected function _parseIncludes($includes, $blacklist, $whitelist, Table $repository = null, $path = [])
@@ -236,6 +238,7 @@ class JsonApiListener extends ApiListener
         $wildcardWhitelist = Hash::get((array)$whitelist, $wildcard);
         $wildcardBlacklist = Hash::get((array)$blacklist, $wildcard);
         $contains = [];
+
         foreach ($includes as $include => $nestedIncludes) {
             $nestedContains = [];
             $includePath = array_merge($path, [$include]);
@@ -267,9 +270,13 @@ class JsonApiListener extends ApiListener
             }
 
             if (!empty($nestedContains)) {
-                $contains[$association->getAlias()] = $nestedContains;
+                if (!empty($association)) {
+                    $contains[$association->getAlias()] = $nestedContains;
+                }
             } else {
-                $contains[] = $association->getAlias();
+                if (!empty($association)) {
+                    $contains[] = $association->getAlias();
+                }
             }
         }
 
@@ -320,15 +327,16 @@ class JsonApiListener extends ApiListener
     /**
      * Parses out fields query parameter and apply it to the query
      *
-     * @param string|array $fieldSets The query data
+     * @param string|array|null $fieldSets The query data
      * @param \Crud\Event\Subject $subject The subject
      * @param array $options Array of options for includes.
      * @return void
      */
     protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
     {
+        // could be null for e.g. using integration tests
         if ($fieldSets === null) {
-            return;
+             return;
         }
 
         // format $fieldSets to array acceptable by listener config()
@@ -677,7 +685,7 @@ class JsonApiListener extends ApiListener
      * Deduplicate resultset from rows that might have come from joins
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return ORM\ResultSet
+     * @return \Cake\ORM\ResultSet
      */
     protected function _deduplicateResultSet($subject)
     {
@@ -691,7 +699,10 @@ class JsonApiListener extends ApiListener
                 $ids[] = $id;
             }
         }
-        $resultSet->unserialize(serialize($entities));
+
+        if (isset($entities)) {
+            $resultSet->unserialize(serialize($entities));
+        }
 
         return $resultSet;
     }
@@ -737,14 +748,14 @@ class JsonApiListener extends ApiListener
      *
      * @param \Cake\Datasource\RepositoryInterface $repository Repository
      * @param array $contains Array of contained associations
-     * @return \Cake\ORM\AssociationCollection
+     * @return array Array with \Cake\ORM\AssociationCollection
      */
     protected function _getContainedAssociations($repository, $contains)
     {
         $associationCollection = $repository->associations();
-
         $associations = [];
-        foreach ((array)$contains as $contain => $nestedContains) {
+
+        foreach ($contains as $contain => $nestedContains) {
             if (is_string($nestedContains)) {
                 $contain = $nestedContains;
                 $nestedContains = [];
@@ -818,7 +829,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new \InvalidArgumentException("Association {$name} does not have an association object set");
+                throw new \InvalidArgumentException("Association does not have an association object set");
             }
 
             $associationRepository = $association['association']->getTarget();
@@ -835,7 +846,7 @@ class JsonApiListener extends ApiListener
      * `included` node in the json response UNLESS user has specified listener
      * config option 'include'.
      *
-     * @param \Cake\ORM\AssociationCollection $associations AssociationCollection
+     * @param array $associations Array with \Cake\ORM\AssociationCollection(s)
      * @param bool $last What does this do?
      * @return array
      * @throws \InvalidArgumentException
