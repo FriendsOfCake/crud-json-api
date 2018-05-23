@@ -9,4 +9,4 @@ There are many ways you can help improving this plugin:
 
 .. note::
 
-We welcome and appreciate contributions on all levels.
+  We welcome and appreciate contributions on all levels.

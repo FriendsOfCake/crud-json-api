@@ -25,7 +25,7 @@ exceptions:
 
 .. note::
 
-Please note that the ``debug`` node with the stack trace will only be included if ``debug`` is true.
+  Please note that the ``debug`` node with the stack trace will only be included if ``debug`` is true.
 
 Validation Errors
 ^^^^^^^^^^^^^^^^^

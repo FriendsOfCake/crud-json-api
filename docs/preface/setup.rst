@@ -64,7 +64,9 @@ class and enabling it with the ``exceptionRenderer`` configuration option.
     }
   }
 
-**Note:** The listener setting above is ignored when using CakePHP's PSR7 middleware feature.
+.. note::
+
+  The listener setting above is ignored when using CakePHP's PSR7 middleware feature.
 
 If you want to use CakePHP's ``ErrorHandlerMiddleware``:
 
@@ -118,5 +120,5 @@ and can be used like this inside your application:
 
 .. note::
 
-To make sure the listener won't get in your way it will
-return ``null`` for all requests unless ``is('jsonapi')`` is true.
+  To make sure the listener won't get in your way it will
+  return ``null`` for all requests unless ``is('jsonapi')`` is true.
