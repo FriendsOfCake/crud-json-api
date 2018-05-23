@@ -281,7 +281,7 @@ class DynamicEntitySchema extends SchemaProvider
      * controller name to be used in links.
      *
      * @param \Cake\Datasource\RepositoryInterface $repository Repository
-     * @return string Lowercase controller name
+     * @return array Array holding lowercase controller name as the value
      */
     protected function _getRepositoryRoutingParameters($repository)
     {
