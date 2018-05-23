@@ -154,9 +154,9 @@ class JsonApiListener extends ApiListener
         // set property so we can check inside `_renderWithResources()`
         if (!empty($event->getSubject()->query->getContain())) {
             $this->_ControllerHasSetContain = true;
+
             return null;
         }
-
 
         if ($this->getConfig('include')) {
             return null;
@@ -618,10 +618,10 @@ class JsonApiListener extends ApiListener
 
         // only generate the `included` node if the option is set by query parameter or config
         // (which will not be the case when viewing a single Resource without parameters).
-        if ($this->getConfig('include') || $this->_ControllerHasSetContain === true ) {
+        if ($this->getConfig('include') || $this->_ControllerHasSetContain === true) {
             $include = $this->_getIncludeList($usedAssociations);
         } else {
-           $include = [];
+            $include = [];
         }
 
         // Set data before rendering the view
