@@ -8,7 +8,7 @@ Fetch a single JSON API Resource by calling the ``view`` action of your API with
 
 A successful request will respond with HTTP response code ``200``
 and response body similar to this output produced by
-````http://example.com/countries/1``:
+``http://example.com/countries/1``:
 
 .. code-block:: json
 
