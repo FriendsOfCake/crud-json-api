@@ -62,6 +62,13 @@ class JsonApiListener extends ApiListener
     ];
 
     /**
+     * True if the Controller has set a contain statement.
+     *
+     * @var
+     */
+    protected $_ControllerHasSetContain;
+
+    /**
      * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add you own listener callbacks
      *
@@ -93,6 +100,7 @@ class JsonApiListener extends ApiListener
             'Crud.beforeRedirect' => ['callable' => [$this, 'beforeRedirect'], 'priority' => 100],
             'Crud.beforePaginate' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
+            'Crud.afterFind' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
         ];
     }
 
@@ -131,6 +139,30 @@ class JsonApiListener extends ApiListener
         $this->_checkRequestMethods();
         $this->_validateConfigOptions();
         $this->_checkRequestData();
+    }
+
+    /**
+     * afterFind() event used to make sure belongsTo relationships are shown when requesting
+     * a single primary resource. Does NOT execute when either a Controller has set `contain` or the
+     * `?include=` query parameter was passed because that would override/break previously generated data.
+     *
+     * @param \Cake\Event\Event $event Event
+     * @return null
+     */
+    public function afterFind($event)
+    {
+        // set property so we can check inside `_renderWithResources()`
+        if (!empty($event->getSubject()->query->getContain())) {
+            $this->_ControllerHasSetContain = true;
+            return null;
+        }
+
+
+        if ($this->getConfig('include')) {
+            return null;
+        }
+
+        $this->_insertBelongsToDataIntoEventFindResult($event);
     }
 
     /**
@@ -492,6 +524,8 @@ class JsonApiListener extends ApiListener
 
         foreach ($associations as $association) {
             $type = $association->type();
+
+            // only handle hasMany and belongsTo
             if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
                 $associationTable = $association->getTarget();
                 $foreignKey = $association->getForeignKey();
@@ -582,6 +616,14 @@ class JsonApiListener extends ApiListener
             $usedAssociations = $this->_extractEntityAssociations($repository, $entity);
         }
 
+        // only generate the `included` node if the option is set by query parameter or config
+        // (which will not be the case when viewing a single Resource without parameters).
+        if ($this->getConfig('include') || $this->_ControllerHasSetContain === true ) {
+            $include = $this->_getIncludeList($usedAssociations);
+        } else {
+           $include = [];
+        }
+
         // Set data before rendering the view
         $this->_controller()->set([
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
@@ -591,7 +633,7 @@ class JsonApiListener extends ApiListener
             '_jsonOptions' => $this->getConfig('jsonOptions'),
             '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             '_repositories' => $this->_getRepositoryList($repository, $usedAssociations),
-            '_include' => $this->_getIncludeList($usedAssociations),
+            '_include' => $include,
             '_fieldSets' => $this->getConfig('fieldSets'),
             Inflector::tableize($repository->getAlias()) => $this->_getFindResult($subject),
             '_serialize' => true,
