@@ -17,4 +17,5 @@ parameters:
         - '#Access to an undefined property object::\$created#'
         - '#Access to an undefined property object::\$entity#'
         - '#Access to an undefined property object::\$id#'
+        - '#Access to an undefined property object::\$query#'
         - '#Access to an undefined property object::\$success#'

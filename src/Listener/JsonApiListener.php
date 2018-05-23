@@ -64,7 +64,7 @@ class JsonApiListener extends ApiListener
     /**
      * True if the Controller has set a contain statement.
      *
-     * @var
+     * @var bool
      */
     protected $_ControllerHasSetContain;
 
