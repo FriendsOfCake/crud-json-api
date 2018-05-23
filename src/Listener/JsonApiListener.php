@@ -24,8 +24,6 @@ use Crud\Listener\ApiListener;
 class JsonApiListener extends ApiListener
 {
 
-    use JsonApiTrait;
-
     /**
      * Default configuration
      *

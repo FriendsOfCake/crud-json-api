@@ -20,8 +20,6 @@ use Neomerx\JsonApi\Schema\SchemaProvider;
 class DynamicEntitySchema extends SchemaProvider
 {
 
-    use JsonApiTrait;
-
     /**
      * NeoMerx required property specifying which field to retrieve id from.
      *
@@ -276,5 +274,21 @@ class DynamicEntitySchema extends SchemaProvider
         ];
 
         return $links;
+    }
+
+    /**
+     * Parses the name of an Entity class to build a lowercase plural
+     * controller name to be used in links.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @return string Lowercase controller name
+     */
+    protected function _getRepositoryRoutingParameters($repository)
+    {
+        list(, $controllerName) = pluginSplit($repository->getRegistryAlias());
+
+        return [
+            'controller' => $controllerName,
+        ];
     }
 }
