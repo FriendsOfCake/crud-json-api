@@ -94,12 +94,12 @@ class JsonApiView extends View
     /**
      * Generates a JSON API string without resource(s).
      *
-     * @return void|string
+     * @return null|string
      */
     protected function _encodeWithoutSchemas()
     {
         if (empty($this->viewVars['_meta'])) {
-            return;
+            return null;
         }
 
         $encoder = Encoder::instance(
@@ -312,7 +312,7 @@ class JsonApiView extends View
     /**
      * Returns data to be serialized.
      *
-     * @param array|string|bool $serialize The name(s) of the view variable(s) that
+     * @param array|string|bool|object $serialize The name(s) of the view variable(s) that
      *   need(s) to be serialized. If true all available view variables will be used.
      * @return mixed The data to serialize.
      */
@@ -356,7 +356,10 @@ class JsonApiView extends View
             foreach ($this->viewVars['_jsonOptions'] as $jsonOption) {
                 $jsonOptions = $jsonOptions | $jsonOption;
             }
-            $jsonOptions = $jsonOptions | $jsonOption;
+
+            if (isset($jsonOption)) {
+                $jsonOptions = $jsonOptions | $jsonOption;
+            }
         }
 
         if (Configure::read('debug') === false) {

@@ -34,10 +34,8 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         }
 
         $viewVars = $this->controller->viewVars;
-
-        $code = $viewVars['code']; // e.g. 404
-
-        $title = $this->controller->response->getReasonPhrase($code); // e,g. Not Found
+        $code = $this->controller->response->getStatusCode(); // e.g. 404
+        $title = $this->controller->response->getReasonPhrase(); // e,g. Not Found
 
         // Only set JSON API `detail` field if `message` viewVar field is not
         // identical to the CakePHP HTTP Status Code description.

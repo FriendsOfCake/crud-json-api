@@ -1,0 +1,20 @@
+parameters:
+    excludes_analyse:
+
+    universalObjectCratesClasses:
+        - Crud\Event\Subject
+    ignoreErrors:
+        # ORM
+        - '#Call to an undefined method Cake\\Datasource\\EntityInterface::source\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::associations\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getAssociation\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getEntityClass\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getPrimaryKey\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::getRegistryAlias\(\)#'
+        - '#Call to an undefined method Cake\\Datasource\\RepositoryInterface::hasAssociation\(\)#'
+
+        # Crud properties
+        - '#Access to an undefined property object::\$created#'
+        - '#Access to an undefined property object::\$entity#'
+        - '#Access to an undefined property object::\$id#'
+        - '#Access to an undefined property object::\$success#'
