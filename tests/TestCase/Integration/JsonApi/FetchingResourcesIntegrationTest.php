@@ -13,12 +13,16 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
     public function getProvider()
     {
         return [
-            #
-            # Test fetching a single-word resource.
-            #
+            # Test fetching a single-word resource (with multiple belongsTo associations)
             'fetch-single-word-resource' => [
                 '/countries/1',
                 'get-country.json'
+            ],
+
+            # Test fetching a multi-word resource (with no belongsTo associations)
+            'fetch-multi-word-resource' => [
+                '/national-capitals/1',
+                'get-national-capital.json'
             ],
         ];
     }

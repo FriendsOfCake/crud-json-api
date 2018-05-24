@@ -1,0 +1,13 @@
+{
+    "data": {
+        "type": "national-capitals",
+        "id": "1",
+        "attributes": {
+            "name": "Amsterdam",
+            "description": "National capital of the Netherlands"
+        },
+        "links": {
+            "self": "\/national-capitals\/1"
+        }
+    }
+}
