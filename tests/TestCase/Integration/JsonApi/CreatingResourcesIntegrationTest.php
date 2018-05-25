@@ -16,15 +16,15 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             'create-single-word-resource-no-relationships' => [
-                '/currencies',
-                'create-currency-no-relationships.json',
-                'created-currency-no-relationships.json'
+                '/currencies', // URL
+                'create-currency-no-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
+                'created-currency-no-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
             ],
 
             'create-single-word-resource-multiple-existing-belongsto-relationships' => [
-                '/countries', // URL
-                'create-country-multiple-existing-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
-                'created-country-multiple-existing-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
+                '/countries',
+                'create-country-multiple-existing-belongsto-relationships.json',
+                'created-country-multiple-existing-belongsto-relationships.json'
             ],
 
             'create-multi-word-resource-no-relationships' => [
