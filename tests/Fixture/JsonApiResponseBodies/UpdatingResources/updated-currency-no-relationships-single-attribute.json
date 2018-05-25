@@ -1,0 +1,13 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "2",
+        "attributes": {
+            "code": "USD",
+            "name": "Russian Ruble"
+        },
+        "links": {
+            "self": "\/currencies\/2"
+        }
+    }
+}

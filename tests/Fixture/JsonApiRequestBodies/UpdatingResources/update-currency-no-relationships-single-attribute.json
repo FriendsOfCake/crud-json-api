@@ -1,0 +1,9 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "2",
+        "attributes": {
+            "name": "Russian Ruble"
+        }
+    }
+}
