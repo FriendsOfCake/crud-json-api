@@ -16,22 +16,22 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
         return [
             'fetch-single-word-resource-with-no-relationships' => [
                 '/currencies/1',
-                'get-currency.json'
+                'get-currency-no-relationships.json'
             ],
 
             'fetch-single-word-resource-with-multiple-belongsto-relationships' => [
                 '/countries/1',
-                'get-country.json'
+                'get-country-multiple-belongsTo-relationships.json'
             ],
 
             'fetch-multi-word-resource-with-no-relationships' => [
                 '/national-capitals/1',
-                'get-national-capital.json'
+                'get-national-capital-no-relationships.json'
             ],
 
             'fetch-multi-word-resource-with-single-belongsTo-relationship' => [
                 '/national-cities/1',
-                'get-national-city.json'
+                'get-national-city-single-belongsTo-relationship.json'
             ],
         ];
     }
