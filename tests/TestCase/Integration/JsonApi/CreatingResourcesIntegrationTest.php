@@ -32,6 +32,13 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                 'create-national-capital-no-relationships.json',
                 'created-national-capital-no-relationships.json'
             ],
+
+            'create-multi-word-resource-single-belongsto-relationships' => [
+                '/national-cities',
+                'create-national-city-single-belongsto-relationship.json',
+                'created-national-city-single-belongsto-relationship.json'
+            ],
+
         ];
     }
 
