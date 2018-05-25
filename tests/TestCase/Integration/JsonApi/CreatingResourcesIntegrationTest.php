@@ -6,17 +6,19 @@ use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 class PostRequestIntegrationTest extends JsonApiBaseTestCase
 {
     /**
-     * PhpUnit Data Provider for testing (only) successful POST requests.
+     * PhpUnit Data Provider that will call `testCreateResource()` for every array entry
+     * so we can test multiple successful POST requests without repeating ourselves.
+     *
      *
      * @return array
      */
-    public function postProvider()
+    public function createResourceProvider()
     {
         return [
             'create-single-word-resource' => [
                 '/countries', // URL
-                'post-country-with-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies
-                'post-country-with-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies
+                'create-country-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies
+                'created-country-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies
             ],
         ];
     }
@@ -26,9 +28,9 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
      * @param string $body JSON API body in CakePHP array format
      * @param string $expectedResponseFile The file to find the expected jsonapi response in
      * @return void
-     * @dataProvider postProvider
+     * @dataProvider createResourceProvider
      */
-    public function testPost($url, $requestBodyFile, $expectedResponseFile)
+    public function testCreateResource($url, $requestBodyFile, $expectedResponseFile)
     {
         $this->configRequest([
             'headers' => [
@@ -38,14 +40,13 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
             'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . $requestBodyFile)
         ]);
 
-        # execute the PATCH request
+        # execute the POST request
         $this->post($url);
+
+        # assert the response
         $this->assertResponseCode(201); # http://jsonapi.org/format/#crud-creating-responses-201
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseNotEmpty();
-
-        # This should be the actual test replacing NotEmpty
-        # Also the response now comes with all includes by default, this is NOT the intended behavior
-        #$this->assertResponseEquals($this->_getExpectedResponseBody('CreatingResources' . DS . 'post-country.json'));
+        $this->assertResponseEquals($this->_getExpectedResponseBody('CreatingResources' . DS . $expectedResponseFile));
     }
 }
