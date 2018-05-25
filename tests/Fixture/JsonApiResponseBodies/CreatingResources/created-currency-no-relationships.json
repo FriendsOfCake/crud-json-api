@@ -1,0 +1,13 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "3",
+        "attributes": {
+            "code": "ZAR",
+            "name": "South African Rand"
+        },
+        "links": {
+            "self": "\/currencies\/3"
+        }
+    }
+}
