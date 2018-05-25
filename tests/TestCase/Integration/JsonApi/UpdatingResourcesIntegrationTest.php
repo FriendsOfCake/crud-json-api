@@ -33,6 +33,13 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 'update-currency-no-relationships-single-attribute.json',
                 'updated-currency-no-relationships-single-attribute.json'
             ],
+
+            'update-multi-word-no-relationships' => [
+                '/national-capitals/6',
+                'update-national-capital-no-relationships.json',
+                'updated-national-capital-no-relationships.json'
+            ],
+
         ];
     }
 
