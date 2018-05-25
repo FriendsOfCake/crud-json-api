@@ -1,0 +1,13 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "1",
+        "attributes": {
+            "code": "EUR",
+            "name": "Euro"
+        },
+        "links": {
+            "self": "\/currencies\/1"
+        }
+    }
+}

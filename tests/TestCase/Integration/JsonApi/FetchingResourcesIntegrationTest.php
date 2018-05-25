@@ -6,19 +6,32 @@ use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
     /**
-     * PhpUnit Data Provider for testing (only) successful GET requests.
+     * PhpUnit Data Provider that will call `testFetchResource()` for every array entry
+     * so we can test multiple successful GET requests without repeating ourselves.
      *
      * @return array
      */
-    public function getProvider()
+    public function fetchResourceProvider()
     {
         return [
-            #
-            # Test fetching a single-word resource.
-            #
-            'fetch-single-word-resource' => [
+            'fetch-single-word-resource-with-no-relationships' => [
+                '/currencies/1',
+                'get-currency-no-relationships.json'
+            ],
+
+            'fetch-single-word-resource-with-multiple-belongsto-relationships' => [
                 '/countries/1',
-                'get-country.json'
+                'get-country-multiple-belongsTo-relationships.json'
+            ],
+
+            'fetch-multi-word-resource-with-no-relationships' => [
+                '/national-capitals/1',
+                'get-national-capital-no-relationships.json'
+            ],
+
+            'fetch-multi-word-resource-with-single-belongsTo-relationship' => [
+                '/national-cities/1',
+                'get-national-city-single-belongsTo-relationship.json'
             ],
         ];
     }
@@ -27,9 +40,9 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
      * @param string $url The endpoint to hit
      * @param string $expectedResponseFile The file to find the expected jsonapi response in
      * @return void
-     * @dataProvider getProvider
+     * @dataProvider fetchResourceProvider
      */
-    public function testGet($url, $expectedResponseFile)
+    public function testFetchResource($url, $expectedResponseFile)
     {
         $this->configRequest([
             'headers' => [
@@ -39,6 +52,8 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
 
         # execute the GET request
         $this->get($url);
+
+        # assert the response
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseEquals($this->_getExpectedResponseBody('FetchingResources' . DS . $expectedResponseFile));

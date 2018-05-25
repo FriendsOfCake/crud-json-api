@@ -117,8 +117,8 @@ As an example, a client could produce the exact same JSON API response as shown 
 
 .. note::
 
-If the ``include`` parameter is provided, then only the requested relationships will be included
-in the ``included`` schema.
+  If the ``include`` parameter is provided, then only the requested relationships will be included
+  in the ``included`` schema.
 
 Whitelist/blacklist
 ^^^^^^^^^^^^^^^^^^^
@@ -154,8 +154,3 @@ config option to ``true``:
 
     return $this->Crud->execute();
   }
-
-.. note::
-
-Please note that only support for ``belongsTo`` and ``hasMany``
-relationships has been implemented.

@@ -147,6 +147,7 @@ class JsonApiListenerTest extends TestCase
             'Crud.beforeRedirect' => ['callable' => [$listener, 'beforeRedirect'], 'priority' => 100],
             'Crud.beforePaginate' => ['callable' => [$listener, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$listener, 'beforeFind'], 'priority' => 10],
+            'Crud.afterFind' => ['callable' => [$listener, 'afterFind'], 'priority' => 50],
         ];
 
         $this->assertSame($expected, $result);

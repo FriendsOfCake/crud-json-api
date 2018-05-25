@@ -1,0 +1,34 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "1",
+        "attributes": {
+            "code": "NL",
+            "name": "The Netherlands",
+            "dummy-counter": 11111
+        },
+        "relationships": {
+            "currency": {
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
+                },
+                "links": {
+                    "self": "\/currencies\/1"
+                }
+            },
+            "national-capital": {
+                "data": {
+                    "type": "national-capitals",
+                    "id": "1"
+                },
+                "links": {
+                    "self": "\/national-capitals\/1"
+                }
+            }
+        },
+        "links": {
+            "self": "\/countries\/1"
+        }
+    }
+}

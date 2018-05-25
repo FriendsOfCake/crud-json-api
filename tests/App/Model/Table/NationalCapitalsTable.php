@@ -5,6 +5,6 @@ class NationalCapitalsTable extends \Cake\ORM\Table
 {
     public function initialize(array $config)
     {
-        $this->belongsTo('Countries');
+        $this->hasMany('Countries');
     }
 }

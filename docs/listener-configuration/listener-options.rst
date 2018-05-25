@@ -115,8 +115,8 @@ Please note that entity names:
 
 .. note::
 
-The value of the ``include`` configuration will be overwritten if the
-the client uses the ``?include`` query parameter.
+  The value of the ``include`` configuration will be overwritten if the
+  the client uses the ``?include`` query parameter.
 
 fieldSets
 ^^^^^^^^^
@@ -138,9 +138,9 @@ generated json. For example:
 
 .. note::
 
-Please note that there is no need to hide ``id`` fields as this
-is handled by the listener automatically as per the
-`JSON API specification <http://jsonapi.org/format/#document-resource-object-fields>`_.
+  Please note that there is no need to hide ``id`` fields as this
+  is handled by the listener automatically as per the
+  `JSON API specification <http://jsonapi.org/format/#document-resource-object-fields>`_.
 
 docValidatorAboutLinks
 ^^^^^^^^^^^^^^^^^^^^^^

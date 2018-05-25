@@ -10,4 +10,4 @@ provides you with a reference directory you can use to lookup fully-functional e
 
 .. note::
 
-Please submit a PR if you are missing a use case.
+  Please submit a PR if you are missing a use case.
