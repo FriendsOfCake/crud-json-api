@@ -15,10 +15,16 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
     public function createResourceProvider()
     {
         return [
-            'create-single-word-resource' => [
+            'create-single-word-resource-multiple-belongsto-relationships' => [
                 '/countries', // URL
-                'create-country-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies
-                'created-country-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies
+                'create-country-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
+                'created-country-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
+            ],
+
+            'create-multi-word-resource-no-relationships' => [
+                '/national-capitals',
+                'create-national-capital-no-relationships.json',
+                'created-national-capital-no-relationships.json'
             ],
         ];
     }
