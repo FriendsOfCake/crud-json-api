@@ -21,10 +21,10 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                 'created-currency-no-relationships.json'
             ],
 
-            'create-single-word-resource-multiple-belongsto-relationships' => [
+            'create-single-word-resource-multiple-existing-belongsto-relationships' => [
                 '/countries', // URL
-                'create-country-multiple-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
-                'created-country-multiple-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
+                'create-country-multiple-existing-belongsto-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
+                'created-country-multiple-existing-belongsto-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
             ],
 
             'create-multi-word-resource-no-relationships' => [
@@ -33,10 +33,10 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                 'created-national-capital-no-relationships.json'
             ],
 
-            'create-multi-word-resource-single-belongsto-relationships' => [
+            'create-multi-word-resource-single-existing-belongsto-relationships' => [
                 '/national-cities',
-                'create-national-city-single-belongsto-relationship.json',
-                'created-national-city-single-belongsto-relationship.json'
+                'create-national-city-single-existing-belongsto-relationship.json',
+                'created-national-city-single-existing-belongsto-relationship.json'
             ],
 
         ];
