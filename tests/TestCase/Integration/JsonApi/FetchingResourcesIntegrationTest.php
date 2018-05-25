@@ -21,7 +21,7 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
 
             'fetch-single-word-resource-with-multiple-belongsto-relationships' => [
                 '/countries/1',
-                'get-country-multiple-belongsTo-relationships.json'
+                'get-country-multiple-belongsto-relationships.json'
             ],
 
             'fetch-multi-word-resource-with-no-relationships' => [
@@ -31,7 +31,7 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
 
             'fetch-multi-word-resource-with-single-belongsTo-relationship' => [
                 '/national-cities/1',
-                'get-national-city-single-belongsTo-relationship.json'
+                'get-national-city-single-belongsto-relationship.json'
             ],
         ];
     }

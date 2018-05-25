@@ -9,37 +9,8 @@ Creating a new JSON API Resource is done by calling the ``add`` action of your A
 - request data in valid JSON API document format
 
 A successful request will respond with HTTP response code ``201``
-and response body containing the ``id`` of the newly created
-record.
-
-The response body will look similar to this output produced by
-``http://example.com/countries``:
-
-.. code-block:: json
-
-  {
-    "data": {
-      "type": "countries",
-      "id": "28",
-      "attributes": {
-        "code": "DK",
-        "name": "Denmark"
-      },
-      "relationships": {
-        "currency": {
-          "data": {
-            "type": "currencies",
-            "id": "1"
-          },
-          "links": {
-            "self": "/currencies/1"
-          }
-        }
-      },
-      "links": {
-        "self": "/countries/10"
-      }
-    }
+and a JSON API response body presenting the newly created Resource
+along with ``id``, ``attributes`` and ``belongsTo`` relationships.
 
 Request Data
 ^^^^^^^^^^^^
@@ -53,8 +24,22 @@ specification it is first validated by the listener's DocumentValidator which
 will throw a (422) ValidationException if it does not comply along
 with a pointer to the cause.
 
-A valid JSON API document structure for creating a new Country
-would look similar to:
+A valid JSON API request body for creating a new Country would look similar to:
+
+.. code-block:: json
+
+  {
+    "data": {
+      "type": "countries",
+      "attributes": {
+        "code": "NL",
+        "name": "The Netherlands"
+      }
+    }
+  }
+
+The same applies when creating new resources with relationships. For example, the JSON API
+request body for creating a new Country with ``currency_id=1`` would look similar to:
 
 .. code-block:: json
 
@@ -75,3 +60,18 @@ would look similar to:
       }
     }
   }
+
+.. note::
+
+  See this link for more examples of
+  `valid JsonApiRequestBodies <https://github.com/FriendsOfCake/crud-json-api/tree/master/tests/Fixture/JsonApiRequestBodies>`_.
+
+Side-Posting
+^^^^^^^^^^^^
+
+Side-posting is an often requested feature which would allow creating multiple resources (and/or relationships) using a single POST request.
+
+However, this functionality is NOT supported by version 1.0 of the JSON API specification and is therefore NOT supported by crud-json-api.
+
+Work for this feature is in progress and might land in version 1.1 of the specification, more information
+`available here <https://github.com/json-api/json-api/pull/1197>`_.

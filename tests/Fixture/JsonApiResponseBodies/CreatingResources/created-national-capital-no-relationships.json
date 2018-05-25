@@ -1,0 +1,13 @@
+{
+    "data": {
+        "type": "national-capitals",
+        "id": "7",
+        "attributes": {
+            "name": "Havana",
+            "description": "National capital of Cuba"
+        },
+        "links": {
+            "self": "\/national-capitals\/7"
+        }
+    }
+}

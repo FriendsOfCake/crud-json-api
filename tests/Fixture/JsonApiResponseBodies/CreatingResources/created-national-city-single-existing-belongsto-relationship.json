@@ -1,0 +1,23 @@
+{
+    "data": {
+        "type": "national-cities",
+        "id": "7",
+        "attributes": {
+            "name": "Rotterdam"
+        },
+        "relationships": {
+            "country": {
+                "data": {
+                    "type": "countries",
+                    "id": "1"
+                },
+                "links": {
+                    "self": "\/countries\/1"
+                }
+            }
+        },
+        "links": {
+            "self": "\/national-cities\/7"
+        }
+    }
+}

@@ -20,12 +20,13 @@ use Crud\TestSuite\TestCase;
  */
 class JsonApiListenerTest extends TestCase
 {
+
     /**
-     * Path to directory holding the JSON API response fixtures
+     * Path to directory holding the JSON API documents to be tested against the Decoder
      *
      * @var
      */
-    protected $_JsonApiResponseBodyFixtures;
+    protected $_JsonApiDecoderFixtures;
 
     /**
      * fixtures property
@@ -47,8 +48,7 @@ class JsonApiListenerTest extends TestCase
     {
         parent::setUp();
 
-        // set path to the JSON API response fixtures
-        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiDecoderFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiDecoder';
     }
 
     /**
@@ -1287,7 +1287,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, no relationships)
-        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country.json');
+        $jsonApiFixture = new File($this->_JsonApiDecoderFixtures . DS . 'incoming-country-no-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1298,7 +1298,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success (single entity, multiple relationships, hasMany ignored for now)
-        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiDecoderFixtures . DS . 'incoming-country-mixed-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $expected = [
             'code' => 'NL',
@@ -1317,7 +1317,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success for relationships with null/empty data
-        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiDecoderFixtures . DS . 'incoming-country-mixed-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $jsonApiArray['data']['relationships']['cultures']['data'] = null;
         $jsonApiArray['data']['relationships']['currency']['data'] = null;
