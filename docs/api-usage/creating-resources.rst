@@ -10,7 +10,7 @@ Creating a new JSON API Resource is done by calling the ``add`` action of your A
 
 A successful request will respond with HTTP response code ``201``
 and a JSON API response body presenting the newly created Resource
-along with ``id``, ``data`` and ``belongsTo`` relationships.
+along with ``id``, ``attributes`` and ``belongsTo`` relationships.
 
 Request Data
 ^^^^^^^^^^^^
