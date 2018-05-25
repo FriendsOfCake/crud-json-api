@@ -1317,7 +1317,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame($expected, $result);
 
         // assert success for relationships with null/empty data
-        $jsonApiFixture = new File($this->_JsonApiDecoderFixtures . DS . 'CreatingResources' . DS . 'post-country-multiple-relationships.json');
+        $jsonApiFixture = new File($this->_JsonApiDecoderFixtures . DS . 'incoming-country-mixed-relationships.json');
         $jsonApiArray = json_decode($jsonApiFixture->read(), true);
         $jsonApiArray['data']['relationships']['cultures']['data'] = null;
         $jsonApiArray['data']['relationships']['currency']['data'] = null;
