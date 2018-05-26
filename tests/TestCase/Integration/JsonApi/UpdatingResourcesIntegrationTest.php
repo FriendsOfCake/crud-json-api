@@ -20,10 +20,10 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             # changing USD to RUB
-            'update-single-word-resource-no-relationships-all-attributes' => [
+            'update-single-word-resource-attributes-only-all' => [
                 '/currencies/2', // URL
-                'update-currency-no-relationships-all-attributes.json', // Fixtures/JsonApiRequestBodies/UpdatingResources
-                'updated-currency-no-relationships-all-attributes.json', // Fixtures/JsonApiResponseBodies/UpdatingResources
+                'update-currency-attributes-only-all.json', // Fixtures/JsonApiRequestBodies/UpdatingResources
+                'updated-currency-attributes-only-all.json', // Fixtures/JsonApiResponseBodies/UpdatingResources
                 [
                     'id' => 2,
                     'code' => 'RUB', // updated
@@ -35,10 +35,10 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
             # "If a request does not include all of the attributes for a resource, the server MUST
             #  interpret the missing attributes as if they were included with their current values.
             #  The server MUST NOT interpret missing attributes as null values."
-            'update-single-word-resource-no-relationships-single-attribute' => [
+            'update-single-word-resource-attributes-only-single' => [
                 '/currencies/2',
-                'update-currency-no-relationships-single-attribute.json',
-                'updated-currency-no-relationships-single-attribute.json',
+                'update-currency-attributes-only-single.json',
+                'updated-currency-attributes-only-single.json',
                 [
                     'id' => 2,
                     'code' => 'USD', // unchanged
@@ -46,12 +46,12 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 ]
             ],
 
-            # Make sure `belongsTo` relationships gets updated when we pass the
+            # Make sure `belongsTo` relationships gets updated when we pass both
             # `attributes` and `relationships` nodes to a single-word Resource.
-            'update-single-word-resource-multiple-relationships' => [
+            'update-single-word-resource-attributes-and-multiple-belongsto-relationships' => [
                 '/countries/2',
-                'update-country-multiple-belongsto-relationships.json',
-                'updated-country-multiple-belongsto-relationships.json',
+                'update-country-attributes-and-multiple-belongsto-relationships.json',
+                'updated-country-attributes-and-multiple-belongsto-relationships.json',
                 [
                     'id' => 2,
                     'code' => 'JM', // updated
@@ -64,7 +64,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 
             # Make sure `belongsTo` relationships get updated when we only pass the `relationships` node to
             # a single-word Resource (and thus the `attributes` node is absent in the POST request body)
-            'update-single-word-resource-multiple-relationships-only' => [
+            'update-single-word-resource-multiple-belongsto-relationships-only' => [
                 '/countries/2',
                 'update-country-multiple-belongsto-relationships-only.json',
                 'updated-country-multiple-belongsto-relationships-only.json',
@@ -80,10 +80,10 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 
 
             # Make sure we can update multi-word attributes
-            'update-multi-word-resource-no-relationships' => [
+            'update-multi-word-resource-attributes-only' => [
                 '/national-capitals/6',
-                'update-national-capital-no-relationships.json',
-                'updated-national-capital-no-relationships.json',
+                'update-national-capital-attributes-only.json',
+                'updated-national-capital-attributes-only.json',
                 [
                     'id' => 6,
                     'name' => 'Hollywood', // updated
@@ -91,12 +91,12 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 ]
             ],
 
-            # Make sure `belongsTo` relationships gets updated when we pass the
+            # Make sure `belongsTo` relationships gets updated when we pass both
             # `attributes` and `relationships` nodes to a multi-word Resource.
             'update-multi-word-resource-single-belongsto-relationships' => [
                 '/national-cities/2',
-                'update-national-city-single-belongsto-relationship.json',
-                'updated-national-city-single-belongsto-relationship.json',
+                'update-national-city-attributes-and-single-belongsto-relationship.json',
+                'updated-national-city-attributes-and-single-belongsto-relationship.json',
                 [
                     'id' => 2,
                     'name' => 'Milan', // updated
