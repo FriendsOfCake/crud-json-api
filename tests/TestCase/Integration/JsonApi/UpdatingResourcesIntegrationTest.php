@@ -78,7 +78,6 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 ]
             ],
 
-
             # Make sure we can update multi-word attributes
             'update-multi-word-resource-attributes-only' => [
                 '/national-capitals/6',
