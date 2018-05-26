@@ -11,8 +11,8 @@ class CountriesFixture extends TestFixture
         'code' => ['type' => 'string', 'length' => 2, 'null' => false],
         'name' => ['type' => 'string', 'length' => 255, 'null' => false],
         'dummy_counter' => ['type' => 'integer'],
-        'currency_id' => ['type' => 'integer', 'null' => false],
-        'national_capital_id' => ['type' => 'integer', 'null' => false],
+        'currency_id' => ['type' => 'integer', 'null' => true],
+        'national_capital_id' => ['type' => 'integer', 'null' => true],
         'supercountry_id' => ['type' => 'integer', 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
