@@ -35,7 +35,7 @@ class CountriesTable extends Table
     {
         // used for testing built-in validation rules/messages
         $validator
-            ->requirePresence('name')
+            ->requirePresence('name', 'create')
             ->notEmpty('name');
 
         // used for testing user-defined rules/messages
