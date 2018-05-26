@@ -1174,6 +1174,8 @@ class JsonApiListenerTest extends TestCase
      * _checkRequestData()
      *
      * @return void
+     * @expectedException \Cake\Http\Exception\BadRequestException
+     * @expectedExceptionMessage Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.
      */
     public function testCheckRequestData()
     {
@@ -1237,10 +1239,6 @@ class JsonApiListenerTest extends TestCase
         // assert null if there is no Content-Type
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
-        // assert null if there is no request data
-        $controller->request = $controller->request->withParsedBody([]);
-        $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
-
         // assert POST is processed
         $controller->request = $controller->request->withData('data', [
             'type' => 'dummy',
@@ -1257,6 +1255,10 @@ class JsonApiListenerTest extends TestCase
         ]);
 
         $this->callProtectedMethod('_checkRequestData', [], $listener);
+
+        // make sure the BadRequestException is thrown when request data is missing
+        $controller->request = $controller->request->withParsedBody([]);
+        $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
     }
 
     /**

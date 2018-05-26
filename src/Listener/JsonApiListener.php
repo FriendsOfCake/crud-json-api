@@ -939,7 +939,7 @@ class JsonApiListener extends ApiListener
         $requestData = $this->_controller()->request->getData();
 
         if (empty($requestData)) {
-            return;
+            throw new BadRequestException('Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.');
         }
 
         $validator = new DocumentValidator($requestData, $this->getConfig());
