@@ -16,7 +16,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/sub_countries?supercountry_id=3"
+                    "self": "\/sub_countries?supercountry-id=3"
                 }
             }
         },

@@ -189,7 +189,7 @@ class DynamicEntitySchemaTest extends TestCase
         $this->assertSame($expected, $this->getProtectedProperty('subHref', $result));
 
         // assert _ getRelationshipSelfLinks() for plural (hasMany)
-        $expected = '/cultures?country_id=2';
+        $expected = '/cultures?country-id=2';
 
         $result = $this->callProtectedMethod('getRelationshipSelfLink', [$entity, 'cultures', null, true], $schema);
         $this->setReflectionClassInstance($result);

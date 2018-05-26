@@ -240,10 +240,16 @@ class DynamicEntitySchema extends SchemaProvider
             return new Link($url, $meta, $treatAsHref);
         }
 
+        // generate the link for hasMany relationship
+        $foreignKey = $association->getForeignKey();
+        if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+            $foreignKey = Inflector::dasherize($foreignKey);
+        }
+
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
             '_method' => 'GET',
             'action' => 'index',
-            '?' => [$association->getForeignKey() => $entity->id]
+            '?' => [$foreignKey => $entity->id]
         ], $this->_view->viewVars['_absoluteLinks']);
 
         return new Link($url, $meta, $treatAsHref);

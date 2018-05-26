@@ -28,7 +28,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/national-cities?country_id=1"
+                    "self": "\/national-cities?country-id=1"
                 }
             }
         },

@@ -25,7 +25,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/cultures?country_id=1"
+                    "self": "\/cultures?country-id=1"
                 }
             }
         },
