@@ -1,0 +1,25 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "2",
+        "attributes": {
+            "code": "JM",
+            "name": "Jamaica",
+            "dummy-counter": 12345
+        },
+        "relationships": {
+            "currency": {
+                "data": {
+                    "type": "currencies",
+                    "id": "2"
+                }
+            },
+            "national-capital": {
+                "data": {
+                    "type": "national-capitals",
+                    "id": "5"
+                }
+            }
+        }
+    }
+}

@@ -26,8 +26,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 'updated-currency-no-relationships-all-attributes.json', // Fixtures/JsonApiResponseBodies/UpdatingResources
                 [
                     'id' => 2,
-                    'code' => 'RUB', // array subset we expect to see in the database after PATCHing
-                    'name' => 'Russian Ruble'
+                    'code' => 'RUB', // updated
+                    'name' => 'Russian Ruble' // updated
                 ]
             ],
 
@@ -42,31 +42,65 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 2,
                     'code' => 'USD', // unchanged
-                    'name' => 'Russian Ruble'
+                    'name' => 'Russian Ruble' // updated
                 ]
             ],
 
+            # Make sure `belongsTo` relationships gets updated when we pass the
+            # `attributes` and `relationships` nodes to a single-word Resource.
+            'update-single-word-resource-multiple-relationships' => [
+                '/countries/2',
+                'update-country-multiple-belongsto-relationships.json',
+                'updated-country-multiple-belongsto-relationships.json',
+                [
+                    'id' => 2,
+                    'code' => 'JM', // updated
+                    'name' => 'Jamaica', // updated
+                    'dummy_counter' => 12345, // updated
+                    'currency_id' => 2, // updated
+                    'national_capital_id' => 5 // updated
+                ]
+            ],
+
+            # Make sure `belongsTo` relationships get updated when we only update/pass the
+            # `relationships` node (and thus `attributes` is absent in the POST request body)
+            'update-single-word-resource-multiple-relationships-only' => [
+                '/countries/2',
+                'update-country-multiple-belongsto-relationships-only.json',
+                'updated-country-multiple-belongsto-relationships-only.json',
+                [
+                    'id' => 2,
+                    'code' => 'BG', // unchanged
+                    'name' => 'Bulgaria', // unchanged
+                    'dummy_counter' => 22222, // unchanged
+                    'currency_id' => 2, // updated
+                    'national_capital_id' => 4 // updated
+                ]
+            ],
+
+
+            # Make sure we can update multi-word attributes
             'update-multi-word-resource-no-relationships' => [
                 '/national-capitals/6',
                 'update-national-capital-no-relationships.json',
                 'updated-national-capital-no-relationships.json',
                 [
                     'id' => 6,
-                    'name' => 'Hollywood',
-                    'description' => 'National capital of the cinematic world'
+                    'name' => 'Hollywood', // updated
+                    'description' => 'National capital of the cinematic world' // updated
                 ]
             ],
 
-            # here we are changing both the name attribute (Rotterdam) and
-            # the related country (NL) to Milan and Italy
+            # Make sure `belongsTo` relationships gets updated when we pass the
+            # `attributes` and `relationships` nodes to a multi-word Resource.
             'update-multi-word-resource-single-belongsto-relationships' => [
                 '/national-cities/2',
                 'update-national-city-single-belongsto-relationship.json',
                 'updated-national-city-single-belongsto-relationship.json',
                 [
                     'id' => 2,
-                    'name' => 'Milan',
-                    'country_id' => 3
+                    'name' => 'Milan', // updated
+                    'country_id' => 3 // updated
                 ]
             ],
 
