@@ -149,6 +149,10 @@ class JsonApiListener extends ApiListener
      */
     public function afterFind($event)
     {
+        if (!$this->_request()->isGet()) {
+            return null;
+        }
+
         // set property so we can check inside `_renderWithResources()`
         if (!empty($event->getSubject()->query->getContain())) {
             $this->_ControllerHasSetContain = true;
@@ -524,6 +528,8 @@ class JsonApiListener extends ApiListener
      */
     protected function _insertBelongsToDataIntoEventFindResult($event)
     {
+        // return null;
+
         $entity = $event->getSubject()->entity;
         $repository = $this->_controller()->loadModel();
         $associations = $repository->associations();
@@ -933,7 +939,7 @@ class JsonApiListener extends ApiListener
         $requestData = $this->_controller()->request->getData();
 
         if (empty($requestData)) {
-            return;
+            throw new BadRequestException('Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.');
         }
 
         $validator = new DocumentValidator($requestData, $this->getConfig());
@@ -946,7 +952,10 @@ class JsonApiListener extends ApiListener
             $validator->validateUpdateDocument();
         }
 
-        $this->_controller()->request = $this->_controller()->request->withParsedBody($this->_convertJsonApiDocumentArray($requestData));
+        # decode JSON API to CakePHP array format, then call the action as usual
+        $decodedJsonApi = $this->_convertJsonApiDocumentArray($requestData);
+
+        $this->_controller()->request = $this->_controller()->request->withParsedBody($decodedJsonApi);
     }
 
     /**

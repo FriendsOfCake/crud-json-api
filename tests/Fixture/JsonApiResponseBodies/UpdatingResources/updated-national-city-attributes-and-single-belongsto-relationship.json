@@ -1,0 +1,23 @@
+{
+    "data": {
+        "type": "national-cities",
+        "id": "2",
+        "attributes": {
+            "name": "Milan"
+        },
+        "relationships": {
+            "country": {
+                "data": {
+                    "type": "countries",
+                    "id": "3"
+                },
+                "links": {
+                    "self": "\/countries\/3"
+                }
+            }
+        },
+        "links": {
+            "self": "\/national-cities\/2"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "data": {
+        "type": "national-cities",
+        "id": "2",
+        "relationships": {
+            "country": {
+                "data": {
+                    "type": "countries",
+                    "id": "3"
+                }
+            }
+        }
+    }
+}

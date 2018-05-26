@@ -1,0 +1,10 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "2",
+        "attributes": {
+            "code": "RUB",
+            "name": "Russian Ruble"
+        }
+    }
+}
