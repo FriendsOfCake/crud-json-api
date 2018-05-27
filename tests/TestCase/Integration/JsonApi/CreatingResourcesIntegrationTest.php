@@ -38,7 +38,6 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $this->assertArraySubset($expectedErrorMessage, $responseBodyArray);
     }
 
-
     /**
      * PhpUnit Data Provider that will call `testCreateResource()` for every array entry
      * so we can test multiple successful POST requests without repeating ourselves.
