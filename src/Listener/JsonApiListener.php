@@ -92,6 +92,7 @@ class JsonApiListener extends ApiListener
         return [
             'Crud.beforeHandle' => ['callable' => [$this, 'beforeHandle'], 'priority' => 10],
             'Crud.setFlash' => ['callable' => [$this, 'setFlash'], 'priority' => 5],
+            'Crud.beforeSave' => ['callable' => [$this, 'beforeSave'], 'priority' => 20],
             'Crud.afterSave' => ['callable' => [$this, 'afterSave'], 'priority' => 90],
             'Crud.afterDelete' => ['callable' => [$this, 'afterDelete'], 'priority' => 90],
             'Crud.beforeRender' => ['callable' => [$this, 'respond'], 'priority' => 100],
@@ -168,9 +169,30 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * afterSave() event used to respond with Status Code 201 for newly
-     * created resources. Only applied to `add` actions as described at
-     * http://jsonapi.org/format/#crud-creating-responses-201.
+     * beforeSave() event.
+     *
+     * @param \Cake\Event\Event $event Event
+     * @return void
+     * @throws \Cake\Http\Exception\BadRequestException
+     */
+    public function beforeSave($event)
+    {
+        // generate a flat list of hasMany relationships for the current model
+        $entity = $event->getSubject()->entity;
+        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]); // hasMany
+
+        // stop propagation if hasMany relationship(s) are detected in the request data
+        // and thus the client is trying to side-post/create related records
+        foreach ($hasManyAssociations as $associationName) {
+            $key = Inflector::tableize($associationName);
+            if (isset($entity->$key)) {
+                throw new BadRequestException("JSON API 1.0 does not support side-posting (hasMany relationship data detected in the request body)");
+            }
+        }
+    }
+
+    /**
+     * afterSave() event.
      *
      * @param \Cake\Event\Event $event Event
      * @return false|null
@@ -186,7 +208,8 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        // created resource MUST respond with HTTP Status Code 201
+        // The `add`action (new Resource) MUST respond with HTTP Status Code 201,
+        // see http://jsonapi.org/format/#crud-creating-responses-201
         if ($event->getSubject()->created) {
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
@@ -528,8 +551,6 @@ class JsonApiListener extends ApiListener
      */
     protected function _insertBelongsToDataIntoEventFindResult($event)
     {
-        // return null;
-
         $entity = $event->getSubject()->entity;
         $repository = $this->_controller()->loadModel();
         $associations = $repository->associations();
@@ -537,7 +558,7 @@ class JsonApiListener extends ApiListener
         foreach ($associations as $association) {
             $type = $association->type();
 
-            // only handle hasMany and belongsTo
+            // handle `belongsTo` and `hasOne` relationships
             if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
                 $associationTable = $association->getTarget();
                 $foreignKey = $association->getForeignKey();
@@ -956,6 +977,36 @@ class JsonApiListener extends ApiListener
         $decodedJsonApi = $this->_convertJsonApiDocumentArray($requestData);
 
         $this->_controller()->request = $this->_controller()->request->withParsedBody($decodedJsonApi);
+    }
+
+    /**
+     * Returns a flat array list with the names of all associations for the given
+     * entity, optionally limited to only matching associationTypes.
+     *
+     * @param \Cake\ORM\Entity $entity Entity
+     * @param array $associationTypes Array with any combination of Cake\ORM\Association types
+     * @return array
+     */
+    protected function _getAssociationsList($entity, array $associationTypes = [])
+    {
+        $table = $this->_controller()->loadModel();
+        $associations = $table->associations();
+
+        $result = [];
+        foreach ($associations as $association) {
+            $associationType = $association->type();
+
+            if (empty($associationTypes)) {
+                array_push($result, $association->getName());
+                continue;
+            }
+
+            if (in_array($association->type(), $associationTypes)) {
+                array_push($result, $association->getName());
+            }
+        }
+
+        return $result;
     }
 
     /**

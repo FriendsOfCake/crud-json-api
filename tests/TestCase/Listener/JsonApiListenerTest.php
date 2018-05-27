@@ -141,6 +141,7 @@ class JsonApiListenerTest extends TestCase
         $expected = [
             'Crud.beforeHandle' => ['callable' => [$listener, 'beforeHandle'], 'priority' => 10],
             'Crud.setFlash' => ['callable' => [$listener, 'setFlash'], 'priority' => 5],
+            'Crud.beforeSave' => ['callable' => [$this, 'beforeSave'], 'priority' => 20],
             'Crud.afterSave' => ['callable' => [$listener, 'afterSave'], 'priority' => 90],
             'Crud.afterDelete' => ['callable' => [$listener, 'afterDelete'], 'priority' => 90],
             'Crud.beforeRender' => ['callable' => [$listener, 'respond'], 'priority' => 100],
