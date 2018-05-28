@@ -21,7 +21,7 @@ composer require friendsofcake/crud-json-api
 
 - standardized API data fetching, data posting and (validation) errors
 - automated handling of complex associations/relationships
-- instant compatibility with JSON API supporting tools like Ember Data
+- instant JSON API backend for tools like Ember Data, React and Vue
 - tons of configurable options to manipulate the generated json
 
 ## Sample output
