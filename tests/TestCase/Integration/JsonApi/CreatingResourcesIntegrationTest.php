@@ -5,6 +5,39 @@ use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class PostRequestIntegrationTest extends JsonApiBaseTestCase
 {
+
+    /**
+     * Make sure attempts to side-post related (hasMany) records throws an exception.
+     *
+     * @return void
+     */
+    public function testSidePostingException()
+    {
+        $this->configRequest([
+            'headers' => [
+                'Accept' => 'application/vnd.api+json',
+                'Content-Type' => 'application/vnd.api+json'
+            ],
+            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . 'create-country-throw-side-posting-exception.json')
+        ]);
+
+        $this->post('/countries');
+        $this->assertResponseCode(400); // bad request
+        $responseBodyArray = json_decode((string)$this->_response->getBody(), true);
+
+        $expectedErrorMessage = [
+            'errors' => [
+                [
+                    'code' => 400,
+                    'title' => 'Bad Request',
+                    'detail' => 'JSON API 1.0 does not support side-posting (hasMany relationship data detected in the request body)'
+                ]
+            ]
+        ];
+
+        $this->assertArraySubset($expectedErrorMessage, $responseBodyArray);
+    }
+
     /**
      * PhpUnit Data Provider that will call `testCreateResource()` for every array entry
      * so we can test multiple successful POST requests without repeating ourselves.

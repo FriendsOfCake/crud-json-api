@@ -124,7 +124,7 @@ class JsonApiView extends View
         }
 
         // All "Schema is not registered for a resource at path 'xyz'" errors
-        // originate from the line below and are caused by the mentioned Table
+        // originate from the line below and are caused by the mentioned Cake Table
         // object not being present in the  `_repositories` viewVar array.
         $schemas = $this->_entitiesToNeoMerxSchema($this->viewVars['_repositories']);
 

@@ -1,0 +1,20 @@
+{
+    "data": {
+        "type": "countries",
+        "attributes": {
+            "code": "MC",
+            "name": "Monaco",
+            "dummy-counter": 66666
+        },
+        "relationships": {
+            "national-cities": {
+                "data": [
+                    {
+                        "type": "national-cities",
+                        "id": "4"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -34,7 +34,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/cultures?country_id=1"
+                    "self": "\/cultures?country-id=1"
                 }
             },
             "national-cities": {
@@ -57,7 +57,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/national-cities?country_id=1"
+                    "self": "\/national-cities?country-id=1"
                 }
             }
         },

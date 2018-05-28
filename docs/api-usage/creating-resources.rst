@@ -38,8 +38,8 @@ A valid JSON API request body for creating a new Country would look similar to:
     }
   }
 
-The same applies when creating new resources with relationships. For example, the JSON API
-request body for creating a new Country with ``currency_id=1`` would look similar to:
+The same rules apply when you create a new Resource and want to set its ``belongsTo`` relationships.
+For example, the JSON API request body for creating a new Country with ``currency_id=1`` would like:
 
 .. code-block:: json
 
@@ -69,9 +69,16 @@ request body for creating a new Country with ``currency_id=1`` would look simila
 Side-Posting
 ^^^^^^^^^^^^
 
-Side-posting is an often requested feature which would allow creating multiple resources (and/or relationships) using a single POST request.
+Side-posting is an often requested feature which would allow creating multiple Resources (and/or relationships) using a single POST request.
 
 However, this functionality is NOT supported by version 1.0 of the JSON API specification and is therefore NOT supported by crud-json-api.
 
-Work for this feature is in progress and might land in version 1.1 of the specification, more information
-`available here <https://github.com/json-api/json-api/pull/1197>`_.
+In practice this means:
+
+- you will only be able to create Resources with ``belongsTo`` relationships pointing to EXISTING foreign keys
+- crud-json-api will throw a ``BadRequestException`` when it detects attempts to side-post ``hasMany`` relationships
+
+.. note::
+
+  Side-posting might land in version 1.1 of the JSON API specification, more information available in
+  `this Pull Request <https://github.com/json-api/json-api/pull/1197>`_.

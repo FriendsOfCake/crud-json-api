@@ -27,7 +27,7 @@
                     }
                 ],
                 "links": {
-                    "self": "\/countries?currency_id=1"
+                    "self": "\/countries?currency-id=1"
                 }
             }
         },
