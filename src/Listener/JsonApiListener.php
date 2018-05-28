@@ -976,6 +976,12 @@ class JsonApiListener extends ApiListener
         # decode JSON API to CakePHP array format, then call the action as usual
         $decodedJsonApi = $this->_convertJsonApiDocumentArray($requestData);
 
+        // For PATCH operations the `id` field in the request data MUST match the URL id
+        // because JSON API considers it immutable. https://github.com/json-api/json-api/issues/481
+        if (($requestMethod === 'PATCH') && ($this->_controller()->request->getParam('id') !== $decodedJsonApi['id'])) {
+            throw new BadRequestException("URL id does not match request data id as required for JSON API PATCH actions");
+        }
+
         $this->_controller()->request = $this->_controller()->request->withParsedBody($decodedJsonApi);
     }
 
