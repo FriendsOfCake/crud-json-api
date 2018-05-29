@@ -540,11 +540,7 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * Adds belongsTo data to the find() result so the 201 success response
-     * is able to render the jsonapi `relationships` member.
-     *
-     * Please note that we are deliberately NOT creating a new find query as
-     * this would not respect non-accessible fields.
+     * Adds belongsTo data to the find() result.
      *
      * @param \Cake\Event\Event $event Event
      * @return void
@@ -558,33 +554,32 @@ class JsonApiListener extends ApiListener
         foreach ($associations as $association) {
             $type = $association->type();
 
-            // handle `belongsTo` and `hasOne` relationships
             if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
-                $associationTable = $association->getTarget();
-                $foreignKey = $association->getForeignKey();
+                $associationTable = $association->getTarget(); // Users
+                $foreignKey = $association->getForeignKey(); // user_id
+                $associationId = $entity->$foreignKey; // 1234
 
-                $result = $associationTable
-                    ->find()
-                    ->select(['id'])
-                    ->where([$association->getName() . '.id' => $entity->$foreignKey])
-                    ->first();
+                if (!empty($associationId)) {
+                    $associatedEntity = $associationTable->newEntity();
+                    $associatedEntity->set('id', $associationId);
 
-                // Unfortunately, _propertyName is protected. We have got serious reason to use it though.
-                $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
-                $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
-                $propertyNameProp->setAccessible(true);
-                $key = $propertyNameProp->getValue($association);
+                    // generate key name required for neoMerx to find and use the entity data
+                    // => ?!? => unfortunately, _propertyName is protected. We have got serious reason to use it though
+                    $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
+                    $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
+                    $propertyNameProp->setAccessible(true);
+                    $key = $propertyNameProp->getValue($association);
 
-                // There are cases when _propertyName is not set and we go default then
-                if (!$key) {
-                    $key = Inflector::tableize($association->getName());
-                    $key = Inflector::singularize($key);
+                    if (!$key) {
+                        $key = Inflector::singularize($association->getName()); // Users
+                        $key = Inflector::underscore($key); // user
+                    }
+
+                    $entity->set($key, $associatedEntity);
                 }
 
-                $entity->$key = $result;
-
-                //Also insert the contained associations into the query
-                if (isset($event->getSubject()->query)) {
+                // insert the contained associations into the query
+                if (!empty($event->getSubject()->query)) {
                     $event->getSubject()->query->contain($association->getName());
                 }
             }
