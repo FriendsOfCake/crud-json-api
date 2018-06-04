@@ -7,6 +7,7 @@ use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
@@ -181,13 +182,38 @@ class JsonApiListener extends ApiListener
         $entity = $event->getSubject()->entity;
         $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]); // hasMany
 
-        // stop propagation if hasMany relationship(s) are detected in the request data
-        // and thus the client is trying to side-post/create related records
         foreach ($hasManyAssociations as $associationName) {
             $key = Inflector::tableize($associationName);
-            if (isset($entity->$key)) {
-                throw new BadRequestException("JSON API 1.0 does not support side-posting (hasMany relationship data detected in the request body)");
+
+            // do nothing if association is not hasMany
+            if (!isset($entity->$key)) {
+                continue;
             }
+
+            // hasMany found in the entity, extract ids from the request data
+            $primaryResourceId = $this->_controller()->request->getData('id');
+            $hasManyIds = Hash::extract($this->_controller()->request->getData($key), '{n}.id');
+            $hasManyTable = TableRegistry::get($associationName);
+
+            // query database only for hasMany that match both passed id and the id of the primary resource
+            $query = $hasManyTable->find()
+                ->select(['id'])
+                ->where([
+                    'project_id' => $primaryResourceId,
+                    'id IN' => $hasManyIds,
+                ]);
+
+            // throw an exception if number of database records does not exactly matches passed ids
+            if (count($hasManyIds) !== $query->count()) {
+                throw new BadRequestException("One or more of the passed hasMany relationships ids were not found in the database");
+            }
+
+            // all good, merge fetched entities into the entity before saving
+            $entity->$key = $query->toArray();
+
+            // lastly, set the `saveStrategy` for this hasMany to `replace` so non-matching existing records will be removed
+            $repository = $event->getSubject()->query->getRepository();
+            $repository->getAssociation($associationName)->setSaveStrategy('replace');
         }
     }
 
@@ -552,10 +578,11 @@ class JsonApiListener extends ApiListener
         $associations = $repository->associations();
 
         foreach ($associations as $association) {
-            $type = $association->type();
+            $associationType = $association->type();
+            $associationTable = $association->getTarget(); // Users
 
-            if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
-                $associationTable = $association->getTarget(); // Users
+            // belongsTo and HasOne
+            if ($associationType === Association::MANY_TO_ONE || $associationType === Association::ONE_TO_ONE) {
                 $foreignKey = $association->getForeignKey(); // user_id
                 $associationId = $entity->$foreignKey; // 1234
 
@@ -577,11 +604,11 @@ class JsonApiListener extends ApiListener
 
                     $entity->set($key, $associatedEntity);
                 }
+            }
 
-                // insert the contained associations into the query
-                if (!empty($event->getSubject()->query)) {
-                    $event->getSubject()->query->contain($association->getName());
-                }
+            // insert the contained associations into the query
+            if (!empty($event->getSubject()->query)) {
+                $event->getSubject()->query->contain($association->getName());
             }
         }
 
