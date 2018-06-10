@@ -170,7 +170,9 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * beforeSave() event.
+     * beforeSave() event used to prevent users from sending `hasMany` relationships when POSTing and
+     * to prevent them from sending `hasMany` relationships not belonging to this primary resource
+     * when PATCHing.
      *
      * @param \Cake\Event\Event $event Event
      * @return void
@@ -182,12 +184,22 @@ class JsonApiListener extends ApiListener
         $entity = $event->getSubject()->entity;
         $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]); // hasMany
 
+        if (empty($hasManyAssociations)) {
+            return;
+        }
+
+        // must be PATCH so verify hasMany relationships before saving
         foreach ($hasManyAssociations as $associationName) {
             $key = Inflector::tableize($associationName);
 
             // do nothing if association is not hasMany
             if (!isset($entity->$key)) {
                 continue;
+            }
+
+            // prevent clients attempting to side-post/create related hasMany records
+            if ($this->_request()->getMethod() === 'POST') {
+                throw new BadRequestException("JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)");
             }
 
             // hasMany found in the entity, extract ids from the request data

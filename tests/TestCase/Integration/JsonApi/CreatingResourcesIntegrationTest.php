@@ -7,7 +7,7 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
 {
 
     /**
-     * Make sure attempts to side-post related (hasMany) records throws an exception.
+     * Make sure attempts to side-post/create related hasMany records throws an exception.
      *
      * @return void
      */
@@ -30,7 +30,7 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                 [
                     'code' => 400,
                     'title' => 'Bad Request',
-                    'detail' => 'JSON API 1.0 does not support side-posting (hasMany relationship data detected in the request body)'
+                    'detail' => 'JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)'
                 ]
             ]
         ];
