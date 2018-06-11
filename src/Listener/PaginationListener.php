@@ -85,7 +85,7 @@ class PaginationListener extends BaseListener
             'filter' => $request->getQuery('filter'),
         ];
 
-        $fullBase = (bool) $this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
+        $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
         $self = Router::url([
             'controller' => $this->_controller()->getName(),
