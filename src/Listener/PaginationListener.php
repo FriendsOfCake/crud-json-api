@@ -72,8 +72,6 @@ class PaginationListener extends BaseListener
      */
     protected function _getJsonApiPaginationResponse(array $pagination)
     {
-        $routerMethod = 'normalize'; // produce relative links
-
         $defaultUrl = array_intersect_key($pagination, [
             'sort' => null,
             'page' => null,
@@ -87,49 +85,47 @@ class PaginationListener extends BaseListener
             'filter' => $request->getQuery('filter'),
         ];
 
-        if ($this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks') === true) {
-            $routerMethod = 'url'; // produce absolute links
-        }
+        $fullBase = (bool) $this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
-        $self = Router::$routerMethod([
+        $self = Router::url([
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => $pagination['page'],
             '_method' => 'GET',
-        ] + $defaultUrl, true);
+        ] + $defaultUrl, $fullBase);
 
-        $first = Router::$routerMethod([
+        $first = Router::url([
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => 1,
             '_method' => 'GET',
-        ] + $defaultUrl, true);
+        ] + $defaultUrl, $fullBase);
 
-        $last = Router::$routerMethod([
+        $last = Router::url([
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
-        ] + $defaultUrl, true);
+        ] + $defaultUrl, $fullBase);
 
         $prev = null;
         if ($pagination['prevPage']) {
-            $prev = Router::$routerMethod([
+            $prev = Router::url([
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
                 'page' => $pagination['page'] - 1,
                 '_method' => 'GET',
-            ] + $defaultUrl, true);
+            ] + $defaultUrl, $fullBase);
         }
 
         $next = null;
         if ($pagination['nextPage']) {
-            $next = Router::$routerMethod([
+            $next = Router::url([
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
                 'page' => $pagination['page'] + 1,
                 '_method' => 'GET',
-            ] + $defaultUrl, true);
+            ] + $defaultUrl, $fullBase);
         }
 
         return [
