@@ -1,0 +1,19 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "2",
+        "relationships": {
+            "cultures": {
+                "data": [
+                    {
+                        "type": "cultures",
+                        "id": "3"
+                    }
+                ]
+            }
+        },
+        "links": {
+            "self": "\/countries\/2"
+        }
+    }
+}

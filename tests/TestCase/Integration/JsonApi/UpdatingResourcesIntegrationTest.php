@@ -78,6 +78,24 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 ]
             ],
 
+            # Make sure `hasMany` relationships get updated (here we provide
+            # one culture so the result will contain only one culture, all
+            # others are wiped out
+            'update-single-word-resource-single-hasmany-relationship-only' => [
+                '/countries/2',
+                'update-country-set-single-hasmany-relationship.json',
+                'updated-country-set-single-hasmany-relationship.json',
+            ],
+
+            # Make sure `hasMany` relationships get updated (here we provide
+            # two cultures so the result will contain just those two cultures, all
+            # others are wiped out
+            'update-single-word-resource-set-multiple-hasmany-relationships' => [
+                '/countries/2',
+                'update-country-set-multiple-hasmany-relationships.json',
+                'updated-country-set-multiple-hasmany-relationships.json',
+            ],
+
             # Make sure we can update multi-word attributes
             'update-multi-word-resource-attributes-only' => [
                 '/national-capitals/6',
@@ -127,7 +145,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
      * @return void
      * @dataProvider updateResourceProvider
      */
-    public function testUpdateResource($url, $requestBodyFile, $expectedResponseFile, $expectedRecordSubset)
+    public function testUpdateResource($url, $requestBodyFile, $expectedResponseFile, $expectedRecordSubset = null)
     {
         $this->configRequest([
             'headers' => [
@@ -145,6 +163,11 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseEquals($this->_getExpectedResponseBody('UpdatingResources' . DS . $expectedResponseFile));
 
+        # only check database if array is passed
+        if (empty($expectedRecordSubset)) {
+            return;
+        }
+
         # generate variables required to retrieve updated database record
         preg_match('/\/(.+)\/(\d+|\d)/', $url, $matches);
         $tableName = Inflector::underscore($matches[1]);
@@ -154,6 +177,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
         # assert the database record got updated like expected
         $table = TableRegistry::get($tableName);
         $record = $table->get($recordId)->toArray();
+
         $this->assertArraySubset($expectedRecordSubset, $record);
     }
 }

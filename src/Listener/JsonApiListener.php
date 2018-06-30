@@ -182,7 +182,7 @@ class JsonApiListener extends ApiListener
     {
         // generate a flat list of hasMany relationships for the current model
         $entity = $event->getSubject()->entity;
-        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]); // hasMany
+        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]);
 
         if (empty($hasManyAssociations)) {
             return;
@@ -208,16 +208,17 @@ class JsonApiListener extends ApiListener
             $hasManyTable = TableRegistry::get($associationName);
 
             // query database only for hasMany that match both passed id and the id of the primary resource
+            $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
             $query = $hasManyTable->find()
                 ->select(['id'])
                 ->where([
-                    'project_id' => $primaryResourceId,
+                    $entityForeignKey => $primaryResourceId,
                     'id IN' => $hasManyIds,
                 ]);
 
             // throw an exception if number of database records does not exactly matches passed ids
             if (count($hasManyIds) !== $query->count()) {
-                throw new BadRequestException("One or more of the passed hasMany relationships ids were not found in the database");
+                throw new BadRequestException("One or more of the provided relationship ids for $associationName do not exist in the database");
             }
 
             // all good, merge fetched entities into the entity before saving
