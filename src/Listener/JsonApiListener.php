@@ -221,7 +221,7 @@ class JsonApiListener extends ApiListener
                 throw new BadRequestException("One or more of the provided relationship ids for $associationName do not exist in the database");
             }
 
-            // all good, merge fetched entities into the entity before saving
+            // all good, replace entity data with fetched entities before saving
             $entity->$key = $query->toArray();
 
             // lastly, set the `saveStrategy` for this hasMany to `replace` so non-matching existing records will be removed
