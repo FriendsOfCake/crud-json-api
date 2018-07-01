@@ -58,6 +58,11 @@ For example, a valid JSON API document structure that would set a single related
     }
   }
 
+.. note::
+
+  Please note that JSON API does not support updating attributes for the related resource(s) and thus
+  will simply ignore them if found in the request body.
+
 Updating To-Many Relationships
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -92,3 +97,8 @@ for a given ``country`` would look like:
       }
     }
   }
+
+.. note::
+
+  Please note that JSON API does not support updating attributes for the related resource(s) and thus
+  will simply ignore them if found in the request body.
