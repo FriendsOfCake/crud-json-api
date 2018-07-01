@@ -204,10 +204,13 @@ class JsonApiListener extends ApiListener
 
             // hasMany found in the entity, extract ids from the request data
             $primaryResourceId = $this->_controller()->request->getData('id');
+
+            /** @var array $hasManyIds */
             $hasManyIds = Hash::extract($this->_controller()->request->getData($key), '{n}.id');
             $hasManyTable = TableRegistry::get($associationName);
 
             // query database only for hasMany that match both passed id and the id of the primary resource
+            /** @var string $entityForeignKey */
             $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
             $query = $hasManyTable->find()
                 ->select(['id'])
