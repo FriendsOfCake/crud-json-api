@@ -7,6 +7,7 @@ use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
@@ -169,7 +170,9 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * beforeSave() event.
+     * beforeSave() event used to prevent users from sending `hasMany` relationships when POSTing and
+     * to prevent them from sending `hasMany` relationships not belonging to this primary resource
+     * when PATCHing.
      *
      * @param \Cake\Event\Event $event Event
      * @return void
@@ -179,15 +182,54 @@ class JsonApiListener extends ApiListener
     {
         // generate a flat list of hasMany relationships for the current model
         $entity = $event->getSubject()->entity;
-        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]); // hasMany
+        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]);
 
-        // stop propagation if hasMany relationship(s) are detected in the request data
-        // and thus the client is trying to side-post/create related records
+        if (empty($hasManyAssociations)) {
+            return;
+        }
+
+        // must be PATCH so verify hasMany relationships before saving
         foreach ($hasManyAssociations as $associationName) {
             $key = Inflector::tableize($associationName);
-            if (isset($entity->$key)) {
-                throw new BadRequestException("JSON API 1.0 does not support side-posting (hasMany relationship data detected in the request body)");
+
+            // do nothing if association is not hasMany
+            if (!isset($entity->$key)) {
+                continue;
             }
+
+            // prevent clients attempting to side-post/create related hasMany records
+            if ($this->_request()->getMethod() === 'POST') {
+                throw new BadRequestException("JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)");
+            }
+
+            // hasMany found in the entity, extract ids from the request data
+            $primaryResourceId = $this->_controller()->request->getData('id');
+
+            /** @var array $hasManyIds */
+            $hasManyIds = Hash::extract($this->_controller()->request->getData($key), '{n}.id');
+            $hasManyTable = TableRegistry::get($associationName);
+
+            // query database only for hasMany that match both passed id and the id of the primary resource
+            /** @var string $entityForeignKey */
+            $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
+            $query = $hasManyTable->find()
+                ->select(['id'])
+                ->where([
+                    $entityForeignKey => $primaryResourceId,
+                    'id IN' => $hasManyIds,
+                ]);
+
+            // throw an exception if number of database records does not exactly matches passed ids
+            if (count($hasManyIds) !== $query->count()) {
+                throw new BadRequestException("One or more of the provided relationship ids for $associationName do not exist in the database");
+            }
+
+            // all good, replace entity data with fetched entities before saving
+            $entity->$key = $query->toArray();
+
+            // lastly, set the `saveStrategy` for this hasMany to `replace` so non-matching existing records will be removed
+            $repository = $event->getSubject()->query->getRepository();
+            $repository->getAssociation($associationName)->setSaveStrategy('replace');
         }
     }
 
@@ -540,11 +582,7 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * Adds belongsTo data to the find() result so the 201 success response
-     * is able to render the jsonapi `relationships` member.
-     *
-     * Please note that we are deliberately NOT creating a new find query as
-     * this would not respect non-accessible fields.
+     * Adds belongsTo data to the find() result.
      *
      * @param \Cake\Event\Event $event Event
      * @return void
@@ -556,37 +594,37 @@ class JsonApiListener extends ApiListener
         $associations = $repository->associations();
 
         foreach ($associations as $association) {
-            $type = $association->type();
+            $associationType = $association->type();
+            $associationTable = $association->getTarget(); // Users
 
-            // handle `belongsTo` and `hasOne` relationships
-            if ($type === Association::MANY_TO_ONE || $type === Association::ONE_TO_ONE) {
-                $associationTable = $association->getTarget();
-                $foreignKey = $association->getForeignKey();
+            // belongsTo and HasOne
+            if ($associationType === Association::MANY_TO_ONE || $associationType === Association::ONE_TO_ONE) {
+                $foreignKey = $association->getForeignKey(); // user_id
+                $associationId = $entity->$foreignKey; // 1234
 
-                $result = $associationTable
-                    ->find()
-                    ->select(['id'])
-                    ->where([$association->getName() . '.id' => $entity->$foreignKey])
-                    ->first();
+                if (!empty($associationId)) {
+                    $associatedEntity = $associationTable->newEntity();
+                    $associatedEntity->set('id', $associationId);
 
-                // Unfortunately, _propertyName is protected. We have got serious reason to use it though.
-                $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
-                $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
-                $propertyNameProp->setAccessible(true);
-                $key = $propertyNameProp->getValue($association);
+                    // generate key name required for neoMerx to find and use the entity data
+                    // => ?!? => unfortunately, _propertyName is protected. We have got serious reason to use it though
+                    $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
+                    $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
+                    $propertyNameProp->setAccessible(true);
+                    $key = $propertyNameProp->getValue($association);
 
-                // There are cases when _propertyName is not set and we go default then
-                if (!$key) {
-                    $key = Inflector::tableize($association->getName());
-                    $key = Inflector::singularize($key);
+                    if (!$key) {
+                        $key = Inflector::singularize($association->getName()); // Users
+                        $key = Inflector::underscore($key); // user
+                    }
+
+                    $entity->set($key, $associatedEntity);
                 }
+            }
 
-                $entity->$key = $result;
-
-                //Also insert the contained associations into the query
-                if (isset($event->getSubject()->query)) {
-                    $event->getSubject()->query->contain($association->getName());
-                }
+            // insert the contained associations into the query
+            if (!empty($event->getSubject()->query)) {
+                $event->getSubject()->query->contain($association->getName());
             }
         }
 

@@ -7,106 +7,21 @@
 
 # JSON API Crud Listener for CakePHP
 
-Crud Listener for (rapidly) building CakePHP APIs following the JSON API specification.
+Build advanced JSON API Servers with almost no code. Comes with:
 
-[Documentation found here](https://crud-json-api.readthedocs.io/).
+- Compound Documents (Deeply Nested)
+- Sparse Fieldsets
+- Multi-field Search (Filtering)
+- Multi-field Sorting
+- Multi-field Validation
+- Pagination
 
-## Installation
+## How does it work?
 
-```
-composer require friendsofcake/crud-json-api
-```
+1. Structure your data using the powerful CakePHP ORM
+2. Create (empty) Controllers
+3. Let crud-json-api serve your data as JSON API
 
-## Why use it?
+## Documentation
 
-- standardized API data fetching, data posting and (validation) errors
-- automated handling of complex associations/relationships
-- instant JSON API backend for tools like Ember Data, React and Vue
-- tons of configurable options to manipulate the generated json
-
-## Sample output
-
-```json
-  {
-    "data": {
-      "type": "countries",
-      "id": "2",
-      "attributes": {
-        "code": "BE",
-        "name": "Belgium"
-      },
-      "relationships": {
-        "currency": {
-          "data": {
-            "type": "currencies",
-            "id": "1"
-          },
-          "links": {
-            "self": "/currencies/1"
-          }
-        },
-        "cultures": {
-          "data": [
-            {
-              "type": "cultures",
-              "id": "2"
-            },
-            {
-              "type": "cultures",
-              "id": "3"
-            }
-          ],
-          "links": {
-            "self": "/cultures?country_id=2"
-          }
-        }
-      },
-      "links": {
-        "self": "/countries/2"
-      }
-    },
-    "included": [
-      {
-        "type": "currencies",
-        "id": "1",
-        "attributes": {
-          "code": "EUR",
-          "name": "Euro"
-        },
-        "links": {
-          "self": "/currencies/1"
-        }
-      },
-      {
-        "type": "cultures",
-        "id": "2",
-        "attributes": {
-          "code": "nl-BE",
-          "name": "Dutch (Belgium)"
-        },
-        "links": {
-          "self": "/cultures/2"
-        }
-      },
-      {
-        "type": "cultures",
-        "id": "3",
-        "attributes": {
-          "code": "fr-BE",
-          "name": "French (Belgium)"
-        },
-        "links": {
-          "self": "/cultures/3"
-        }
-      }
-    ]
-  }
-```
-
-## Contribute
-
-Before submitting a PR make sure:
-
-- [PHPUnit](http://book.cakephp.org/3.0/en/development/testing.html#running-tests)
-and [CakePHP Code Sniffer](https://github.com/cakephp/cakephp-codesniffer) tests pass
-- [Codecov Code Coverage ](https://codecov.io/github/FriendsOfCake/crud-json-api) does not drop
+Fully documented at [https://crud-json-api.readthedocs.io/](https://crud-json-api.readthedocs.io/)
