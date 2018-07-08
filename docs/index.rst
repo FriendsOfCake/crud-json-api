@@ -1,7 +1,7 @@
 Introduction
 ============
 
-Crud listener for building `JSON API <http://jsonapi.org/>` Servers with almost no code.
+Crud listener for building `JSON API <http://jsonapi.org/>`_ Servers with almost no code.
 
 Comes with advanced features like:
 
