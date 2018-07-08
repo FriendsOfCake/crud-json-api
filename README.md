@@ -7,11 +7,11 @@
 
 # JSON API Crud Listener for CakePHP
 
-Build advanced JSON API Servers with almost no code. Comes with:
+Build JSON API Servers with almost no code. Comes with advanced features like:
 
-- Compound Documents (Deeply Nested)
+- Compound Documents (Deeply Nested Includes)
 - Sparse Fieldsets
-- Multi-field Search (Filtering)
+- Multi-field Filtering (Search)
 - Multi-field Sorting
 - Multi-field Validation
 - Pagination
@@ -19,8 +19,8 @@ Build advanced JSON API Servers with almost no code. Comes with:
 ## How does it work?
 
 1. Structure your data using the powerful CakePHP ORM
-2. Create (empty) Controllers
-3. Let crud-json-api serve your data as JSON API
+2. Create (near-empty) Controllers
+3. Let crud-json-api handle your JSON API
 
 ## Documentation
 

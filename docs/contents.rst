@@ -55,5 +55,7 @@ Contents
    :maxdepth: 3
    :caption: Additional Information
 
+    Customizing Output <additional-information/customizing-output>
+    Common Issues <additional-information/common-issues>
     Fixtures <additional-information/fixtures>
     Contributing <additional-information/contributing>

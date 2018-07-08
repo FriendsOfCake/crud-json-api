@@ -2,7 +2,7 @@ Fixtures
 ========
 
 We realize the JSON API document structure can be complex and hard to memorize which is exactly why we have decided to use
-pure JSON API documents for our integration tests. This not only assures the plugin will behave as we expect but also
+pure JSON API documents for our integration tests. This not only assures the plugin will behave exactly as we expect but also
 provides you with a reference directory you can use to lookup fully-functional examples of:
 
 - `JsonApiRequestBodies <https://github.com/FriendsOfCake/crud-json-api/tree/master/tests/Fixture/JsonApiRequestBodies>`_:, the JSON API bodies used when Creating or Updating Resources

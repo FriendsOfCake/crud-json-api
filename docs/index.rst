@@ -1,12 +1,13 @@
 Introduction
 ============
 
-Use the JsonApi listener to build Crud APIs following the
-`JSON API specification <http://jsonapi.org/>`_.
+Crud listener for building `JSON API <http://jsonapi.org/>` Servers with almost no code.
 
-Brings you
-----------
+Comes with advanced features like:
 
-* standardized data fetching, data posting and (validation) errors
-* a ton of configurable options to manipulate the generated json
-* instant compatibility with JSON API supporting tools like Ember Data
+- Compound Documents (Deeply Nested Includes)
+- Sparse Fieldsets
+- Multi-field Search (Filtering)
+- Multi-field Sorting
+- Multi-field Validation
+- Pagination
