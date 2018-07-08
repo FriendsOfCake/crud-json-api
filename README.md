@@ -20,7 +20,7 @@ Build JSON API Servers with almost no code. Comes with advanced features like:
 
 1. Structure your data using the powerful CakePHP ORM
 2. Create (near-empty) Controllers
-3. Let crud-json-api handle your JSON API
+3. Let crud-json-api worry about JSON API
 
 ## Documentation
 
