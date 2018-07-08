@@ -55,7 +55,7 @@ Contents
    :maxdepth: 3
    :caption: Additional Information
 
-    Customizing Output <additional-information/customizing-output>
+    JSON Examples <additional-information/examples>
     Common Issues <additional-information/common-issues>
-    Fixtures <additional-information/fixtures>
+    Customizing Output <additional-information/customizing-output>
     Contributing <additional-information/contributing>
