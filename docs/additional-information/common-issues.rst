@@ -1,6 +1,16 @@
 Common Issues
 =============
 
+Missing template
+^^^^^^^^^^^^^^^^
+
+Crud-json-api does not require you to create templates so if you see the following error you are
+most likely not sending the correct ``application/vnd.api+json`` Accept Header with your requests:
+
+.. code-block:: php
+
+  Error: Missing Template
+
 Missing routes
 ^^^^^^^^^^^^^^
 
