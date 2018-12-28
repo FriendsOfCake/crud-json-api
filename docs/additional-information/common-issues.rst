@@ -37,4 +37,4 @@ present for both the primary resource and all related resources.
 Normal HTML is returned
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If you are just getting back a standard page response, rather than a JSON response, it is likely because already have a controller action defined for the resource you are trying to request. For CRUD to handle it, you must remove any existing controller actions that conflict with the routes you are trying to configure.
+If you are just getting back a standard page response, rather than a JSON response (and you have confirmed that you are sending the correct JSON API Request Headers) it is most likely because you already have a controller action defined for the resource you are trying to request. For CRUD to handle it, you must remove any existing controller actions that conflict with the routes you are trying to configure.
