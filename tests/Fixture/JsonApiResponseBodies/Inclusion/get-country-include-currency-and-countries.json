@@ -9,12 +9,12 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             }
         },
@@ -23,6 +23,42 @@
         }
     },
     "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR",
+                "name": "Euro"
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=1"
+                    },
+                    "data": [
+                        {
+                            "type": "countries",
+                            "id": "1"
+                        },
+                        {
+                            "type": "countries",
+                            "id": "2"
+                        },
+                        {
+                            "type": "countries",
+                            "id": "3"
+                        },
+                        {
+                            "type": "countries",
+                            "id": "4"
+                        }
+                    ]
+                }
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        },
         {
             "type": "countries",
             "id": "2",
@@ -57,42 +93,6 @@
             },
             "links": {
                 "self": "\/countries\/4"
-            }
-        },
-        {
-            "type": "currencies",
-            "id": "1",
-            "attributes": {
-                "code": "EUR",
-                "name": "Euro"
-            },
-            "relationships": {
-                "countries": {
-                    "data": [
-                        {
-                            "type": "countries",
-                            "id": "1"
-                        },
-                        {
-                            "type": "countries",
-                            "id": "2"
-                        },
-                        {
-                            "type": "countries",
-                            "id": "3"
-                        },
-                        {
-                            "type": "countries",
-                            "id": "4"
-                        }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=1"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/currencies\/1"
             }
         }
     ]

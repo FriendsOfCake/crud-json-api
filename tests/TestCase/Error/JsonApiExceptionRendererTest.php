@@ -10,7 +10,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Crud\Error\Exception\ValidationException;
 use Crud\TestSuite\TestCase;
-use Neomerx\JsonApi\Exceptions\ErrorCollection;
+use Neomerx\JsonApi\Schema\ErrorCollection;
 
 class JsonApiExceptionRendererTest extends TestCase
 {
@@ -27,7 +27,7 @@ class JsonApiExceptionRendererTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
+        'plugin.CrudJsonApi.Countries',
     ];
 
     /**
@@ -37,6 +37,11 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         parent::setUp();
         Configure::write('debug', true);
+
+        $this->deprecated(function () {
+            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+        });
 
         // set path to the JSON API response fixtures
         $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
@@ -303,7 +308,7 @@ class JsonApiExceptionRendererTest extends TestCase
 
         $result = $this->callProtectedMethod('_getNeoMerxErrorCollection', [$nonStandardizedValidationErrors], $renderer);
 
-        $this->assertInstanceOf('\Neomerx\JsonApi\Exceptions\ErrorCollection', $result);
+        $this->assertInstanceOf(ErrorCollection::class, $result);
         $this->assertSame(2, $result->count());
     }
 

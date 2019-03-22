@@ -9,35 +9,38 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             },
             "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
                 "data": {
                     "type": "national-capitals",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/national-capitals\/1"
                 }
             },
             "cultures": {
+                "links": {
+                    "related": "\/cultures?country_id=1"
+                },
                 "data": [
                     {
                         "type": "cultures",
                         "id": "1"
                     }
-                ],
-                "links": {
-                    "self": "\/cultures?country-id=1"
-                }
+                ]
             },
             "national-cities": {
+                "links": {
+                    "related": "\/national-cities?country_id=1"
+                },
                 "data": [
                     {
                         "type": "national-cities",
@@ -55,10 +58,7 @@
                         "type": "national-cities",
                         "id": "6"
                     }
-                ],
-                "links": {
-                    "self": "\/national-cities?country-id=1"
-                }
+                ]
             }
         },
         "links": {

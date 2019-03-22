@@ -592,7 +592,12 @@ class JsonApiListener extends ApiListener
      */
     protected function _insertBelongsToDataIntoEventFindResult($event)
     {
-        $entity = $event->getSubject()->entity;
+        $subject = $event->getSubject();
+        if (!isset($subject->entity)) {
+            return;
+        }
+
+        $entity = $subject->entity;
         $repository = $this->_controller()->loadModel();
         $associations = $repository->associations();
 

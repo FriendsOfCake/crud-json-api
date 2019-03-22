@@ -8,9 +8,9 @@ use Cake\Validation\Validation;
 use Crud\Core\BaseObject;
 use Crud\Error\Exception\CrudException;
 use Crud\Error\Exception\ValidationException;
-use Neomerx\JsonApi\Document\Error;
-use Neomerx\JsonApi\Document\Link;
-use Neomerx\JsonApi\Exceptions\ErrorCollection;
+use Neomerx\JsonApi\Schema\Error;
+use Neomerx\JsonApi\Schema\ErrorCollection;
+use Neomerx\JsonApi\Schema\Link;
 use stdClass;
 
 /**
@@ -30,7 +30,7 @@ class DocumentValidator extends stdClass
     protected $_document;
 
     /**
-     * @var \Neomerx\JsonApi\Exceptions\ErrorCollection
+     * @var \Neomerx\JsonApi\Schema\ErrorCollection
      */
     protected $_errorCollection;
 
@@ -596,7 +596,7 @@ class DocumentValidator extends stdClass
      * Helper method that displays aboutLink only if enabled in Listener config.
      *
      * @param string $url URL
-     * @return \Neomerx\JsonApi\Document\Link|null
+     * @return \Neomerx\JsonApi\Schema\Link|null
      */
     protected function _getAboutLink($url)
     {
@@ -604,7 +604,7 @@ class DocumentValidator extends stdClass
             return null;
         }
 
-        return new Link($url);
+        return new Link(false, $url, false);
     }
 
     /**

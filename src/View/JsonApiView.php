@@ -173,9 +173,11 @@ class JsonApiView extends View
             $encoder->withLinks($this->_getPaginationLinks($pagination));
 
             // Additional pagination information has to be in top-level node `meta`
-            $this->get('_meta')['record_count'] = $pagination['record_count'];
-            $this->get('_meta')['page_count'] = $pagination['page_count'];
-            $this->get('_meta')['page_limit'] = $pagination['page_limit'];
+            $meta = $this->get('_meta');
+            $meta['record_count'] = $pagination['record_count'];
+            $meta['page_count'] = $pagination['page_count'];
+            $meta['page_limit'] = $pagination['page_limit'];
+            $this->set('_meta', $meta);
         }
 
         // Add optional top-level `meta` node to the response if enabled by

@@ -9,24 +9,24 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             },
             "cultures": {
+                "links": {
+                    "related": "\/cultures?country_id=1"
+                },
                 "data": [
                     {
                         "type": "cultures",
                         "id": "1"
                     }
-                ],
-                "links": {
-                    "self": "\/cultures?country-id=1"
-                }
+                ]
             }
         },
         "links": {

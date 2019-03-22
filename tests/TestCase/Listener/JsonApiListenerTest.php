@@ -34,11 +34,11 @@ class JsonApiListenerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.cultures',
-        'plugin.CrudJsonApi.currencies',
-        'plugin.CrudJsonApi.national_capitals',
-        'plugin.CrudJsonApi.national_cities',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Cultures',
+        'plugin.CrudJsonApi.Currencies',
+        'plugin.CrudJsonApi.NationalCapitals',
+        'plugin.CrudJsonApi.NationalCities',
     ];
 
     /**

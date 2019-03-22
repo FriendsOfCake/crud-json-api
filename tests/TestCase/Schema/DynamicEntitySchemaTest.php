@@ -21,9 +21,9 @@ class DynamicEntitySchemaTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.cultures',
-        'plugin.CrudJsonApi.currencies',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Cultures',
+        'plugin.CrudJsonApi.Currencies',
     ];
 
     /**

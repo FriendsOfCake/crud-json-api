@@ -7,9 +7,7 @@
     "links": {
         "self": "\/countries?page=1&filter=Nether",
         "first": "\/countries?page=1&filter=Nether",
-        "last": "\/countries?page=1&filter=Nether",
-        "prev": null,
-        "next": null
+        "last": "\/countries?page=1&filter=Nether"
     },
     "data": [
         {

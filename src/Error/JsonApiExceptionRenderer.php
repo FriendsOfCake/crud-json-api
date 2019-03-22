@@ -34,7 +34,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         }
 
         $viewVars = $this->controller->viewVars;
-        $code = $this->controller->response->getStatusCode(); // e.g. 404
+        $status = $this->controller->response->getStatusCode(); // e.g. 404
         $title = $this->controller->response->getReasonPhrase(); // e,g. Not Found
 
         // Only set JSON API `detail` field if `message` viewVar field is not
@@ -48,12 +48,11 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $errorCollection->add(new Error(
             $idx = null,
             $aboutLink = null,
-            $status = null,
-            $code,
+            $typeLinks = null,
+            $status,
+            $code = null,
             $title,
-            $detail,
-            $source = null,
-            $meta = null
+            $detail
         ));
 
         $encoder = Encoder::instance();
@@ -132,7 +131,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
     protected function _getNeoMerxErrorCollection($validationErrors)
     {
         if (isset($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'])) {
-            if (is_a($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'], '\Neomerx\JsonApi\Exceptions\ErrorCollection')) {
+            if (is_a($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'], ErrorCollection::class)) {
                 return $validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'];
             }
         }

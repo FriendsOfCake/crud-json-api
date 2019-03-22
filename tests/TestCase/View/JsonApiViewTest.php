@@ -31,9 +31,9 @@ class JsonApiViewTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.currencies',
-        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Currencies',
+        'plugin.CrudJsonApi.Cultures',
     ];
 
     /**
@@ -56,6 +56,11 @@ class JsonApiViewTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->deprecated(function () {
+            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+        });
 
         $listener = new JsonApiListener(new Controller());
         $this->_defaultViewVars = $listener->getConfig();

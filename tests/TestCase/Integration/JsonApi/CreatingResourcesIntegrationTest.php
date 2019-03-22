@@ -28,7 +28,7 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $expectedErrorMessage = [
             'errors' => [
                 [
-                    'code' => 400,
+                    'status' => 400,
                     'title' => 'Bad Request',
                     'detail' => 'JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)'
                 ]
