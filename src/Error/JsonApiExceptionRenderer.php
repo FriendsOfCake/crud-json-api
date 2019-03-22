@@ -7,9 +7,9 @@ use Cake\Core\Exception\Exception;
 use Cake\Error\Debugger;
 use Crud\Error\ExceptionRenderer;
 use Crud\Listener\ApiQueryLogListener;
-use Neomerx\JsonApi\Document\Error;
 use Neomerx\JsonApi\Encoder\Encoder;
-use Neomerx\JsonApi\Exceptions\ErrorCollection;
+use Neomerx\JsonApi\Schema\Error;
+use Neomerx\JsonApi\Schema\ErrorCollection;
 use Zend\Diactoros\Stream;
 
 /**
