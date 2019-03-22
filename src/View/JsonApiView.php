@@ -8,13 +8,15 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use Crud\Error\Exception\CrudException;
-use Neomerx\JsonApi\Document\Link;
+use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Encoder\Encoder;
 use Neomerx\JsonApi\Encoder\EncoderOptions;
 use Neomerx\JsonApi\Encoder\Parameters\EncodingParameters;
+use Neomerx\JsonApi\Schema\Link;
 
 class JsonApiView extends View
 {
@@ -48,11 +50,11 @@ class JsonApiView extends View
      *
      * @return array
      */
-    protected function _getSpecialVars()
+    protected function _getSpecialVars(): array
     {
         $result = [];
 
-        $viewVarKeys = array_keys($this->viewVars);
+        $viewVarKeys = $this->getVars();
         foreach ($viewVarKeys as $viewVarKey) {
             if ($viewVarKey[0] === '_') {
                 $result[] = $viewVarKey;
@@ -75,16 +77,16 @@ class JsonApiView extends View
      */
     public function render($view = null, $layout = null)
     {
-        if (isset($this->viewVars['_repositories'])) {
+        if ($this->get('_repositories')) {
             $json = $this->_encodeWithSchemas();
         } else {
             $json = $this->_encodeWithoutSchemas();
         }
 
         // Add query logs node if ApiQueryLogListener is loaded
-        if (Configure::read('debug') && isset($this->viewVars['queryLog'])) {
+        if (Configure::read('debug') && $this->get('queryLog')) {
             $json = json_decode($json, true);
-            $json['query'] = $this->viewVars['queryLog'];
+            $json['query'] = $this->get('queryLog');
             $json = json_encode($json, $this->_jsonOptions());
         }
 
@@ -96,20 +98,16 @@ class JsonApiView extends View
      *
      * @return null|string
      */
-    protected function _encodeWithoutSchemas()
+    protected function _encodeWithoutSchemas(): ?string
     {
-        if (empty($this->viewVars['_meta'])) {
+        if (empty($this->get('_meta'))) {
             return null;
         }
 
-        $encoder = Encoder::instance(
-            [],
-            new EncoderOptions(
-                $this->_jsonOptions()
-            )
-        );
+        $encoder = Encoder::instance()
+            ->withEncodeOptions($this->_jsonOptions());
 
-        return $encoder->encodeMeta($this->viewVars['_meta']);
+        return $encoder->encodeMeta($this->get('_meta'));
     }
 
     /**
@@ -117,33 +115,26 @@ class JsonApiView extends View
      *
      * @return string
      */
-    protected function _encodeWithSchemas()
+    protected function _encodeWithSchemas(): string
     {
-        if ($this->viewVars['_inflect'] === 'dasherize') {
+        if ($this->get('_inflect') === 'dasherize') {
             $this->_dasherizeIncludesViewVar();
         }
 
         // All "Schema is not registered for a resource at path 'xyz'" errors
         // originate from the line below and are caused by the mentioned Cake Table
         // object not being present in the  `_repositories` viewVar array.
-        $schemas = $this->_entitiesToNeoMerxSchema($this->viewVars['_repositories']);
+        $schemas = $this->_entitiesToNeoMerxSchema($this->get('_repositories'));
 
         // Please note that a third NeoMerx EncoderOptions argument `depth`
         // exists but has not been implemented in this plugin.
-        $encoder = Encoder::instance(
-            $schemas,
-            new EncoderOptions(
-                $this->_jsonOptions()
-            )
-        );
+        $encoder = Encoder::instance($schemas)
+            ->withEncodeOptions($this->_jsonOptions());
 
-        $serialize = null;
-        if (isset($this->viewVars['_serialize'])) {
-            $serialize = $this->viewVars['_serialize'];
-        }
+        $serialize = $this->get('_serialize');
 
-        if (isset($this->viewVars['_serialize']) && $this->viewVars['_serialize'] !== false) {
-            $serialize = $this->_getDataToSerializeFromViewVars($this->viewVars['_serialize']);
+        if ($this->get('_serialize') !== false) {
+            $serialize = $this->_getDataToSerializeFromViewVars($this->get('_serialize'));
         }
 
         // By default the listener will automatically add all associated data
@@ -157,51 +148,48 @@ class JsonApiView extends View
         //
         // Lastly, listener config option `fieldSets` may be used to limit
         // the fields shown in the result.
-        $include = $this->viewVars['_include'];
-        $fieldSets = $this->viewVars['_fieldSets'];
+        $include = $this->get('_include');
+        $fieldSets = $this->get('_fieldSets');
 
-        $parameters = new EncodingParameters(
-            $include,
-            $fieldSets
-        );
+        $encoder
+            ->withIncludedPaths($include)
+            ->withFieldSets($fieldSets);
 
         // Add optional top-level `version` node to the response if enabled
         // by user using listener config option.
-        if ($this->viewVars['_withJsonApiVersion']) {
-            if (is_array($this->viewVars['_withJsonApiVersion'])) {
-                $encoder->withJsonApiVersion($this->viewVars['_withJsonApiVersion']);
+        if ($this->get('_withJsonApiVersion')) {
+            if (is_string($this->get('_withJsonApiVersion'))) {
+                $encoder->withJsonApiVersion($this->get('_withJsonApiVersion'));
             } else {
-                $encoder->withJsonApiVersion();
+                $encoder->withJsonApiVersion('1.1');
             }
         }
 
         // Add top-level `links` node with pagination information (requires
         // ApiPaginationListener which will have set/filled viewVar).
-        if (isset($this->viewVars['_pagination'])) {
-            $pagination = $this->viewVars['_pagination'];
+        if ($this->get('_pagination')) {
+            $pagination = $this->get('_pagination');
 
             $encoder->withLinks($this->_getPaginationLinks($pagination));
 
             // Additional pagination information has to be in top-level node `meta`
-            $this->viewVars['_meta']['record_count'] = $pagination['record_count'];
-            $this->viewVars['_meta']['page_count'] = $pagination['page_count'];
-            $this->viewVars['_meta']['page_limit'] = $pagination['page_limit'];
+            $this->get('_meta')['record_count'] = $pagination['record_count'];
+            $this->get('_meta')['page_count'] = $pagination['page_count'];
+            $this->get('_meta')['page_limit'] = $pagination['page_limit'];
         }
 
         // Add optional top-level `meta` node to the response if enabled by
         // user using listener config option.
-        if (!empty($this->viewVars['_meta'])) {
+        if ($this->get('_meta')) {
             if (empty($serialize)) {
-                return $encoder->encodeMeta($this->viewVars['_meta']);
-            } else {
-                $encoder->withMeta($this->viewVars['_meta']);
+                return $encoder->encodeMeta($this->get('_meta'));
             }
+
+             $encoder->withMeta($this->get('_meta'));
         }
 
         // JSON API as generated by NeoMerx. When things look off,  start debugging here
-        $neoMerxEncodedJson = $encoder->encodeData($serialize, $parameters);
-
-        return $neoMerxEncodedJson;
+        return $encoder->encodeData($serialize);
     }
 
     /**
@@ -214,15 +202,15 @@ class JsonApiView extends View
      * @throws \Crud\Error\Exception\CrudException
      * @return array A list with Entity class names as key holding NeoMerx Closure object
      */
-    protected function _entitiesToNeoMerxSchema(array $repositories)
+    protected function _entitiesToNeoMerxSchema(array $repositories): iterable
     {
         $schemas = [];
         foreach ($repositories as $repositoryName => $repository) {
-            if (isset($schemas[$repository->getEntityClass()])) {
+            $entityClass = $repository->getEntityClass();
+
+            if (isset($schemas[$entityClass])) {
                 continue;
             }
-
-            $entityClass = $repository->getEntityClass();
 
             if ($entityClass === Entity::class) {
                 throw new CrudException(sprintf('Entity classes must not be the generic "%s" class for repository "%s"', $entityClass, $repositoryName));
@@ -233,7 +221,7 @@ class JsonApiView extends View
             $entityName = App::shortName($entityClass, 'Model');
 
             // Take plugin name and entity name off
-            list($pluginName, $entityName) = pluginSplit($entityName, true);
+            [$pluginName, $entityName] = pluginSplit($entityName, true);
 
             // Find the first namespace separator to take everything after the entity type.
             $firstNamespaceSeparator = strpos($entityName, '/');
@@ -276,34 +264,28 @@ class JsonApiView extends View
      * @param array $pagination ApiPaginationListener pagination response
      * @return array
      */
-    protected function _getPaginationLinks($pagination)
+    protected function _getPaginationLinks($pagination): array
     {
-        $links = [
-            Link::SELF => null,
-            Link::FIRST => null,
-            Link::LAST => null,
-            Link::PREV => null,
-            Link::NEXT => null,
-        ];
+        $links = [];
 
         if (isset($pagination['self'])) {
-            $links[Link::SELF] = new Link($pagination['self'], null, true);
+            $links[LinkInterface::SELF] = new Link(false, $pagination['self'], false);
         }
 
         if (isset($pagination['first'])) {
-            $links[Link::FIRST] = new Link($pagination['first'], null, true);
+            $links[LinkInterface::FIRST] = new Link(false, $pagination['first'], false);
         }
 
         if (isset($pagination['last'])) {
-            $links[Link::LAST] = new Link($pagination['last'], null, true);
+            $links[LinkInterface::LAST] = new Link(false, $pagination['last'], false);
         }
 
         if (isset($pagination['prev'])) {
-            $links[Link::PREV] = new Link($pagination['prev'], null, true);
+            $links[LinkInterface::PREV] = new Link(false, $pagination['prev'], false);
         }
 
         if (isset($pagination['next'])) {
-            $links[Link::NEXT] = new Link($pagination['next'], null, true);
+            $links[LinkInterface::NEXT] = new Link(false, $pagination['next'], false);
         }
 
         return $links;
@@ -323,23 +305,23 @@ class JsonApiView extends View
         }
 
         if ($serialize === true) {
-            $data = array_diff_key(
-                $this->viewVars,
-                array_flip($this->_getSpecialVars())
+            $viewVars = array_diff(
+                $this->getVars(),
+                $this->_getSpecialVars()
             );
 
-            if (empty($data)) {
+            if (empty($viewVars)) {
                 return null;
             }
 
-            return current($data);
+            $serialize = current($viewVars);
         }
 
         if (is_array($serialize)) {
             $serialize = current($serialize);
         }
 
-        return isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+        return $this->get($serialize);
     }
 
     /**
@@ -352,13 +334,13 @@ class JsonApiView extends View
     {
         $jsonOptions = 0;
 
-        if (!empty($this->viewVars['_jsonOptions'])) {
-            foreach ($this->viewVars['_jsonOptions'] as $jsonOption) {
-                $jsonOptions = $jsonOptions | $jsonOption;
+        if (!empty($this->get('_jsonOptions'))) {
+            foreach ($this->get('_jsonOptions') as $jsonOption) {
+                $jsonOptions |= $jsonOption;
             }
 
             if (isset($jsonOption)) {
-                $jsonOptions = $jsonOptions | $jsonOption;
+                $jsonOptions |= $jsonOption;
             }
         }
 
@@ -366,8 +348,8 @@ class JsonApiView extends View
             return $jsonOptions;
         }
 
-        if ($this->viewVars['_debugPrettyPrint']) {
-            $jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
+        if ($this->get('_debugPrettyPrint')) {
+            $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
         return $jsonOptions;
@@ -380,8 +362,8 @@ class JsonApiView extends View
      */
     protected function _dasherizeIncludesViewVar()
     {
-        foreach ($this->viewVars['_include'] as $key => $value) {
-            $this->viewVars['_include'][$key] = Inflector::dasherize($value);
+        foreach ($this->get('_include') as $key => $value) {
+            $this->get('_include')[$key] = Inflector::dasherize($value);
         }
     }
 }
