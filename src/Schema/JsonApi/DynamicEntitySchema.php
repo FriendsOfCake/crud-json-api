@@ -1,65 +1,61 @@
 <?php
 namespace CrudJsonApi\Schema\JsonApi;
 
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use CrudJsonApi\Traits\JsonApiTrait;
-use Neomerx\JsonApi\Contracts\Document\LinkInterface;
-use Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface;
-use Neomerx\JsonApi\Document\Link;
-use Neomerx\JsonApi\Schema\SchemaProvider;
+use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
+use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
+use Neomerx\JsonApi\Schema\BaseSchema;
+use Neomerx\JsonApi\Schema\Link;
 
 /**
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  */
-class DynamicEntitySchema extends SchemaProvider
+class DynamicEntitySchema extends BaseSchema
 {
-
-    /**
-     * NeoMerx required property specifying which field to retrieve id from.
-     *
-     * @var string
-     */
-    public $idField = 'id';
-
     /**
      * Holds the instance of Cake\View\View
      * @var \Cake\View\View
      */
-    protected $_view;
+    protected $view;
     /**
-     * @var RepositoryInterface
+     * @var \Cake\ORM\Table
      */
-    protected $_repository;
+    protected $repository;
 
     /**
      * Class constructor
      *
-     * @param \Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface $factory ContainerInterface
+     * @param \Neomerx\JsonApi\Contracts\Factories\FactoryInterface $factory ContainerInterface
      * @param \Cake\View\View $view Instance of the cake view we are rendering this in
-     * @param RepositoryInterface $repository Repository to use
+     * @param \Cake\ORM\Table $repository Repository to use
      */
     public function __construct(
-        SchemaFactoryInterface $factory,
+        FactoryInterface $factory,
         View $view,
-        RepositoryInterface $repository
+        Table $repository
     ) {
-        $this->_view = $view;
-
-        // NeoMerx required property holding lowercase singular or plural resource name
-        if (!isset($this->resourceType)) {
-            list (, $entityName) = pluginSplit($repository->getRegistryAlias());
-            $method = isset($view->viewVars['_inflect']) ? $view->viewVars['_inflect'] : 'dasherize';
-            $this->resourceType = Inflector::$method($entityName);
-        }
+        $this->view = $view;
+        $this->repository = $repository;
 
         parent::__construct($factory);
-        $this->_repository = $repository;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getType(): string
+    {
+        [, $entityName] = pluginSplit($this->repository->getRegistryAlias());
+        $method = $this->view->get('_inflect', 'dasherize');
+
+        return Inflector::$method($entityName);
     }
 
     /**
@@ -68,20 +64,24 @@ class DynamicEntitySchema extends SchemaProvider
      * @param \Cake\ORM\Entity $entity Entity
      * @return string
      */
-    public function getId($entity)
+    public function getId($entity): ?string
     {
-        return (string)$entity->get($this->_repository->getPrimaryKey());
+        return (string)$entity->get($this->repository->getPrimaryKey());
     }
 
     /**
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @return \Cake\Datasource\RepositoryInterface $repository
+     * @return \Cake\ORM\Table|null
      */
-    protected function _getRepository($entity)
+    protected function getRepository($entity = null): ?Table
     {
-        $repositoryName = $entity->source();
+        if (!$entity) {
+            return $this->repository;
+        }
 
-        return isset($this->_view->viewVars['_repositories'][$repositoryName]) ? $this->_view->viewVars['_repositories'][$repositoryName] : null;
+        $repositoryName = $entity->getSource();
+
+        return $this->view->get('_repositories')[$repositoryName] ?? null;
     }
 
     /**
@@ -91,17 +91,14 @@ class DynamicEntitySchema extends SchemaProvider
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return array
      */
-    public function getAttributes($entity)
+    public function getAttributes($entity): iterable
     {
-        if ($entity->has($this->idField)) {
-            $hidden = array_merge($entity->getHidden(), [$this->idField]);
-            $entity->setHidden($hidden);
-        }
+        $entity->setHidden((array)$this->getRepository()->getPrimaryKey(), true);
 
         $attributes = $entity->toArray();
 
         // remove associated data so it won't appear inside jsonapi `attributes`
-        foreach ($this->_repository->associations() as $association) {
+        foreach ($this->getRepository()->associations() as $association) {
             $propertyName = $association->getProperty();
 
             if ($association->type() === Association::MANY_TO_ONE) {
@@ -113,7 +110,7 @@ class DynamicEntitySchema extends SchemaProvider
         }
 
         // dasherize attribute keys (like `created_by`) if need be
-        if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
             foreach ($attributes as $key => $value) {
                 $dasherizedKey = Inflector::dasherize($key);
 
@@ -138,11 +135,11 @@ class DynamicEntitySchema extends SchemaProvider
      * @param array $includeRelationships Used to fine tune relationships
      * @return array
      */
-    public function getRelationships($entity, $isPrimary, array $includeRelationships)
+    public function getRelationships($entity): iterable
     {
         $relations = [];
 
-        foreach ($this->_repository->associations() as $association) {
+        foreach ($this->getRepository()->associations() as $association) {
             $property = $association->getProperty();
 
             $data = $entity->get($property);
@@ -151,7 +148,7 @@ class DynamicEntitySchema extends SchemaProvider
             }
 
             // change related  data in entity to dasherized if need be
-            if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+            if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
                 $dasherizedProperty = Inflector::dasherize($property);
 
                 if (empty($entity->$dasherizedProperty)) {
@@ -161,10 +158,11 @@ class DynamicEntitySchema extends SchemaProvider
                 }
             }
 
+            $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
             $relations[$property] = [
-                self::DATA => $data,
-                self::SHOW_SELF => true,
-                self::SHOW_RELATED => false,
+                self::RELATIONSHIP_DATA => $data,
+                self::RELATIONSHIP_LINKS_SELF => $isOne,
+                self::RELATIONSHIP_LINKS_RELATED => !$isOne,
             ];
         }
 
@@ -177,109 +175,115 @@ class DynamicEntitySchema extends SchemaProvider
      * @param \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
      * @return string|null
      */
-    public function getSelfSubUrl($entity = null)
+    public function getSelfSubUrl($entity = null): string
     {
         if ($entity === null) {
-            return null;
+            return '';
         }
 
-        return Router::url($this->_getRepositoryRoutingParameters($this->_repository) + [
+        return Router::url($this->_getRepositoryRoutingParameters($this->repository) + [
             '_method' => 'GET',
             'action' => 'view',
-            $entity->get($this->_repository->getPrimaryKey()),
-        ], $this->_view->viewVars['_absoluteLinks']);
+            $entity->get($this->getRepository()->getPrimaryKey()),
+        ], $this->view->get('_absoluteLinks'));
     }
 
     /**
-     * NeoMerx override to generate belongsTo and hasMany links
-     * inside `relationships` node.
-     *
-     * belongsTo example: /cultures?country_id=1
-     * hasMany example"   /countries/1/relationships/currency"
-     *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param string $name Relationship name in lowercase singular or plural
-     * @param array $meta Optional array with meta information
-     * @param bool $treatAsHref True to NOT prefix url
      *
-     * @return \Neomerx\JsonApi\Document\Link
+     * @return \Cake\ORM\Association|null
      */
-    public function getRelationshipSelfLink($entity, $name, $meta = null, $treatAsHref = false)
+    protected function getAssociationByProperty(string $name): ?Association
     {
-        if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
             $name = Inflector::underscore($name);
         }
 
-        $association = $this->_repository->associations()->getByProperty($name);
+        return $this->getRepository()
+            ->associations()
+            ->getByProperty($name);
+    }
+
+    /**
+     * NeoMerx override to generate belongsTo and hasOne links
+     * inside `relationships` node.
+     *
+     * Example: /cultures?country_id=1 (or /country/1/cultures if your routes are configured like this)
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param string $name Relationship name in lowercase singular or plural
+     *
+     * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
+     */
+    public function getRelationshipSelfLink($entity, string $name): LinkInterface
+    {
+        $association = $this->getAssociationByProperty($name);
+        if (!$association) {
+            return null;
+        }
+
         $relatedRepository = $association->getTarget();
 
         // generate link for belongsTo relationship
-        if (in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE])) {
-            if ($this->_view->viewVars['_jsonApiBelongsToLinks'] === true) {
-                list(, $controllerName) = pluginSplit($this->_repository->getRegistryAlias());
-                $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+        if ($this->view->get('_jsonApiBelongsToLinks') === true) {
+            list(, $controllerName) = pluginSplit($this->getRepository()->getRegistryAlias());
+            $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
-                $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
-                    '_method' => 'GET',
-                    'action' => 'view',
-                    $sourceName . '_id' => $entity->id,
-                    'from' => $this->_repository->getRegistryAlias(),
-                    'type' => $name,
-                ], $this->_view->viewVars['_absoluteLinks']);
-            } else {
-                $name = Inflector::dasherize($name);
-                $relatedEntity = $entity[$name];
+            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
+                '_method' => 'GET',
+                'action' => 'view',
+                $sourceName . '_id' => $entity->id,
+                'from' => $this->getRepository()->getRegistryAlias(),
+                'type' => $name,
+            ], $this->view->get('_absoluteLinks'));
+        } else {
+            $name = Inflector::dasherize($name);
+            $relatedEntity = $entity[$name];
 
-                $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
-                    '_method' => 'GET',
-                    'action' => 'view',
-                    $relatedEntity->get($relatedRepository->getPrimaryKey()),
-                ], $this->_view->viewVars['_absoluteLinks']);
-            }
-
-            return new Link($url, $meta, $treatAsHref);
+            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
+                '_method' => 'GET',
+                'action' => 'view',
+                $relatedEntity->get($relatedRepository->getPrimaryKey()),
+            ], $this->view->get('_absoluteLinks'));
         }
+
+        return $this->getFactory()->createLink(false, $url, false);
+    }
+
+    /**
+     * NeoMerx override to generate hasMany and belongsToMany links
+     * inside `relationships` node.
+     *
+     * hasMany example"   /countries/1/currencies"
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param string $name Relationship name in lowercase singular or plural
+     *
+     * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
+     */
+    public function getRelationshipRelatedLink($entity, string $name): LinkInterface
+    {
+        $association = $this->getAssociationByProperty($name);
+        if (!$association) {
+            return null;
+        }
+
+        $relatedRepository = $association->getTarget();
 
         // generate the link for hasMany relationship
         $foreignKey = $association->getForeignKey();
-        if ($this->_view->viewVars['_inflect'] === 'dasherize') {
+        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
             $foreignKey = Inflector::dasherize($foreignKey);
         }
 
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
-            '_method' => 'GET',
-            'action' => 'index',
-            '?' => [$foreignKey => $entity->id]
-        ], $this->_view->viewVars['_absoluteLinks']);
+                '_method' => 'GET',
+                'action' => 'index',
+                $foreignKey => $entity->id
+            ], $this->view->get('_absoluteLinks'));
 
-        return new Link($url, $meta, $treatAsHref);
-    }
-
-    /**
-     * NeoMerx override used to generate `self` links inside `included` node.
-     *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @return array
-     */
-    public function getIncludedResourceLinks($entity)
-    {
-        $repositoryName = $entity->getSource();
-        if (!isset($this->_view->viewVars['_repositories'][$repositoryName])) {
-            return [];
-        }
-        $repository = $this->_view->viewVars['_repositories'][$repositoryName];
-
-        $url = Router::url($this->_getRepositoryRoutingParameters($repository) + [
-            '_method' => 'GET',
-            'action' => 'view',
-            $entity->get($repository->getPrimaryKey()),
-        ], $this->_view->viewVars['_absoluteLinks']);
-
-        $links = [
-            LinkInterface::SELF => new Link($url),
-        ];
-
-        return $links;
+        return $this->getFactory()
+            ->createLink(false, $url, false);
     }
 
     /**
@@ -291,7 +295,7 @@ class DynamicEntitySchema extends SchemaProvider
      */
     protected function _getRepositoryRoutingParameters($repository)
     {
-        list(, $controllerName) = pluginSplit($repository->getRegistryAlias());
+        [, $controllerName] = pluginSplit($repository->getRegistryAlias());
 
         return [
             'controller' => $controllerName,
