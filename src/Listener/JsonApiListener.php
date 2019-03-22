@@ -3,9 +3,11 @@ namespace CrudJsonApi\Listener;
 
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
+use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -794,8 +796,13 @@ class JsonApiListener extends ApiListener
      */
     protected function _deduplicateResultSet($subject)
     {
-        $resultSet = clone $subject->entities;
+        $resultSet = null;
+        if ($subject->entities instanceof ResultSet) {
+            $resultSet = clone $subject->entities;
+        }
+
         $ids = [];
+        $entities = [];
         $keys = (array)$subject->query->getRepository()->getPrimaryKey();
         foreach ($subject->entities as $entity) {
             $id = $entity->extract($keys);
@@ -805,8 +812,10 @@ class JsonApiListener extends ApiListener
             }
         }
 
-        if (isset($entities)) {
+        if (!empty($entities) && $resultSet) {
             $resultSet->unserialize(serialize($entities));
+        } elseif (!empty($entities)) {
+            $resultSet = new ResultSetDecorator($entities);
         }
 
         return $resultSet;
@@ -952,7 +961,7 @@ class JsonApiListener extends ApiListener
      * config option 'include'.
      *
      * @param array $associations Array with \Cake\ORM\AssociationCollection(s)
-     * @param bool $last What does this do?
+     * @param bool $last Is this the "top-level"/entry point for the recursive function
      * @return array
      * @throws \InvalidArgumentException
      */
