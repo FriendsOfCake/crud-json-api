@@ -1,17 +1,14 @@
 <?php
 namespace CrudJsonApi\Schema\JsonApi;
 
-use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
-use CrudJsonApi\Traits\JsonApiTrait;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Schema\BaseSchema;
-use Neomerx\JsonApi\Schema\Link;
 
 /**
  * Licensed under The MIT License
@@ -173,7 +170,7 @@ class DynamicEntitySchema extends BaseSchema
      * NeoMerx override used to generate `self` links
      *
      * @param \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
-     * @return string|null
+     * @return string
      */
     public function getSelfSubUrl($entity = null): string
     {
@@ -272,9 +269,6 @@ class DynamicEntitySchema extends BaseSchema
 
         // generate the link for hasMany relationship
         $foreignKey = $association->getForeignKey();
-        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
-            $foreignKey = Inflector::dasherize($foreignKey);
-        }
 
         $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
                 '_method' => 'GET',

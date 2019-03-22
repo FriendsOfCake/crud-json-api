@@ -982,7 +982,12 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException("Association {$name} does not have an association object set");
             }
 
-            $result[$association['association']->getProperty()] = $this->_getIncludeList($association['children'], false);
+            $property = $association['association']->getProperty();
+            if ($this->getConfig('inflect') === 'dasherize') {
+                $property = Inflector::dasherize($property); // e.g. currency, national-capitals
+            }
+
+            $result[$property] = $this->_getIncludeList($association['children'], false);
         }
 
         return $last ? array_keys(Hash::flatten($result)) : $result;
