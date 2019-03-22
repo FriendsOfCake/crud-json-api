@@ -103,6 +103,7 @@ class JsonApiListener extends ApiListener
             'Crud.beforePaginate' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.afterFind' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
+            'Crud.afterPaginate' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
         ];
     }
 
