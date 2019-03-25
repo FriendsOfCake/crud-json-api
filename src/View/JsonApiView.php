@@ -158,10 +158,9 @@ class JsonApiView extends View
         // Add optional top-level `version` node to the response if enabled
         // by user using listener config option.
         if ($this->get('_withJsonApiVersion')) {
-            if (is_string($this->get('_withJsonApiVersion'))) {
-                $encoder->withJsonApiVersion($this->get('_withJsonApiVersion'));
-            } else {
-                $encoder->withJsonApiVersion('1.1');
+            $encoder->withJsonApiVersion('1.1');
+            if (!is_bool($this->get('_withJsonApiVersion'))) {
+                $encoder->withJsonApiMeta($this->get('_withJsonApiVersion'));
             }
         }
 

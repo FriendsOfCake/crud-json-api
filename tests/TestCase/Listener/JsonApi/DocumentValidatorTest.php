@@ -3,6 +3,8 @@ namespace CrudJsonApi\Test\TestCase\Listener\JsonApi;
 
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use Crud\TestSuite\TestCase;
+use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
+use Neomerx\JsonApi\Schema\ErrorCollection;
 use stdClass;
 
 /**
@@ -628,7 +630,7 @@ class DocumentValidatorTest extends TestCase
         $this->setProtectedProperty('_config', $listenerConfig, $this->_validator);
         $result = $this->callProtectedMethod('_getAboutLink', ['http://www.friendsofcake.com'], $this->_validator);
 
-        $this->assertTrue(is_a($result, '\Neomerx\JsonApi\Document\Link'));
+        $this->assertInstanceOf(LinkInterface::class, $result);
     }
 
     /**
@@ -648,6 +650,6 @@ class DocumentValidatorTest extends TestCase
         $errors = $result->getErrors();
         $this->assertArrayHasKey('CrudJsonApiListener', $errors);
         $this->assertArrayHasKey('NeoMerxErrorCollection', $errors['CrudJsonApiListener']);
-        $this->assertInstanceOf('\Neomerx\JsonApi\Exceptions\ErrorCollection', $errors['CrudJsonApiListener']['NeoMerxErrorCollection']);
+        $this->assertInstanceOf(ErrorCollection::class, $errors['CrudJsonApiListener']['NeoMerxErrorCollection']);
     }
 }

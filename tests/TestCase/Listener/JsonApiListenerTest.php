@@ -149,6 +149,7 @@ class JsonApiListenerTest extends TestCase
             'Crud.beforePaginate' => ['callable' => [$listener, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$listener, 'beforeFind'], 'priority' => 10],
             'Crud.afterFind' => ['callable' => [$listener, 'afterFind'], 'priority' => 50],
+            'Crud.afterPaginate' => ['callable' => [$listener, 'afterFind'], 'priority' => 50],
         ];
 
         $this->assertSame($expected, $result);
@@ -1134,9 +1135,9 @@ class JsonApiListenerTest extends TestCase
 
         $expected = [
             'currency.countries',
-            'national_capital',
+            'national-capital',
             'cultures',
-            'national_cities',
+            'national-cities',
             'subcountries',
             'supercountry'
         ];
@@ -1147,7 +1148,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'national_capital', 'cultures', 'national_cities', 'subcountries', 'supercountry'], $result);
+        $this->assertSame(['currency', 'national-capital', 'cultures', 'national-cities', 'subcountries', 'supercountry'], $result);
 
         // assert the include list is still auto-generated if an association is
         // removed from the AssociationsCollection
@@ -1155,7 +1156,7 @@ class JsonApiListenerTest extends TestCase
         $this->assertSame(['currencies', 'nationalcapitals', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'national_capital', 'national_cities', 'subcountries', 'supercountry'], $result);
+        $this->assertSame(['currency', 'national-capital', 'national-cities', 'subcountries', 'supercountry'], $result);
 
         // assert user specified listener config option is returned as-is (no magic)
         $userSpecifiedIncludes = [

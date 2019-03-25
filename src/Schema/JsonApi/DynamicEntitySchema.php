@@ -223,7 +223,7 @@ class DynamicEntitySchema extends BaseSchema
 
         // generate link for belongsTo relationship
         if ($this->view->get('_jsonApiBelongsToLinks') === true) {
-            list(, $controllerName) = pluginSplit($this->getRepository()->getRegistryAlias());
+            [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
             $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
             $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [

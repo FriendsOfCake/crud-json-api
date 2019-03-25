@@ -116,6 +116,7 @@ class DocumentValidator extends stdClass
         $this->_errorCollection->add(new Error(
             $idx = null,
             $aboutLink = $this->_getAboutLink('http://jsonapi.org/format/#document-top-level'),
+            $typeLinks = null,
             $status = null,
             $code = null,
             $title = null,
