@@ -176,10 +176,10 @@ class DynamicEntitySchema extends BaseSchema
             return '';
         }
 
-        return Router::url($this->_getRepositoryRoutingParameters($this->repository) + [
+        return Router::url($this->_getRepositoryRoutingParameters($this->repository) +
+            $entity->extract((array)$this->getRepository()->getPrimaryKey()) + [
             '_method' => 'GET',
             'action' => 'view',
-            $entity->get($this->getRepository()->getPrimaryKey()),
         ], $this->view->get('_absoluteLinks'));
     }
 
@@ -235,10 +235,10 @@ class DynamicEntitySchema extends BaseSchema
             $name = Inflector::dasherize($name);
             $relatedEntity = $entity[$name];
 
-            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
+            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) +
+                $relatedEntity->extract((array)$relatedRepository->getPrimaryKey()) + [
                 '_method' => 'GET',
                 'action' => 'view',
-                $relatedEntity->get($relatedRepository->getPrimaryKey()),
             ], $this->view->get('_absoluteLinks'));
         }
 
