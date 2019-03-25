@@ -128,8 +128,6 @@ class DynamicEntitySchema extends BaseSchema
      * JSON API optional `related` links not implemented yet.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity object
-     * @param bool $isPrimary True to add resource to data section instead of included
-     * @param array $includeRelationships Used to fine tune relationships
      * @return array
      */
     public function getRelationships($entity): iterable

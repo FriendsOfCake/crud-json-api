@@ -5,11 +5,9 @@ use Cake\Controller\Controller;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use CrudJsonApi\Listener\JsonApiListener;
-use Crud\TestSuite\TestCase;
 use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema;
+use Crud\TestSuite\TestCase;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
-use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
-use Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaInterface;
 use Neomerx\JsonApi\Factories\Factory;
 
