@@ -68,9 +68,9 @@ class DynamicEntitySchema extends BaseSchema
 
     /**
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @return \Cake\ORM\Table|null
+     * @return \Cake\ORM\Table
      */
-    protected function getRepository($entity = null): ?Table
+    protected function getRepository($entity = null): Table
     {
         if (!$entity) {
             return $this->repository;
@@ -78,7 +78,7 @@ class DynamicEntitySchema extends BaseSchema
 
         $repositoryName = $entity->getSource();
 
-        return $this->view->get('_repositories')[$repositoryName] ?? null;
+        return $this->view->get('_repositories')[$repositoryName];
     }
 
     /**
@@ -99,8 +99,8 @@ class DynamicEntitySchema extends BaseSchema
             $propertyName = $association->getProperty();
 
             if ($association->type() === Association::MANY_TO_ONE) {
-                $foreignKey = $association->getForeignKey();
-                unset($attributes[$foreignKey]);
+                $foreignKey = (array)$association->getForeignKey();
+                $attributes = array_diff_key($attributes, array_flip($foreignKey));
             }
 
             unset($attributes[$propertyName]);
@@ -214,7 +214,7 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            return null;
+            throw new \InvalidArgumentException('Invalid association ' . $name);
         }
 
         $relatedRepository = $association->getTarget();
@@ -260,18 +260,19 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            return null;
+            throw new \InvalidArgumentException('Invalid association ' . $name);
         }
 
         $relatedRepository = $association->getTarget();
 
         // generate the link for hasMany relationship
-        $foreignKey = $association->getForeignKey();
+        $foreignKeys = (array)$association->getForeignKey();
+        $primaryKeys = $entity->extract((array)$this->getRepository()->getPrimaryKey());
+        $keys = array_combine($foreignKeys, $primaryKeys);
 
-        $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
+        $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
                 'action' => 'index',
-                $foreignKey => $entity->id
             ], $this->view->get('_absoluteLinks'));
 
         return $this->getFactory()

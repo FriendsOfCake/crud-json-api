@@ -4,6 +4,7 @@ namespace CrudJsonApi\Listener;
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
@@ -297,11 +298,11 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param string $include The association include path
      * @return \Cake\ORM\Association|null
      */
-    protected function _getAssociation(RepositoryInterface $repository, $include)
+    protected function _getAssociation(Table $repository, $include)
     {
         $delimiter = '-';
         if (strpos($include, '_') !== false) {
@@ -798,15 +799,10 @@ class JsonApiListener extends ApiListener
      * Deduplicate resultset from rows that might have come from joins
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\ORM\ResultSet
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _deduplicateResultSet($subject)
+    protected function _deduplicateResultSet($subject): ResultSetInterface
     {
-        $resultSet = null;
-        if ($subject->entities instanceof ResultSet) {
-            $resultSet = clone $subject->entities;
-        }
-
         $ids = [];
         $entities = [];
         $keys = (array)$subject->query->getRepository()->getPrimaryKey();
@@ -818,9 +814,10 @@ class JsonApiListener extends ApiListener
             }
         }
 
-        if (!empty($entities) && $resultSet) {
+        if ($subject->entities instanceof ResultSet) {
+            $resultSet = clone $subject->entities;
             $resultSet->unserialize(serialize($entities));
-        } elseif (!empty($entities)) {
+        } else {
             $resultSet = new ResultSetDecorator($entities);
         }
 
@@ -866,7 +863,7 @@ class JsonApiListener extends ApiListener
     /**
      * Creates a nested array of all associations used in the query
      *
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param array $contains Array of contained associations
      * @return array Array with \Cake\ORM\AssociationCollection
      */
@@ -906,7 +903,7 @@ class JsonApiListener extends ApiListener
      * query) in the find result from the entity's AssociationCollection to
      * prevent `null` entries appearing in the json api `relationships` node.
      *
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param \Cake\ORM\Entity $entity Entity
      * @return array
      */

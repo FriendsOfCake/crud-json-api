@@ -34,7 +34,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         }
 
         $viewVars = $this->controller->viewVars;
-        $status = $this->controller->response->getStatusCode(); // e.g. 404
+        $status = (string)$this->controller->response->getStatusCode(); // e.g. 404
         $title = $this->controller->response->getReasonPhrase(); // e,g. Not Found
 
         // Only set JSON API `detail` field if `message` viewVar field is not
@@ -126,14 +126,13 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      * - creating a new collection from CakePHP validation errors
      *
      * @param array $validationErrors CakePHP validation errors
-     * @return \Neomerx\JsonApi\Exceptions\ErrorCollection
+     * @return \Neomerx\JsonApi\Schema\ErrorCollection
      */
     protected function _getNeoMerxErrorCollection($validationErrors)
     {
-        if (isset($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'])) {
-            if (is_a($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'], ErrorCollection::class)) {
-                return $validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'];
-            }
+        if (isset($validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection']) &&
+            $validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'] instanceof ErrorCollection) {
+            return $validationErrors['CrudJsonApiListener']['NeoMerxErrorCollection'];
         }
 
         // Create new NeoMerx ErrorCollection from CakePHP validation errors

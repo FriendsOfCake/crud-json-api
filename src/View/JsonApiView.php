@@ -199,11 +199,11 @@ class JsonApiView extends View
      * 2. custom dynamic schema
      * 3. Crud's dynamic schema
      *
-     * @param RepositoryInterface[] $repositories List holding repositories used to map entities to schema classes
+     * @param \Cake\ORM\Table[] $repositories List holding repositories used to map entities to schema classes
      * @throws \Crud\Error\Exception\CrudException
      * @return array A list with Entity class names as key holding NeoMerx Closure object
      */
-    protected function _entitiesToNeoMerxSchema(array $repositories): iterable
+    protected function _entitiesToNeoMerxSchema(array $repositories): array
     {
         $schemas = [];
         foreach ($repositories as $repositoryName => $repository) {
