@@ -9,15 +9,15 @@
         },
         "relationships": {
             "subcountries": {
+                "links": {
+                    "related": "\/sub_countries?supercountry_id=3"
+                },
                 "data": [
                     {
                         "type": "countries",
                         "id": "4"
                     }
-                ],
-                "links": {
-                    "self": "\/sub_countries?supercountry-id=3"
-                }
+                ]
             }
         },
         "links": {
@@ -34,7 +34,7 @@
                 "dummy-counter": 44444
             },
             "links": {
-                "self": "\/sub_countries\/view\/4"
+                "self": "\/countries\/4"
             }
         }
     ]

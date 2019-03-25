@@ -99,6 +99,6 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(201); # http://jsonapi.org/format/#crud-creating-responses-201
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseNotEmpty();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('CreatingResources' . DS . $expectedResponseFile));
+        $this->assertResponseSameAsFile('CreatingResources' . DS . $expectedResponseFile);
     }
 }

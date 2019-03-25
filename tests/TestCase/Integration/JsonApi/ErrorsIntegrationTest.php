@@ -17,9 +17,8 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
 
-        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_response->getBody());
-        $expectedResponseBody = $this->_getExpectedResponseBody('Errors' . DS . '404-error-for-collection-in-debug-mode.json');
-        $this->assertEquals($expectedResponseBody, $actualResponseBody);
+        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_getBodyAsString());
+        $this->assertResponseSameAsFile('Errors' . DS . '404-error-for-collection-in-debug-mode.json', $actualResponseBody);
     }
 
     /**
@@ -32,7 +31,8 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->get('/nonexistents');
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('Errors' . DS . '404-error-for-collection-in-production-mode.json'));
+
+        $this->assertResponseSameAsFile('Errors' . DS . '404-error-for-collection-in-production-mode.json');
     }
 
     /**
@@ -46,9 +46,8 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
 
-        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_response->getBody());
-        $expectedResponseBody = $this->_getExpectedResponseBody('Errors' . DS . '404-error-for-resource-in-debug-mode.json');
-        $this->assertEquals($expectedResponseBody, $actualResponseBody);
+        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_getBodyAsString());
+        $this->assertResponseSameAsFile('Errors' . DS . '404-error-for-resource-in-debug-mode.json', $actualResponseBody);
     }
 
     /**
@@ -61,6 +60,6 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->get('/countries/666');
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('Errors' . DS . '404-error-for-resource-in-production-mode.json'));
+        $this->assertResponseSameAsFile('Errors' . DS . '404-error-for-resource-in-production-mode.json');
     }
 }

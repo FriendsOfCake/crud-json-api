@@ -8,7 +8,6 @@
         "self": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode",
         "first": "\/countries?page=1&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode",
         "last": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode",
-        "prev": null,
         "next": "\/countries?page=2&include=currencies&fields%5Bcountries%5D=name%2Ccurrency&fields%5Bcurrencies%5D=id%2Ccode"
     },
     "data": [
@@ -20,12 +19,12 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
                     }
                 }
             },
@@ -41,12 +40,12 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
                     }
                 }
             },
@@ -62,12 +61,12 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
                     }
                 }
             },

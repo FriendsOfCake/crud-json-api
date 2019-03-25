@@ -9,6 +9,9 @@
             },
             "relationships": {
                 "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=1"
+                    },
                     "data": [
                         {
                             "type": "countries",
@@ -26,10 +29,7 @@
                             "type": "countries",
                             "id": "2"
                         }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=1"
-                    }
+                    ]
                 }
             },
             "links": {
@@ -45,15 +45,15 @@
             },
             "relationships": {
                 "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=2"
+                    },
                     "data": [
                         {
                             "type": "countries",
                             "id": "5"
                         }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=2"
-                    }
+                    ]
                 }
             },
             "links": {

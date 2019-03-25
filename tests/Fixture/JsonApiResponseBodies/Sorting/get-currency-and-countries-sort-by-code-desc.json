@@ -8,6 +8,9 @@
         },
         "relationships": {
             "countries": {
+                "links": {
+                    "related": "\/countries?currency_id=1"
+                },
                 "data": [
                     {
                         "type": "countries",
@@ -25,10 +28,7 @@
                         "type": "countries",
                         "id": "2"
                     }
-                ],
-                "links": {
-                    "self": "\/countries?currency-id=1"
-                }
+                ]
             }
         },
         "links": {

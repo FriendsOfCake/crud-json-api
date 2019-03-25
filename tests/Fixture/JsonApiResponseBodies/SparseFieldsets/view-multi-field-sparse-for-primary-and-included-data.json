@@ -8,12 +8,12 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             }
         },

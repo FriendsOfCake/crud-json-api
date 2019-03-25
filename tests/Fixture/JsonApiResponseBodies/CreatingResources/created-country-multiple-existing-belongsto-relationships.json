@@ -9,21 +9,21 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             },
             "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/2"
+                },
                 "data": {
                     "type": "national-capitals",
                     "id": "2"
-                },
-                "links": {
-                    "self": "\/national-capitals\/2"
                 }
             }
         },

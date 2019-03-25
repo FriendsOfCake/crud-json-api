@@ -293,7 +293,7 @@ class JsonApiViewTest extends TestCase
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
-                'version' => '1.0'
+                'version' => '1.1'
             ]
         ];
 
@@ -310,7 +310,7 @@ class JsonApiViewTest extends TestCase
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
-                'version' => '1.0',
+                'version' => '1.1',
                 'meta' => [
                     'meta-key-1' => 'meta-val-1',
                     'meta-key-2' => 'meta-val-2',

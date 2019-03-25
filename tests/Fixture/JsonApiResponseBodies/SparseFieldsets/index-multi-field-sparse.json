@@ -8,7 +8,6 @@
         "self": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
         "first": "\/countries?page=1&fields%5Bcountries%5D=name%2Ccode",
         "last": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode",
-        "prev": null,
         "next": "\/countries?page=2&fields%5Bcountries%5D=name%2Ccode"
     },
     "data": [

@@ -8,8 +8,7 @@
         "self": "\/countries?page=2&sort=code&include=currency",
         "first": "\/countries?page=1&sort=code&include=currency",
         "last": "\/countries?page=2&sort=code&include=currency",
-        "prev": "\/countries?page=1&sort=code&include=currency",
-        "next": null
+        "prev": "\/countries?page=1&sort=code&include=currency"
     },
     "data": [
         {
@@ -22,12 +21,12 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/2"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "2"
-                    },
-                    "links": {
-                        "self": "\/currencies\/2"
                     }
                 }
             },
@@ -45,12 +44,12 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
-                    "links": {
-                        "self": "\/currencies\/1"
                     }
                 }
             },

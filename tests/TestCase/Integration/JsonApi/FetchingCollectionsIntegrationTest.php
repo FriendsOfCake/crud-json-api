@@ -42,6 +42,6 @@ class FetchingCollectionsIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
 
-        $this->assertResponseEquals($this->_getExpectedResponseBody('FetchingCollections' . DS . $expectedResponseFile));
+        $this->assertResponseSameAsFile('FetchingCollections' . DS . $expectedResponseFile);
     }
 }

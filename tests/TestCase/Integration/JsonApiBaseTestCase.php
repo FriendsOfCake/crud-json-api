@@ -7,12 +7,14 @@ use Cake\Filesystem\File;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use CrudJsonApi\Error\JsonApiExceptionRenderer;
 
 abstract class JsonApiBaseTestCase extends TestCase
 {
     use IntegrationTestTrait;
+    use StringCompareTrait;
 
     /**
      * Path to directory holding the JSON API request body fixtures.
@@ -129,6 +131,18 @@ abstract class JsonApiBaseTestCase extends TestCase
         $file = $this->_JsonApiRequestBodyFixtures . DS . $file;
 
         return trim((new File($file))->read());
+    }
+
+    /**
+     * Asserts that the response is the same as the supplied file.
+     *
+     * @param string $file Filename to check
+     * @param string $response Override the response to check
+     * @return void
+     */
+    public function assertResponseSameAsFile(string $file, string $response = null)
+    {
+        $this->assertSameAsFile($this->_JsonApiResponseBodyFixtures . DS . $file, $response ?: $this->_getBodyAsString());
     }
 
     /**

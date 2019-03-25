@@ -9,12 +9,12 @@
         },
         "relationships": {
             "supercountry": {
+                "links": {
+                    "self": "\/super_countries\/view\/3"
+                },
                 "data": {
                     "type": "countries",
                     "id": "3"
-                },
-                "links": {
-                    "self": "\/super_countries\/view\/3"
                 }
             }
         },
@@ -32,7 +32,7 @@
                 "dummy-counter": 33333
             },
             "links": {
-                "self": "\/super_countries\/view\/3"
+                "self": "\/countries\/3"
             }
         }
     ]
