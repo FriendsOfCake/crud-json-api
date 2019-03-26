@@ -236,7 +236,7 @@ class DynamicEntitySchema extends BaseSchema
             $relatedEntity = $entity[$name];
 
             $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) +
-                $relatedEntity->extract((array)$relatedRepository->getPrimaryKey()) + [
+                array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey())) + [
                 '_method' => 'GET',
                 'action' => 'view',
             ], $this->view->get('_absoluteLinks'));
