@@ -1,6 +1,7 @@
 <?php
 namespace CrudJsonApi\Schema\JsonApi;
 
+use Cake\Core\App;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
@@ -289,7 +290,8 @@ class DynamicEntitySchema extends BaseSchema
      */
     protected function _getRepositoryRoutingParameters($repository)
     {
-        [, $controllerName] = pluginSplit($repository->getRegistryAlias());
+        $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
+        [, $controllerName] = pluginSplit($repositoryName);
 
         return [
             'controller' => $controllerName,
