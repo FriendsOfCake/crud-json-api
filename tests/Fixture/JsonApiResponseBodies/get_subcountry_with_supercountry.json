@@ -10,7 +10,7 @@
         "relationships": {
             "supercountry": {
                 "links": {
-                    "self": "\/super_countries\/view\/3"
+                    "self": "\/countries\/3"
                 },
                 "data": {
                     "type": "countries",

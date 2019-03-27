@@ -10,7 +10,7 @@
         "relationships": {
             "subcountries": {
                 "links": {
-                    "related": "\/sub_countries?supercountry_id=3"
+                    "related": "\/countries?supercountry_id=3"
                 },
                 "data": [
                     {
