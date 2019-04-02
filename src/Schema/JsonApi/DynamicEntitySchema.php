@@ -10,6 +10,7 @@ use Cake\View\View;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Schema\BaseSchema;
+use Neomerx\JsonApi\Schema\Identifier;
 
 /**
  * Licensed under The MIT License
@@ -139,7 +140,13 @@ class DynamicEntitySchema extends BaseSchema
             $property = $association->getProperty();
 
             $data = $entity->get($property);
-            if (!$data) {
+            //If no data, and it's not a BelongsTo relationship, skip
+            if (!$data && $association->type() !== Association::MANY_TO_ONE) {
+                continue;
+            }
+
+            //If there is no data, and the foreignKey field is null, skip
+            if (!$data && (\is_array($association->getForeignKey()) || !$entity->get($association->getForeignKey()))) {
                 continue;
             }
 
@@ -156,7 +163,8 @@ class DynamicEntitySchema extends BaseSchema
 
             $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
             $relations[$property] = [
-                self::RELATIONSHIP_DATA => $data,
+                self::RELATIONSHIP_DATA => $data ?:
+                    new Identifier($entity->get($association->getForeignKey()), $property),
                 self::RELATIONSHIP_LINKS_SELF => $isOne,
                 self::RELATIONSHIP_LINKS_RELATED => !$isOne,
             ];
@@ -235,8 +243,13 @@ class DynamicEntitySchema extends BaseSchema
             ], $this->view->get('_absoluteLinks'));
         } else {
             $name = Inflector::dasherize($name);
-            $relatedEntity = $entity[$name];
-            $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
+            $relatedEntity = $entity->get($name);
+
+            if ($relatedEntity) {
+                $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
+            } else {
+                $keys = array_values($entity->extract((array)$association->getForeignKey()));
+            }
 
             $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
