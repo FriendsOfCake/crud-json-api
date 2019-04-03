@@ -2,6 +2,7 @@
 namespace CrudJsonApi\Schema\JsonApi;
 
 use Cake\Core\App;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
@@ -84,6 +85,35 @@ class DynamicEntitySchema extends BaseSchema
     }
 
     /**
+     * Returns an array with all the properties that have been set
+     * to this entity
+     *
+     * This method will recursively transform entities assigned to properties
+     * into arrays as well.
+     *
+     * @return array
+     */
+    protected function entityToShallowArray(EntityInterface $entity)
+    {
+        $result = [];
+        foreach ($entity->visibleProperties() as $property) {
+            $value = $entity->get($property);
+            if (is_array($value)) {
+                $result[$property] = [];
+                foreach ($value as $k => $innerValue) {
+                    if (!$innerValue instanceof EntityInterface) {
+                        $result[$property][$k] = $innerValue;
+                    }
+                }
+            } else {
+                $result[$property] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * NeoMerx override used to pass entity root properties to be shown
      * as JsonApi `attributes`.
      *
@@ -94,7 +124,7 @@ class DynamicEntitySchema extends BaseSchema
     {
         $entity->setHidden((array)$this->getRepository()->getPrimaryKey(), true);
 
-        $attributes = $entity->toArray();
+        $attributes = $this->entityToShallowArray($entity);
 
         // remove associated data so it won't appear inside jsonapi `attributes`
         foreach ($this->getRepository()->associations() as $association) {
