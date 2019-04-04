@@ -548,6 +548,10 @@ class JsonApiListener extends ApiListener
                 $sortField = substr($sortField, 1);
             }
 
+            if ($this->getConfig('inflect') === 'dasherize') {
+                $sortField = Inflector::underscore($sortField); // e.g. currency, national-capitals
+            }
+
             if (strpos($sortField, '.') !== false) {
                 list ($include, $field) = explode('.', $sortField);
 
