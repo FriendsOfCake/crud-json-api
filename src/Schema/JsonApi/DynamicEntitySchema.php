@@ -334,10 +334,11 @@ class DynamicEntitySchema extends BaseSchema
     protected function _getRepositoryRoutingParameters($repository)
     {
         $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
-        [, $controllerName] = pluginSplit($repositoryName);
+        [$pluginName, $controllerName] = pluginSplit($repositoryName);
 
         return [
             'controller' => $controllerName,
+            'plugin' => $pluginName
         ];
     }
 }
