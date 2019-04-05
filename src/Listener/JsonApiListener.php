@@ -169,8 +169,6 @@ class JsonApiListener extends ApiListener
         if ($this->getConfig('include')) {
             return null;
         }
-
-        $this->_insertBelongsToDataIntoEventFindResult($event);
     }
 
     /**
@@ -259,8 +257,6 @@ class JsonApiListener extends ApiListener
         if ($event->getSubject()->created) {
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
-
-        $this->_insertBelongsToDataIntoEventFindResult($event);
 
         /** @var \Crud\Event\Subject $subject */
         $subject = $event->getSubject();
@@ -587,61 +583,6 @@ class JsonApiListener extends ApiListener
             }
         }
         $subject->query->order($order);
-    }
-
-    /**
-     * Adds belongsTo data to the find() result.
-     *
-     * @param \Cake\Event\Event $event Event
-     * @return void
-     */
-    protected function _insertBelongsToDataIntoEventFindResult($event)
-    {
-        $subject = $event->getSubject();
-        if (!isset($subject->entity)) {
-            return;
-        }
-
-        $entity = $subject->entity;
-        $repository = $this->_controller()->loadModel();
-        $associations = $repository->associations();
-
-        foreach ($associations as $association) {
-            $associationType = $association->type();
-            $associationTable = $association->getTarget(); // Users
-
-            // belongsTo and HasOne
-            if ($associationType === Association::MANY_TO_ONE || $associationType === Association::ONE_TO_ONE) {
-                $foreignKey = $association->getForeignKey(); // user_id
-                $associationId = $entity->$foreignKey; // 1234
-
-                if (!empty($associationId)) {
-                    $associatedEntity = $associationTable->newEntity();
-                    $associatedEntity->set('id', $associationId);
-
-                    // generate key name required for neoMerx to find and use the entity data
-                    // => ?!? => unfortunately, _propertyName is protected. We have got serious reason to use it though
-                    $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
-                    $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
-                    $propertyNameProp->setAccessible(true);
-                    $key = $propertyNameProp->getValue($association);
-
-                    if (!$key) {
-                        $key = Inflector::singularize($association->getName()); // Users
-                        $key = Inflector::underscore($key); // user
-                    }
-
-                    $entity->set($key, $associatedEntity);
-                }
-            }
-
-            // insert the contained associations into the query
-            if (!empty($event->getSubject()->query)) {
-                $event->getSubject()->query->contain($association->getName());
-            }
-        }
-
-        $event->getSubject()->entity = $entity;
     }
 
     /**
