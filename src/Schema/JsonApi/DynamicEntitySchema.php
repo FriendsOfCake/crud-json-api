@@ -48,14 +48,25 @@ class DynamicEntitySchema extends BaseSchema
     }
 
     /**
+     * @param \Cake\ORM\Table $repository The repository object
+     *
+     * @return mixed
+     */
+    private function getTypeFromRepository(Table $repository)
+    {
+        $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
+        [, $entityName] = pluginSplit($repositoryName);
+        $method = $this->view->get('_inflect', 'dasherize');
+
+        return Inflector::$method($entityName);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getType(): string
     {
-        [, $entityName] = pluginSplit($this->repository->getRegistryAlias());
-        $method = $this->view->get('_inflect', 'dasherize');
-
-        return Inflector::$method($entityName);
+        return $this->getTypeFromRepository($this->getRepository());
     }
 
     /**
@@ -191,10 +202,14 @@ class DynamicEntitySchema extends BaseSchema
                 }
             }
 
+            if (!$data) {
+
+                $data = new Identifier($entity->get($association->getForeignKey()), $this->getTypeFromRepository($association->getTarget()));
+            }
+
             $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
             $relations[$property] = [
-                self::RELATIONSHIP_DATA => $data ?:
-                    new Identifier($entity->get($association->getForeignKey()), $property),
+                self::RELATIONSHIP_DATA => $data,
                 self::RELATIONSHIP_LINKS_SELF => $isOne,
                 self::RELATIONSHIP_LINKS_RELATED => !$isOne,
             ];
