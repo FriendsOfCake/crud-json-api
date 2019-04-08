@@ -201,7 +201,7 @@ class JsonApiListener extends ApiListener
 
             // prevent clients attempting to side-post/create related hasMany records
             if ($this->_request()->getMethod() === 'POST') {
-                throw new BadRequestException("JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)");
+                throw new BadRequestException("JSON API 1.1 does not support sideposting (hasMany relationships detected in the request body)");
             }
 
             // hasMany found in the entity, extract ids from the request data
