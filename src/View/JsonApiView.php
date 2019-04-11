@@ -107,6 +107,12 @@ class JsonApiView extends View
         $encoder = Encoder::instance()
             ->withEncodeOptions($this->_jsonOptions());
 
+        // Add optional top-level `link` node to the response if enabled by
+        // user using listener config option.
+        if ($this->get('_links')) {
+            $encoder->withLinks($this->get('_links'));
+        }
+
         return $encoder->encodeMeta($this->get('_meta'));
     }
 
@@ -169,7 +175,9 @@ class JsonApiView extends View
         if ($this->get('_pagination')) {
             $pagination = $this->get('_pagination');
 
-            $encoder->withLinks($this->_getPaginationLinks($pagination));
+            $links = $this->get('_links', []);
+            $paginationLinks = $this->_getPaginationLinks($pagination);
+            $this->set('_links', $links + $paginationLinks);
 
             // Additional pagination information has to be in top-level node `meta`
             $meta = $this->get('_meta');
@@ -177,6 +185,19 @@ class JsonApiView extends View
             $meta['page_count'] = $pagination['page_count'];
             $meta['page_limit'] = $pagination['page_limit'];
             $this->set('_meta', $meta);
+        }
+
+        // Add optional top-level `link` node to the response if enabled by
+        // user using listener config option.
+        if ($this->get('_links')) {
+            $links = $this->get('_links');
+            $encoder->withLinks(array_map(function ($link) {
+                if ($link instanceof Link) {
+                    return $link;
+                }
+
+                return new Link(false, $link, false);
+            }, $links));
         }
 
         // Add optional top-level `meta` node to the response if enabled by

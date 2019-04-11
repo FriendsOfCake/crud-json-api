@@ -47,6 +47,7 @@ class JsonApiListener extends ApiListener
         'setFlash' => false,
         'withJsonApiVersion' => false, // true or array/hash with additional meta information (will add top-level member `jsonapi` to the response)
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
+        'links' => [], // array or hash with link information (will add top-level node `links` to the response)
         'absoluteLinks' => false, // false to generate relative links, true will generate fully qualified URL prefixed with http://domain.name
         'jsonApiBelongsToLinks' => false, // false to generate JSONAPI links (requires custom Route, included)
         'jsonOptions' => [], // array with predefined JSON constants as described at http://php.net/manual/en/json.constants.php
@@ -614,6 +615,7 @@ class JsonApiListener extends ApiListener
         $this->_controller()->set([
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
+            '_links' => $this->getConfig('links'),
             '_absoluteLinks' => $this->getConfig('absoluteLinks'),
             '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             '_jsonOptions' => $this->getConfig('jsonOptions'),
@@ -653,6 +655,7 @@ class JsonApiListener extends ApiListener
         $this->_controller()->set([
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
+            '_links' => $this->getConfig('links'),
             '_absoluteLinks' => $this->getConfig('absoluteLinks'),
             '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             '_jsonOptions' => $this->getConfig('jsonOptions'),
