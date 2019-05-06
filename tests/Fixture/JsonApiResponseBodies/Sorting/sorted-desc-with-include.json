@@ -28,6 +28,24 @@
                         "type": "currencies",
                         "id": "1"
                     }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
+                    }
                 }
             },
             "links": {
@@ -51,6 +69,15 @@
                         "type": "currencies",
                         "id": "2"
                     }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/6"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "6"
+                    }
                 }
             },
             "links": {
@@ -72,6 +99,15 @@
                     },
                     "data": {
                         "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    },
+                    "data": {
+                        "type": "national-capitals",
                         "id": "1"
                     }
                 }

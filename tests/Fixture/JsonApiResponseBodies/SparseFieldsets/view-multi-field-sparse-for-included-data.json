@@ -16,6 +16,15 @@
                     "type": "currencies",
                     "id": "1"
                 }
+            },
+            "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
+                "data": {
+                    "type": "national-capitals",
+                    "id": "1"
+                }
             }
         },
         "links": {

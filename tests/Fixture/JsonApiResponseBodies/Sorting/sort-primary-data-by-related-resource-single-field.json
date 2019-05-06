@@ -19,6 +19,15 @@
                 "dummy-counter": 11111
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
                     "links": {
                         "self": "\/national-capitals\/1"
@@ -42,6 +51,15 @@
                 "dummy-counter": 22222
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
                     "links": {
                         "self": "\/national-capitals\/2"
@@ -65,6 +83,15 @@
                 "dummy-counter": 33333
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
                     "links": {
                         "self": "\/national-capitals\/4"
@@ -88,6 +115,15 @@
                 "dummy-counter": 44444
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
                     "links": {
                         "self": "\/national-capitals\/5"
@@ -95,6 +131,15 @@
                     "data": {
                         "type": "national-capitals",
                         "id": "5"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
                     }
                 }
             },
@@ -111,6 +156,15 @@
                 "dummy-counter": 33333
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/2"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
+                    }
+                },
                 "national-capital": {
                     "links": {
                         "self": "\/national-capitals\/6"

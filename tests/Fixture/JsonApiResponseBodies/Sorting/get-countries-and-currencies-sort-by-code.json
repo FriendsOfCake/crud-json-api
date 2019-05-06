@@ -28,6 +28,15 @@
                         "type": "currencies",
                         "id": "1"
                     }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    }
                 }
             },
             "links": {
@@ -51,6 +60,15 @@
                         "type": "currencies",
                         "id": "1"
                     }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    }
                 }
             },
             "links": {
@@ -72,6 +90,15 @@
                     },
                     "data": {
                         "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    },
+                    "data": {
+                        "type": "national-capitals",
                         "id": "1"
                     }
                 }
