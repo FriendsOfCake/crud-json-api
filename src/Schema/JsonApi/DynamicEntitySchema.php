@@ -178,6 +178,7 @@ class DynamicEntitySchema extends BaseSchema
 
         foreach ($this->getRepository()->associations() as $association) {
             $property = $association->getProperty();
+            $foreignKey = $association->getForeignKey();
 
             $data = $entity->get($property);
             //If no data, and it's not a BelongsTo relationship, skip
@@ -186,7 +187,7 @@ class DynamicEntitySchema extends BaseSchema
             }
 
             //If there is no data, and the foreignKey field is null, skip
-            if (!$data && (\is_array($association->getForeignKey()) || !$entity->get($association->getForeignKey()))) {
+            if (!$data && (is_array($foreignKey) || !$entity->get($foreignKey))) {
                 continue;
             }
 
@@ -201,9 +202,8 @@ class DynamicEntitySchema extends BaseSchema
                 }
             }
 
-            if (!$data) {
-
-                $data = new Identifier($entity->get($association->getForeignKey()), $this->getTypeFromRepository($association->getTarget()));
+            if (!$data && !is_array($foreignKey)) {
+                $data = new Identifier($entity->get($foreignKey), $this->getTypeFromRepository($foreignKey));
             }
 
             $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
