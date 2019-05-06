@@ -203,7 +203,7 @@ class DynamicEntitySchema extends BaseSchema
             }
 
             if (!$data && !is_array($foreignKey)) {
-                $data = new Identifier($entity->get($foreignKey), $this->getTypeFromRepository($foreignKey));
+                $data = new Identifier($entity->get($foreignKey), $this->getTypeFromRepository($association->getTarget()));
             }
 
             $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
