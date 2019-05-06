@@ -636,11 +636,18 @@ class JsonApiListener extends ApiListener
     {
         $repository = $this->_controller()->loadModel(); // Default model class
 
+        $usedAssociations = [];
         if (isset($subject->query)) {
-            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->getContain());
-        } else {
+            $usedAssociations += $this->_getContainedAssociations($repository, $subject->query->getContain());
+        }
+
+        if (isset($subject->entities)) {
             $entity = $this->_getSingleEntity($subject);
-            $usedAssociations = $this->_extractEntityAssociations($repository, $entity);
+            $usedAssociations += $this->_extractEntityAssociations($repository, $entity);
+        }
+
+        if (isset($subject->entity)) {
+            $usedAssociations += $this->_extractEntityAssociations($repository, $subject->entity);
         }
 
         // only generate the `included` node if the option is set by query parameter or config

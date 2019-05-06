@@ -11,6 +11,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\View\JsonApiView;
@@ -26,6 +27,8 @@ use StdClass;
  */
 class JsonApiViewTest extends TestCase
 {
+    use StringCompareTrait;
+
     /**
      * Fixtures
      *
@@ -236,8 +239,8 @@ class JsonApiViewTest extends TestCase
             'countries' => $countries
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json',
             $view->render()
         );
 
@@ -247,8 +250,8 @@ class JsonApiViewTest extends TestCase
             'countries' => $countries,
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json',
             $view->render()
         );
     }
@@ -273,8 +276,8 @@ class JsonApiViewTest extends TestCase
             ]
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'MetaInformation' . DS . 'meta-only.json',
             $view->render()
         );
     }
@@ -287,18 +290,18 @@ class JsonApiViewTest extends TestCase
     public function testOptionalWithJsonApiVersion()
     {
         // make sure top-level node is added when true
-//        $countries = TableRegistry::get('Countries')->find()->all();
-//        $view = $this->_getView('Countries', [
-//            'countries' => $countries,
-//            '_withJsonApiVersion' => true
-//        ]);
-//        $expectedVersionArray = [
-//            'jsonapi' => [
-//                'version' => '1.1'
-//            ]
-//        ];
-//
-//        $this->assertArraySubset($expectedVersionArray, json_decode($view->render(), true));
+        $countries = TableRegistry::get('Countries')->find()->all();
+        $view = $this->_getView('Countries', [
+            'countries' => $countries,
+            '_withJsonApiVersion' => true
+        ]);
+        $expectedVersionArray = [
+            'jsonapi' => [
+                'version' => '1.1'
+            ]
+        ];
+
+        $this->assertArraySubset($expectedVersionArray, json_decode($view->render(), true));
 
         // make sure top-level node is added when passed an array
         $countries = TableRegistry::get('Countries')->find()->all();
@@ -385,19 +388,24 @@ class JsonApiViewTest extends TestCase
     public function testOptionalDebugPrettyPrint()
     {
         // make sure pretty json is generated when true AND in debug mode
+        $countries = TableRegistry::get('Countries')
+            ->find()
+            ->first();
         $this->assertTrue(Configure::read('debug'));
-        $countries = TableRegistry::get('Countries')->find()->first();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
             '_debugPrettyPrint' => true,
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json',
             $view->render()
         );
 
         // make sure we can produce non-pretty in debug mode as well
+        $countries = TableRegistry::get('Countries')
+            ->find()
+            ->first();
         $this->assertTrue(Configure::read('debug'));
         $view = $this->_getView('Countries', [
             'countries' => $countries,
@@ -406,7 +414,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"links":{"self":"\/countries\/1"}}}',
+            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"relationships":{"currency":{"links":{"self":"\/currencies\/1"},"data":{"type":"currencies","id":"1"}},"national-capital":{"links":{"self":"\/national_capitals\/view\/1"},"data":{"type":"national-capitals","id":"1"}}},"links":{"self":"\/countries\/1"}}}',
             $view->render()
         );
     }

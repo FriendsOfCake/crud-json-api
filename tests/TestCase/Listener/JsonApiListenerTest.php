@@ -72,6 +72,7 @@ class JsonApiListenerTest extends TestCase
             'setFlash' => false,
             'withJsonApiVersion' => false,
             'meta' => [],
+            'links' => [],
             'absoluteLinks' => false,
             'jsonApiBelongsToLinks' => false,
             'jsonOptions' => [],
@@ -368,122 +369,6 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $this->assertNull($listener->beforeRedirect(new Event('dogs')));
-    }
-
-    /**
-     * _insertBelongsToDataIntoEventFindResult()
-     *
-     * @return void
-     */
-    public function testInsertBelongsToDataIntoEventFindResult()
-    {
-        $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
-            ->setConstructorArgs([null, null, 'Countries'])
-            ->enableOriginalConstructor()
-            ->getMock();
-
-        $event = $this
-            ->getMockBuilder('\Cake\Event\Event')
-            ->disableOriginalConstructor()
-            ->setMethods(['getSubject'])
-            ->getMock();
-
-        $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        $event
-            ->expects($this->any())
-            ->method('getSubject')
-            ->will($this->returnValue($subject));
-
-        $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->disableOriginalConstructor()
-            ->setMethods(['_controller'])
-            ->getMock();
-
-        $listener
-            ->expects($this->any())
-            ->method('_controller')
-            ->will($this->returnValue($controller));
-
-        $this->setReflectionClassInstance($listener);
-
-        // assert related belongsTo model 'currency' is inserted
-        $table = TableRegistry::get('Countries');
-        $entity = $table->find()->first();
-        $subject->entity = $entity;
-
-        $this->assertArrayHasKey('name', $entity);
-        $this->assertArrayNotHasKey('currency', $entity);
-
-        $this->callProtectedMethod('_insertBelongsToDataIntoEventFindResult', [$event], $listener);
-
-        $this->assertArrayHasKey('name', $subject->entity);
-        $this->assertArrayHasKey('currency', $subject->entity);
-    }
-
-    /**
-     * _insertBelongsToDataIntoEventFindResult()
-     *
-     * @return void
-     */
-    public function testInsertBelongsToDataIntoEventFindResultSelfReferenced()
-    {
-        $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
-            ->setConstructorArgs([null, null, 'Countries'])
-            ->enableOriginalConstructor()
-            ->getMock();
-
-        $event = $this
-            ->getMockBuilder('\Cake\Event\Event')
-            ->disableOriginalConstructor()
-            ->setMethods(['getSubject'])
-            ->getMock();
-
-        $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        $event
-            ->expects($this->any())
-            ->method('getSubject')
-            ->will($this->returnValue($subject));
-
-        $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->disableOriginalConstructor()
-            ->setMethods(['_controller'])
-            ->getMock();
-
-        $listener
-            ->expects($this->any())
-            ->method('_controller')
-            ->will($this->returnValue($controller));
-
-        $this->setReflectionClassInstance($listener);
-
-        // Check if Vatican has supercountry (self-referenced tables)
-        $table = TableRegistry::get('Countries');
-        $entity = $table->get(4);
-        $subject->entity = $entity;
-
-        $this->assertArrayHasKey('name', $subject->entity);
-        $this->assertArrayNotHasKey('supercountry', $subject->entity);
-
-        $this->callProtectedMethod('_insertBelongsToDataIntoEventFindResult', [$event], $listener);
-
-        $this->assertArrayHasKey('name', $subject->entity);
-        $this->assertArrayHasKey('supercountry', $subject->entity);
     }
 
     /**

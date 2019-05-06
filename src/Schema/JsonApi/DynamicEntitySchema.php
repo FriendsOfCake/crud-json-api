@@ -99,8 +99,7 @@ class DynamicEntitySchema extends BaseSchema
      * Returns an array with all the properties that have been set
      * to this entity
      *
-     * This method will recursively transform entities assigned to properties
-     * into arrays as well.
+     * This method will ignore any properties that are entities.
      *
      * @return array
      */

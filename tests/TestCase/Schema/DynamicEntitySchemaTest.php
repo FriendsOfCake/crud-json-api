@@ -10,6 +10,7 @@ use Crud\TestSuite\TestCase;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaInterface;
 use Neomerx\JsonApi\Factories\Factory;
+use Neomerx\JsonApi\Schema\Identifier;
 
 /**
  * Licensed under The MIT License
@@ -186,13 +187,34 @@ class DynamicEntitySchemaTest extends TestCase
         $this->setReflectionClassInstance($result);
         $this->assertSame($expected, $this->getProtectedProperty('value', $result));
 
-        // assert relationships that are valid BUT have no data present in the entity are skipped
+        // assert N-1 (i.e. belongs-to)  relationships are always included as a relationship
         unset($entity['currency']);
         $this->assertArrayNotHasKey('currency', $entity);
 
         $result = $schema->getRelationships($entity);
-        $this->assertArrayNotHasKey('currency', $result);
+        $this->assertArrayHasKey('currency', $result);
         $this->assertArrayHasKey('cultures', $result);
+        $this->assertInstanceOf(Identifier::class, $result['currency'][DynamicEntitySchema::RELATIONSHIP_DATA]);
+
+        // assert other valid relations are not included if no data is loaded
+        // fetch associated data to test against
+        $table = TableRegistry::get('Countries');
+        $query = $table->find()
+            ->where([
+                'Countries.id' => 2
+            ])
+            ->contain([
+                'Cultures',
+                'Currencies',
+            ]);
+
+        $entity = $query->first();
+        unset($entity['cultures']);
+        $this->assertArrayNotHasKey('cultures', $entity);
+
+        $result = $schema->getRelationships($entity);
+        $this->assertArrayNotHasKey('cultures', $result);
+        $this->assertArrayHasKey('currency', $result);
 
         // test custom foreign key
         $query = $table->find()
