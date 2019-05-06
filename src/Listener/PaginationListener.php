@@ -85,6 +85,10 @@ class PaginationListener extends BaseListener
             'filter' => $request->getQuery('filter'),
         ];
 
+        if ($defaultUrl['sort'] === null && $request->getQuery('sort')) {
+            $defaultUrl['sort'] = $request->getQuery('sort');
+        }
+
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
         $self = Router::url([

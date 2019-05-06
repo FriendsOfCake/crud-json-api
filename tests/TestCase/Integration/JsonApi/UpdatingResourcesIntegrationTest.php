@@ -161,7 +161,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
         # assert response
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('UpdatingResources' . DS . $expectedResponseFile));
+        $this->assertResponseSameAsFile('UpdatingResources' . DS . $expectedResponseFile);
 
         # only check database if array is passed
         if (empty($expectedRecordSubset)) {

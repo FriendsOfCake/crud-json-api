@@ -6,10 +6,16 @@ use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\StringCompareTrait;
+use Cake\TestSuite\TestCase;
 use CrudJsonApi\Error\JsonApiExceptionRenderer;
 
-abstract class JsonApiBaseTestCase extends IntegrationTestCase
+abstract class JsonApiBaseTestCase extends TestCase
 {
+    use IntegrationTestTrait;
+    use StringCompareTrait;
+
     /**
      * Path to directory holding the JSON API request body fixtures.
      *
@@ -30,11 +36,11 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.currencies',
-        'plugin.CrudJsonApi.cultures',
-        'plugin.CrudJsonApi.national_capitals',
-        'plugin.CrudJsonApi.national_cities',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Currencies',
+        'plugin.CrudJsonApi.Cultures',
+        'plugin.CrudJsonApi.NationalCapitals',
+        'plugin.CrudJsonApi.NationalCities',
     ];
 
     /**
@@ -43,6 +49,11 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->deprecated(function () {
+            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+        });
 
         // Enable PSR-7 integration testing
         $this->useHttpServer(true);
@@ -120,6 +131,18 @@ abstract class JsonApiBaseTestCase extends IntegrationTestCase
         $file = $this->_JsonApiRequestBodyFixtures . DS . $file;
 
         return trim((new File($file))->read());
+    }
+
+    /**
+     * Asserts that the response is the same as the supplied file.
+     *
+     * @param string $file Filename to check
+     * @param string $response Override the response to check
+     * @return void
+     */
+    public function assertResponseSameAsFile(string $file, string $response = null)
+    {
+        $this->assertSameAsFile($this->_JsonApiResponseBodyFixtures . DS . $file, $response ?: $this->_getBodyAsString());
     }
 
     /**

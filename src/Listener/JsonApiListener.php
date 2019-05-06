@@ -3,9 +3,12 @@ namespace CrudJsonApi\Listener;
 
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\ORM\Association;
+use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -44,6 +47,7 @@ class JsonApiListener extends ApiListener
         'setFlash' => false,
         'withJsonApiVersion' => false, // true or array/hash with additional meta information (will add top-level member `jsonapi` to the response)
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
+        'links' => [], // array or hash with link information (will add top-level node `links` to the response)
         'absoluteLinks' => false, // false to generate relative links, true will generate fully qualified URL prefixed with http://domain.name
         'jsonApiBelongsToLinks' => false, // false to generate JSONAPI links (requires custom Route, included)
         'jsonOptions' => [], // array with predefined JSON constants as described at http://php.net/manual/en/json.constants.php
@@ -101,6 +105,7 @@ class JsonApiListener extends ApiListener
             'Crud.beforePaginate' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.beforeFind' => ['callable' => [$this, 'beforeFind'], 'priority' => 10],
             'Crud.afterFind' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
+            'Crud.afterPaginate' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
         ];
     }
 
@@ -165,8 +170,6 @@ class JsonApiListener extends ApiListener
         if ($this->getConfig('include')) {
             return null;
         }
-
-        $this->_insertBelongsToDataIntoEventFindResult($event);
     }
 
     /**
@@ -199,7 +202,7 @@ class JsonApiListener extends ApiListener
 
             // prevent clients attempting to side-post/create related hasMany records
             if ($this->_request()->getMethod() === 'POST') {
-                throw new BadRequestException("JSON API 1.0 does not support sideposting (hasMany relationships detected in the request body)");
+                throw new BadRequestException("JSON API 1.1 does not support sideposting (hasMany relationships detected in the request body)");
             }
 
             // hasMany found in the entity, extract ids from the request data
@@ -256,8 +259,6 @@ class JsonApiListener extends ApiListener
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
 
-        $this->_insertBelongsToDataIntoEventFindResult($event);
-
         /** @var \Crud\Event\Subject $subject */
         $subject = $event->getSubject();
         $this->render($subject);
@@ -294,11 +295,11 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param string $include The association include path
      * @return \Cake\ORM\Association|null
      */
-    protected function _getAssociation(RepositoryInterface $repository, $include)
+    protected function _getAssociation(Table $repository, $include)
     {
         $delimiter = '-';
         if (strpos($include, '_') !== false) {
@@ -544,6 +545,10 @@ class JsonApiListener extends ApiListener
                 $sortField = substr($sortField, 1);
             }
 
+            if ($this->getConfig('inflect') === 'dasherize') {
+                $sortField = Inflector::underscore($sortField); // e.g. currency, national-capitals
+            }
+
             if (strpos($sortField, '.') !== false) {
                 list ($include, $field) = explode('.', $sortField);
 
@@ -582,56 +587,6 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * Adds belongsTo data to the find() result.
-     *
-     * @param \Cake\Event\Event $event Event
-     * @return void
-     */
-    protected function _insertBelongsToDataIntoEventFindResult($event)
-    {
-        $entity = $event->getSubject()->entity;
-        $repository = $this->_controller()->loadModel();
-        $associations = $repository->associations();
-
-        foreach ($associations as $association) {
-            $associationType = $association->type();
-            $associationTable = $association->getTarget(); // Users
-
-            // belongsTo and HasOne
-            if ($associationType === Association::MANY_TO_ONE || $associationType === Association::ONE_TO_ONE) {
-                $foreignKey = $association->getForeignKey(); // user_id
-                $associationId = $entity->$foreignKey; // 1234
-
-                if (!empty($associationId)) {
-                    $associatedEntity = $associationTable->newEntity();
-                    $associatedEntity->set('id', $associationId);
-
-                    // generate key name required for neoMerx to find and use the entity data
-                    // => ?!? => unfortunately, _propertyName is protected. We have got serious reason to use it though
-                    $reflectedAssoc = new \ReflectionClass('Cake\ORM\Association');
-                    $propertyNameProp = $reflectedAssoc->getProperty('_propertyName');
-                    $propertyNameProp->setAccessible(true);
-                    $key = $propertyNameProp->getValue($association);
-
-                    if (!$key) {
-                        $key = Inflector::singularize($association->getName()); // Users
-                        $key = Inflector::underscore($key); // user
-                    }
-
-                    $entity->set($key, $associatedEntity);
-                }
-            }
-
-            // insert the contained associations into the query
-            if (!empty($event->getSubject()->query)) {
-                $event->getSubject()->query->contain($association->getName());
-            }
-        }
-
-        $event->getSubject()->entity = $entity;
-    }
-
-    /**
      * Set required viewVars before rendering the JsonApiView.
      *
      * @param \Crud\Event\Subject $subject Subject
@@ -660,6 +615,7 @@ class JsonApiListener extends ApiListener
         $this->_controller()->set([
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
+            '_links' => $this->getConfig('links'),
             '_absoluteLinks' => $this->getConfig('absoluteLinks'),
             '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             '_jsonOptions' => $this->getConfig('jsonOptions'),
@@ -680,11 +636,18 @@ class JsonApiListener extends ApiListener
     {
         $repository = $this->_controller()->loadModel(); // Default model class
 
+        $usedAssociations = [];
         if (isset($subject->query)) {
-            $usedAssociations = $this->_getContainedAssociations($repository, $subject->query->getContain());
-        } else {
+            $usedAssociations += $this->_getContainedAssociations($repository, $subject->query->getContain());
+        }
+
+        if (isset($subject->entities)) {
             $entity = $this->_getSingleEntity($subject);
-            $usedAssociations = $this->_extractEntityAssociations($repository, $entity);
+            $usedAssociations += $this->_extractEntityAssociations($repository, $entity);
+        }
+
+        if (isset($subject->entity)) {
+            $usedAssociations += $this->_extractEntityAssociations($repository, $subject->entity);
         }
 
         // only generate the `included` node if the option is set by query parameter or config
@@ -699,6 +662,7 @@ class JsonApiListener extends ApiListener
         $this->_controller()->set([
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
+            '_links' => $this->getConfig('links'),
             '_absoluteLinks' => $this->getConfig('absoluteLinks'),
             '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             '_jsonOptions' => $this->getConfig('jsonOptions'),
@@ -790,12 +754,12 @@ class JsonApiListener extends ApiListener
      * Deduplicate resultset from rows that might have come from joins
      *
      * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\ORM\ResultSet
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _deduplicateResultSet($subject)
+    protected function _deduplicateResultSet($subject): ResultSetInterface
     {
-        $resultSet = clone $subject->entities;
         $ids = [];
+        $entities = [];
         $keys = (array)$subject->query->getRepository()->getPrimaryKey();
         foreach ($subject->entities as $entity) {
             $id = $entity->extract($keys);
@@ -805,8 +769,11 @@ class JsonApiListener extends ApiListener
             }
         }
 
-        if (isset($entities)) {
+        if ($subject->entities instanceof ResultSet) {
+            $resultSet = clone $subject->entities;
             $resultSet->unserialize(serialize($entities));
+        } else {
+            $resultSet = new ResultSetDecorator($entities);
         }
 
         return $resultSet;
@@ -851,7 +818,7 @@ class JsonApiListener extends ApiListener
     /**
      * Creates a nested array of all associations used in the query
      *
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param array $contains Array of contained associations
      * @return array Array with \Cake\ORM\AssociationCollection
      */
@@ -891,7 +858,7 @@ class JsonApiListener extends ApiListener
      * query) in the find result from the entity's AssociationCollection to
      * prevent `null` entries appearing in the json api `relationships` node.
      *
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param \Cake\ORM\Table $repository Repository
      * @param \Cake\ORM\Entity $entity Entity
      * @return array
      */
@@ -952,7 +919,7 @@ class JsonApiListener extends ApiListener
      * config option 'include'.
      *
      * @param array $associations Array with \Cake\ORM\AssociationCollection(s)
-     * @param bool $last What does this do?
+     * @param bool $last Is this the "top-level"/entry point for the recursive function
      * @return array
      * @throws \InvalidArgumentException
      */
@@ -973,7 +940,12 @@ class JsonApiListener extends ApiListener
                 throw new \InvalidArgumentException("Association {$name} does not have an association object set");
             }
 
-            $result[$association['association']->getProperty()] = $this->_getIncludeList($association['children'], false);
+            $property = $association['association']->getProperty();
+            if ($this->getConfig('inflect') === 'dasherize') {
+                $property = Inflector::dasherize($property); // e.g. currency, national-capitals
+            }
+
+            $result[$property] = $this->_getIncludeList($association['children'], false);
         }
 
         return $last ? array_keys(Hash::flatten($result)) : $result;

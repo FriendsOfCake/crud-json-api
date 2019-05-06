@@ -11,12 +11,14 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\View\JsonApiView;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
+use Neomerx\JsonApi\Schema\Link;
 use StdClass;
 
 /**
@@ -25,15 +27,17 @@ use StdClass;
  */
 class JsonApiViewTest extends TestCase
 {
+    use StringCompareTrait;
+
     /**
      * Fixtures
      *
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.currencies',
-        'plugin.CrudJsonApi.cultures',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Currencies',
+        'plugin.CrudJsonApi.Cultures',
     ];
 
     /**
@@ -56,6 +60,11 @@ class JsonApiViewTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->deprecated(function () {
+            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+        });
 
         $listener = new JsonApiListener(new Controller());
         $this->_defaultViewVars = $listener->getConfig();
@@ -126,7 +135,7 @@ class JsonApiViewTest extends TestCase
         $controller = new Controller($request, $response, $tableName);
 
         $builder = $controller->viewBuilder();
-        $builder->setClassName('\CrudJsonApi\View\JsonApiView');
+        $builder->setClassName(JsonApiView::class);
 
         // create view with viewVars for resource-less response
         if (!$tableName) {
@@ -152,7 +161,7 @@ class JsonApiViewTest extends TestCase
         // create required '_entities' and '_associations' viewVars normally
         // produced and set by the JsonApiListener
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -230,8 +239,8 @@ class JsonApiViewTest extends TestCase
             'countries' => $countries
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingCollections' . DS . 'get-countries-without-pagination.json',
             $view->render()
         );
 
@@ -241,8 +250,8 @@ class JsonApiViewTest extends TestCase
             'countries' => $countries,
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json',
             $view->render()
         );
     }
@@ -267,8 +276,8 @@ class JsonApiViewTest extends TestCase
             ]
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'MetaInformation' . DS . 'meta-only.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'MetaInformation' . DS . 'meta-only.json',
             $view->render()
         );
     }
@@ -288,7 +297,7 @@ class JsonApiViewTest extends TestCase
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
-                'version' => '1.0'
+                'version' => '1.1'
             ]
         ];
 
@@ -305,7 +314,7 @@ class JsonApiViewTest extends TestCase
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
-                'version' => '1.0',
+                'version' => '1.1',
                 'meta' => [
                     'meta-key-1' => 'meta-val-1',
                     'meta-key-2' => 'meta-val-2',
@@ -379,19 +388,24 @@ class JsonApiViewTest extends TestCase
     public function testOptionalDebugPrettyPrint()
     {
         // make sure pretty json is generated when true AND in debug mode
+        $countries = TableRegistry::get('Countries')
+            ->find()
+            ->first();
         $this->assertTrue(Configure::read('debug'));
-        $countries = TableRegistry::get('Countries')->find()->first();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
             '_debugPrettyPrint' => true,
         ]);
 
-        $this->assertSame(
-            trim((new File($this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json'))->read()),
+        $this->assertSameAsFile(
+            $this->_JsonApiResponseBodyFixtures . DS . 'FetchingResources' . DS . 'get-country-no-relationships.json',
             $view->render()
         );
 
         // make sure we can produce non-pretty in debug mode as well
+        $countries = TableRegistry::get('Countries')
+            ->find()
+            ->first();
         $this->assertTrue(Configure::read('debug'));
         $view = $this->_getView('Countries', [
             'countries' => $countries,
@@ -400,7 +414,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"links":{"self":"\/countries\/1"}}}',
+            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"relationships":{"currency":{"links":{"self":"\/currencies\/1"},"data":{"type":"currencies","id":"1"}},"national-capital":{"links":{"self":"\/national_capitals\/view\/1"},"data":{"type":"national-capitals","id":"1"}}},"links":{"self":"\/countries\/1"}}}',
             $view->render()
         );
     }
@@ -642,7 +656,7 @@ class JsonApiViewTest extends TestCase
         $this->assertCount(5, $links);
 
         foreach ($links as $link) {
-            $this->assertInstanceOf('\Neomerx\JsonApi\Document\Link', $link);
+            $this->assertInstanceOf(Link::class, $link);
         }
     }
 

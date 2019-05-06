@@ -9,35 +9,38 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/currencies\/1"
                 }
             },
             "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
                 "data": {
                     "type": "national-capitals",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/national-capitals\/1"
                 }
             },
             "cultures": {
+                "links": {
+                    "related": "\/cultures?country_id=1"
+                },
                 "data": [
                     {
                         "type": "cultures",
                         "id": "1"
                     }
-                ],
-                "links": {
-                    "self": "\/cultures?country-id=1"
-                }
+                ]
             },
             "national-cities": {
+                "links": {
+                    "related": "\/national-cities?country_id=1"
+                },
                 "data": [
                     {
                         "type": "national-cities",
@@ -55,10 +58,7 @@
                         "type": "national-cities",
                         "id": "6"
                     }
-                ],
-                "links": {
-                    "self": "\/national-cities?country-id=1"
-                }
+                ]
             }
         },
         "links": {
@@ -96,6 +96,17 @@
                 "name": "Dutch",
                 "another-dummy-counter": 11111
             },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/cultures\/1"
             }
@@ -105,6 +116,17 @@
             "id": "1",
             "attributes": {
                 "name": "Amsterdam"
+            },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
             },
             "links": {
                 "self": "\/national-cities\/1"
@@ -116,6 +138,17 @@
             "attributes": {
                 "name": "Rotterdam"
             },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/national-cities\/2"
             }
@@ -126,6 +159,17 @@
             "attributes": {
                 "name": "Eindhoven"
             },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/national-cities\/5"
             }
@@ -135,6 +179,17 @@
             "id": "6",
             "attributes": {
                 "name": "Nuenen"
+            },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
             },
             "links": {
                 "self": "\/national-cities\/6"

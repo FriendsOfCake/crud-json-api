@@ -119,7 +119,7 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('SparseFieldsets' . DS . $expectedFile));
+        $this->assertResponseSameAsFile('SparseFieldsets' . DS . $expectedFile);
     }
 
     /**
@@ -135,6 +135,6 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('SparseFieldsets' . DS . $expectedFile));
+        $this->assertResponseSameAsFile('SparseFieldsets' . DS . $expectedFile);
     }
 }

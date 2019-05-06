@@ -3,10 +3,14 @@ namespace CrudJsonApi\Test\TestCase\Schema\JsonApi;
 
 use Cake\Controller\Controller;
 use Cake\ORM\TableRegistry;
+use Cake\View\View;
 use CrudJsonApi\Listener\JsonApiListener;
+use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema;
 use Crud\TestSuite\TestCase;
-use Neomerx\JsonApi\Contracts\Schema\SchemaFactoryInterface;
+use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
+use Neomerx\JsonApi\Contracts\Schema\SchemaInterface;
 use Neomerx\JsonApi\Factories\Factory;
+use Neomerx\JsonApi\Schema\Identifier;
 
 /**
  * Licensed under The MIT License
@@ -21,9 +25,9 @@ class DynamicEntitySchemaTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CrudJsonApi.countries',
-        'plugin.CrudJsonApi.cultures',
-        'plugin.CrudJsonApi.currencies',
+        'plugin.CrudJsonApi.Countries',
+        'plugin.CrudJsonApi.Cultures',
+        'plugin.CrudJsonApi.Currencies',
     ];
 
     /**
@@ -67,7 +71,7 @@ class DynamicEntitySchemaTest extends TestCase
 
         // make view return associations on get('_associations') call
         $view = $this
-            ->getMockBuilder('\Cake\View\View')
+            ->getMockBuilder(View::class)
             ->setMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -77,19 +81,19 @@ class DynamicEntitySchemaTest extends TestCase
 
         // setup the schema
         $schemaFactoryInterface = $this
-            ->getMockBuilder(SchemaFactoryInterface::class)
+            ->getMockBuilder(FactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $schema = $this
-            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
+            ->getMockBuilder(DynamicEntitySchema::class)
             ->setMethods(null)
             ->setConstructorArgs([$schemaFactoryInterface, $view, $table])
             ->getMock();
 
         $this->setReflectionClassInstance($schema);
 
-        $this->setProtectedProperty('_view', $view, $schema);
+        $this->setProtectedProperty('view', $view, $schema);
 
         // assert method
         $result = $this->callProtectedMethod('getAttributes', [$entity], $schema);
@@ -142,66 +146,75 @@ class DynamicEntitySchemaTest extends TestCase
         $repositories = $this->callProtectedMethod('_getRepositoryList', [$table, $associations], $listener);
 
         // make view return associations on get('_associations') call
-        $view = $this
-            ->getMockBuilder('\Cake\View\View')
-            ->setMethods(['get'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $view = new View();
 
         $view->set('_repositories', $repositories);
         $view->set('_absoluteLinks', false); // test relative links (listener default)
         $view->set('_inflect', 'dasherize');
 
         // setup the schema
-        $schema = $this
-            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
-            ->setMethods(null)
-            ->setConstructorArgs([new Factory(), $view, $table])
-            ->getMock();
-
-        $this->setReflectionClassInstance($schema);
-
-        $this->setProtectedProperty('_view', $view, $schema);
+        $schema = new DynamicEntitySchema(new Factory(), $view, $table);
 
         // assert getRelationships()
-        $relationships = $this->callProtectedMethod('getRelationships', [$entity, true, []], $schema);
+        $relationships = $schema->getRelationships($entity);
 
         $this->assertArrayHasKey('currency', $relationships);
-        $this->assertSame($expectedCurrencyId, $relationships['currency']['data']['id']);
+        $this->assertSame($expectedCurrencyId, $relationships['currency'][SchemaInterface::RELATIONSHIP_DATA]['id']);
 
         $this->assertArrayHasKey('cultures', $relationships);
-        $this->assertCount(2, $relationships['cultures']['data']);
-        $this->assertSame($expectedFirstCultureId, $relationships['cultures']['data'][0]['id']);
-        $this->assertSame($expectedSecondCultureId, $relationships['cultures']['data'][1]['id']);
+        $this->assertCount(2, $relationships['cultures'][SchemaInterface::RELATIONSHIP_DATA]);
+        $this->assertSame($expectedFirstCultureId, $relationships['cultures'][SchemaInterface::RELATIONSHIP_DATA][0]['id']);
+        $this->assertSame($expectedSecondCultureId, $relationships['cultures'][SchemaInterface::RELATIONSHIP_DATA][1]['id']);
 
         // assert generated belongsToLink using listener default (direct link)
         $view->set('_jsonApiBelongsToLinks', false);
         $expected = '/currencies/1';
-        $result = $this->callProtectedMethod('getRelationshipSelfLink', [$entity, 'currency', null, true], $schema);
+        $result = $schema->getRelationshipSelfLink($entity, 'currency');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('subHref', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
 
         // assert generated belongsToLink using JsonApi (indirect link, requires custom JsonApiRoute)
         $view->set('_jsonApiBelongsToLinks', true);
         $expected = '/countries/2/relationships/currency';
-        $result = $this->callProtectedMethod('getRelationshipSelfLink', [$entity, 'currency', null, true], $schema);
+        $result = $schema->getRelationshipSelfLink($entity, 'currency');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('subHref', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
 
         // assert _ getRelationshipSelfLinks() for plural (hasMany)
-        $expected = '/cultures?country-id=2';
+        $expected = '/cultures?country_id=2';
 
-        $result = $this->callProtectedMethod('getRelationshipSelfLink', [$entity, 'cultures', null, true], $schema);
+        $result = $schema->getRelationshipRelatedLink($entity, 'cultures');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('subHref', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
 
-        // assert relationships that are valid BUT have no data present in the entity are skipped
+        // assert N-1 (i.e. belongs-to)  relationships are always included as a relationship
         unset($entity['currency']);
         $this->assertArrayNotHasKey('currency', $entity);
 
-        $result = $this->callProtectedMethod('getRelationships', [$entity, true, []], $schema);
-        $this->assertArrayNotHasKey('currency', $result);
+        $result = $schema->getRelationships($entity);
+        $this->assertArrayHasKey('currency', $result);
         $this->assertArrayHasKey('cultures', $result);
+        $this->assertInstanceOf(Identifier::class, $result['currency'][DynamicEntitySchema::RELATIONSHIP_DATA]);
+
+        // assert other valid relations are not included if no data is loaded
+        // fetch associated data to test against
+        $table = TableRegistry::get('Countries');
+        $query = $table->find()
+            ->where([
+                'Countries.id' => 2
+            ])
+            ->contain([
+                'Cultures',
+                'Currencies',
+            ]);
+
+        $entity = $query->first();
+        unset($entity['cultures']);
+        $this->assertArrayNotHasKey('cultures', $entity);
+
+        $result = $schema->getRelationships($entity);
+        $this->assertArrayNotHasKey('cultures', $result);
+        $this->assertArrayHasKey('currency', $result);
 
         // test custom foreign key
         $query = $table->find()
@@ -227,56 +240,5 @@ class DynamicEntitySchemaTest extends TestCase
 
         $entity = $query->first();
         $this->assertArrayHasKey('subcountries', $entity);
-    }
-
-    /**
-     * Test NeoMerx override getIncludedResourceLinks() used to generate
-     * `self` links inside the optional JSON API `included` node.
-     *
-     * @return void
-     */
-    public function testGetIncludedResourceLinks()
-    {
-        // assert relative links (listener default)
-        $view = $this
-            ->getMockBuilder('\Cake\View\View')
-            ->setMethods(['get'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $view->set('_absoluteLinks', false);
-        $view->set('_jsonApiBelongsToLinks', false);
-        $view->set('_repositories', [
-            'Countries' => TableRegistry::get('Countries'),
-            'Currencies' => TableRegistry::get('Currencies')
-        ]);
-
-        // get results
-        $table = TableRegistry::get('Countries');
-
-        $schema = $this
-            ->getMockBuilder('\CrudJsonApi\Schema\JsonApi\DynamicEntitySchema')
-            ->setMethods(null)
-            ->setConstructorArgs([new Factory(), $view, $table])
-            ->getMock();
-
-        $this->setReflectionClassInstance($schema);
-        $this->setProtectedProperty('_view', $view, $schema);
-
-        $entity = $table
-            ->find()
-            ->contain([
-                'Currencies',
-            ])
-            ->first();
-        $result = $this->callProtectedMethod('getIncludedResourceLinks', [$entity->currency], $schema);
-
-        // assert success
-        $this->assertArrayHasKey('self', $result);
-        $selfLink = $result['self'];
-        $this->assertTrue(is_a($selfLink, '\Neomerx\JsonApi\Document\Link'));
-
-        $this->setReflectionClassInstance($selfLink);
-        $this->assertSame('/currencies/1', $this->getProtectedProperty('subHref', $selfLink));
     }
 }

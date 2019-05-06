@@ -8,13 +8,22 @@
             "dummy-counter": 11111
         },
         "relationships": {
+            "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
+                }
+            },
             "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
                 "data": {
                     "type": "national-capitals",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/national-capitals\/1"
                 }
             }
         },

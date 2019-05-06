@@ -7,12 +7,12 @@
         },
         "relationships": {
             "country": {
+                "links": {
+                    "self": "\/countries\/1"
+                },
                 "data": {
                     "type": "countries",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/countries\/1"
                 }
             }
         },

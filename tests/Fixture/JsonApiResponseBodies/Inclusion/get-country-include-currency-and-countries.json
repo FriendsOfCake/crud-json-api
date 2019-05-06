@@ -9,12 +9,21 @@
         },
         "relationships": {
             "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
                 "data": {
                     "type": "currencies",
                     "id": "1"
-                },
+                }
+            },
+            "national-capital": {
                 "links": {
-                    "self": "\/currencies\/1"
+                    "self": "\/national-capitals\/1"
+                },
+                "data": {
+                    "type": "national-capitals",
+                    "id": "1"
                 }
             }
         },
@@ -24,42 +33,6 @@
     },
     "included": [
         {
-            "type": "countries",
-            "id": "2",
-            "attributes": {
-                "code": "BG",
-                "name": "Bulgaria",
-                "dummy-counter": 22222
-            },
-            "links": {
-                "self": "\/countries\/2"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "3",
-            "attributes": {
-                "code": "IT",
-                "name": "Italy",
-                "dummy-counter": 33333
-            },
-            "links": {
-                "self": "\/countries\/3"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "4",
-            "attributes": {
-                "code": "VT",
-                "name": "Vatican",
-                "dummy-counter": 44444
-            },
-            "links": {
-                "self": "\/countries\/4"
-            }
-        },
-        {
             "type": "currencies",
             "id": "1",
             "attributes": {
@@ -68,6 +41,9 @@
             },
             "relationships": {
                 "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=1"
+                    },
                     "data": [
                         {
                             "type": "countries",
@@ -85,14 +61,116 @@
                             "type": "countries",
                             "id": "4"
                         }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=1"
-                    }
+                    ]
                 }
             },
             "links": {
                 "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BG",
+                "name": "Bulgaria",
+                "dummy-counter": 22222
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "4",
+            "attributes": {
+                "code": "VT",
+                "name": "Vatican",
+                "dummy-counter": 44444
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/4"
             }
         }
     ]

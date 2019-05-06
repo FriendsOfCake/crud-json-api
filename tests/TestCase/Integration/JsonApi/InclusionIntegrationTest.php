@@ -71,7 +71,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
 
         $this->assertResponseSuccess();
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('Inclusion' . DS . $expectedFile));
+        $this->assertResponseSameAsFile('Inclusion' . DS . $expectedFile);
     }
 
     /**
@@ -89,7 +89,7 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
         $this->get('/countries/1');
 
         $this->assertResponseSuccess();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('Inclusion' . DS . 'get-country-include-currency-and-culture.json'));
+        $this->assertResponseSameAsFile('Inclusion' . DS . 'get-country-include-currency-and-culture.json');
         EventManager::instance()->off('Crud.beforeFind');
     }
 

@@ -56,6 +56,6 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
         # assert the response
         $this->assertResponseCode(200);
         $this->_assertJsonApiResponseHeaders();
-        $this->assertResponseEquals($this->_getExpectedResponseBody('FetchingResources' . DS . $expectedResponseFile));
+        $this->assertResponseSameAsFile('FetchingResources' . DS . $expectedResponseFile);
     }
 }

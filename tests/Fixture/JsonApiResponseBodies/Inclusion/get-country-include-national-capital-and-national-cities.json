@@ -8,15 +8,18 @@
         },
         "relationships": {
             "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
                 "data": {
                     "type": "national-capitals",
                     "id": "1"
-                },
-                "links": {
-                    "self": "\/national-capitals\/1"
                 }
             },
             "national-cities": {
+                "links": {
+                    "related": "\/national-cities?country_id=1"
+                },
                 "data": [
                     {
                         "type": "national-cities",
@@ -26,10 +29,7 @@
                         "type": "national-cities",
                         "id": "2"
                     }
-                ],
-                "links": {
-                    "self": "\/national-cities?country-id=1"
-                }
+                ]
             }
         },
         "links": {

@@ -9,6 +9,9 @@
             },
             "relationships": {
                 "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=1"
+                    },
                     "data": [
                         {
                             "type": "countries",
@@ -26,10 +29,7 @@
                             "type": "countries",
                             "id": "4"
                         }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=1"
-                    }
+                    ]
                 }
             },
             "links": {
@@ -45,15 +45,15 @@
             },
             "relationships": {
                 "countries": {
+                    "links": {
+                        "related": "\/countries?currency_id=2"
+                    },
                     "data": [
                         {
                             "type": "countries",
                             "id": "5"
                         }
-                    ],
-                    "links": {
-                        "self": "\/countries?currency-id=2"
-                    }
+                    ]
                 }
             },
             "links": {
@@ -70,6 +70,26 @@
                 "name": "The Netherlands",
                 "dummy-counter": 11111
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/1"
             }
@@ -81,6 +101,26 @@
                 "code": "BG",
                 "name": "Bulgaria",
                 "dummy-counter": 22222
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/2"
@@ -94,6 +134,26 @@
                 "name": "Italy",
                 "dummy-counter": 33333
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/3"
             }
@@ -106,6 +166,35 @@
                 "name": "Vatican",
                 "dummy-counter": 44444
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/4"
             }
@@ -117,6 +206,26 @@
                 "code": "US",
                 "name": "United States of America",
                 "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/2"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/6"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "6"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/5"

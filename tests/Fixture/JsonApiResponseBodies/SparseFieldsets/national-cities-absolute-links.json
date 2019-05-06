@@ -18,6 +18,17 @@
             "attributes": {
                 "name": "Sofia"
             },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/2"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "2"
+                    }
+                }
+            },
             "links": {
                 "self": "\/national-cities\/3"
             }
@@ -27,6 +38,17 @@
             "id": "4",
             "attributes": {
                 "name": "Plovdiv"
+            },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/2"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "2"
+                    }
+                }
             },
             "links": {
                 "self": "\/national-cities\/4"

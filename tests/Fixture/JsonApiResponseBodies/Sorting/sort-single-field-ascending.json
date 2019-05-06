@@ -8,7 +8,6 @@
         "self": "\/countries?page=1&sort=name",
         "first": "\/countries?page=1&sort=name",
         "last": "\/countries?page=2&sort=name",
-        "prev": null,
         "next": "\/countries?page=2&sort=name"
     },
     "data": [
@@ -19,6 +18,26 @@
                 "code": "BG",
                 "name": "Bulgaria",
                 "dummy-counter": 22222
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "2"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/2"
@@ -32,6 +51,26 @@
                 "name": "Italy",
                 "dummy-counter": 33333
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/3"
             }
@@ -43,6 +82,26 @@
                 "code": "NL",
                 "name": "The Netherlands",
                 "dummy-counter": 11111
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/1"

@@ -8,16 +8,34 @@
             "dummy-counter": 11111
         },
         "relationships": {
+            "currency": {
+                "links": {
+                    "self": "\/currencies\/1"
+                },
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
+                }
+            },
+            "national-capital": {
+                "links": {
+                    "self": "\/national-capitals\/1"
+                },
+                "data": {
+                    "type": "national-capitals",
+                    "id": "1"
+                }
+            },
             "cultures": {
+                "links": {
+                    "related": "\/cultures?country_id=1"
+                },
                 "data": [
                     {
                         "type": "cultures",
                         "id": "1"
                     }
-                ],
-                "links": {
-                    "self": "\/cultures?country-id=1"
-                }
+                ]
             }
         },
         "links": {
@@ -32,6 +50,17 @@
                 "code": "nl-NL",
                 "name": "Dutch",
                 "another-dummy-counter": 11111
+            },
+            "relationships": {
+                "country": {
+                    "links": {
+                        "self": "\/countries\/1"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "1"
+                    }
+                }
             },
             "links": {
                 "self": "\/cultures\/1"

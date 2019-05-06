@@ -7,9 +7,7 @@
     "links": {
         "self": "\/countries?page=1&sort=national_capital.name&limit=10&include=national_capital",
         "first": "\/countries?page=1&sort=national_capital.name&limit=10&include=national_capital",
-        "last": "\/countries?page=1&sort=national_capital.name&limit=10&include=national_capital",
-        "prev": null,
-        "next": null
+        "last": "\/countries?page=1&sort=national_capital.name&limit=10&include=national_capital"
     },
     "data": [
         {
@@ -21,41 +19,27 @@
                 "dummy-counter": 11111
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/1"
+                    },
                     "data": {
                         "type": "national-capitals",
                         "id": "1"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/1"
                     }
                 }
             },
             "links": {
                 "self": "\/countries\/1"
-            }
-        },
-        {
-            "type": "countries",
-            "id": "3",
-            "attributes": {
-                "code": "IT",
-                "name": "Italy",
-                "dummy-counter": 33333
-            },
-            "relationships": {
-                "national-capital": {
-                    "data": {
-                        "type": "national-capitals",
-                        "id": "4"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/4"
-                    }
-                }
-            },
-            "links": {
-                "self": "\/countries\/3"
             }
         },
         {
@@ -67,18 +51,59 @@
                 "dummy-counter": 22222
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/2"
+                    },
                     "data": {
                         "type": "national-capitals",
                         "id": "2"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/2"
                     }
                 }
             },
             "links": {
                 "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "name": "Italy",
+                "dummy-counter": 33333
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/4"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "4"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
             }
         },
         {
@@ -90,13 +115,31 @@
                 "dummy-counter": 44444
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
                 "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/5"
+                    },
                     "data": {
                         "type": "national-capitals",
                         "id": "5"
-                    },
+                    }
+                },
+                "supercountry": {
                     "links": {
-                        "self": "\/national-capitals\/5"
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
                     }
                 }
             },
@@ -113,13 +156,22 @@
                 "dummy-counter": 33333
             },
             "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/currencies\/2"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
+                    }
+                },
                 "national-capital": {
+                    "links": {
+                        "self": "\/national-capitals\/6"
+                    },
                     "data": {
                         "type": "national-capitals",
                         "id": "6"
-                    },
-                    "links": {
-                        "self": "\/national-capitals\/6"
                     }
                 }
             },
@@ -142,17 +194,6 @@
         },
         {
             "type": "national-capitals",
-            "id": "4",
-            "attributes": {
-                "name": "Rome",
-                "description": "National capital of Italy"
-            },
-            "links": {
-                "self": "\/national-capitals\/4"
-            }
-        },
-        {
-            "type": "national-capitals",
             "id": "2",
             "attributes": {
                 "name": "Sofia",
@@ -160,6 +201,17 @@
             },
             "links": {
                 "self": "\/national-capitals\/2"
+            }
+        },
+        {
+            "type": "national-capitals",
+            "id": "4",
+            "attributes": {
+                "name": "Rome",
+                "description": "National capital of Italy"
+            },
+            "links": {
+                "self": "\/national-capitals\/4"
             }
         },
         {

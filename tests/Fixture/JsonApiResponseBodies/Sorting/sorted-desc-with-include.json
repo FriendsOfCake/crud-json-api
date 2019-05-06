@@ -8,7 +8,6 @@
         "self": "\/countries?page=1&sort=-code&include=currency",
         "first": "\/countries?page=1&sort=-code&include=currency",
         "last": "\/countries?page=2&sort=-code&include=currency",
-        "prev": null,
         "next": "\/countries?page=2&sort=-code&include=currency"
     },
     "data": [
@@ -22,12 +21,30 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
+                    }
+                },
+                "national-capital": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/national-capitals\/5"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "5"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3"
+                    },
+                    "data": {
+                        "type": "countries",
+                        "id": "3"
                     }
                 }
             },
@@ -45,12 +62,21 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/2"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "2"
-                    },
+                    }
+                },
+                "national-capital": {
                     "links": {
-                        "self": "\/currencies\/2"
+                        "self": "\/national-capitals\/6"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "6"
                     }
                 }
             },
@@ -68,12 +94,21 @@
             },
             "relationships": {
                 "currency": {
+                    "links": {
+                        "self": "\/currencies\/1"
+                    },
                     "data": {
                         "type": "currencies",
                         "id": "1"
-                    },
+                    }
+                },
+                "national-capital": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/national-capitals\/1"
+                    },
+                    "data": {
+                        "type": "national-capitals",
+                        "id": "1"
                     }
                 }
             },
