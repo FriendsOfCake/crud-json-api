@@ -809,7 +809,7 @@ class JsonApiListener extends ApiListener
     protected function _getSingleEntity($subject)
     {
         if (!empty($subject->entities)) {
-            return $subject->entities->first();
+            return (clone $subject->entities)->first();
         }
 
         return $subject->entity;
