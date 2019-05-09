@@ -11,6 +11,7 @@ use Cake\ORM\Association;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\ORM\Query;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
