@@ -808,8 +808,10 @@ class JsonApiListener extends ApiListener
      */
     protected function _getSingleEntity($subject)
     {
-        if (!empty($subject->entities)) {
+        if (!empty($subject->entities) && $subject->entities instanceof Query) {
             return (clone $subject->entities)->first();
+        } elseif (!empty($subject->entities)) {
+            return $subject->entities->first();
         }
 
         return $subject->entity;
