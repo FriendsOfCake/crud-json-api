@@ -107,6 +107,10 @@ class DynamicEntitySchema extends BaseSchema
     {
         $result = [];
         foreach ($entity->visibleProperties() as $property) {
+            if ($property === '_joinData') {
+                continue;
+            }
+
             $value = $entity->get($property);
             if (is_array($value)) {
                 $result[$property] = [];
