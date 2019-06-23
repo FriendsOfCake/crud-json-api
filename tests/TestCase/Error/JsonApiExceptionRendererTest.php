@@ -211,7 +211,10 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         $errors = [
             'name' => [
-                '_empty' => 'This is a built-in rule'
+                '_empty' => 'This is a single word built-in rule'
+            ],
+            'dummy_counter' => [
+                'integer' => 'This is a two word built-in rule'
             ],
             'code' => [
                 0 => [
@@ -237,9 +240,16 @@ class JsonApiExceptionRendererTest extends TestCase
                     'name'
                 ],
                 'name' => '_empty',
-                'message' => 'This is a built-in rule'
+                'message' => 'This is a single word built-in rule'
             ],
             1 => [
+                'fields' => [
+                    'dummy-counter'
+                ],
+                'name' => 'integer',
+                'message' => 'This is a two word built-in rule'
+            ],
+            2 => [
                 'fields' => [
                     'code'
                 ],
