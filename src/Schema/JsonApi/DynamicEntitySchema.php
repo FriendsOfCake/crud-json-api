@@ -101,6 +101,7 @@ class DynamicEntitySchema extends BaseSchema
      *
      * This method will ignore any properties that are entities.
      *
+     * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return array
      */
     protected function entityToShallowArray(EntityInterface $entity)
