@@ -5,6 +5,7 @@ parameters:
         - Crud\Event\Subject
     ignoreErrors:
         # ORM
+        - '#Call to an undefined method Cake\\Datasource\\EntityInterface::getVisible().#'
 
         # Crud properties
         - '#Access to an undefined property object::\$created#'
