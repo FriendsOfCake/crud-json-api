@@ -15,7 +15,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
-use CrudJsonApi\Traits\JsonApiTrait;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\Listener\ApiListener;

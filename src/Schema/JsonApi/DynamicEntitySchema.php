@@ -101,6 +101,7 @@ class DynamicEntitySchema extends BaseSchema
      *
      * This method will ignore any properties that are entities.
      *
+     * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return array
      */
     protected function entityToShallowArray(EntityInterface $entity)
@@ -110,6 +111,10 @@ class DynamicEntitySchema extends BaseSchema
             ? $entity->getVisible()
             : $entity->visibleProperties();
         foreach ($properties as $property) {
+            if ($property === '_joinData') {
+                continue;
+            }
+
             $value = $entity->get($property);
             if (is_array($value)) {
                 $result[$property] = [];
