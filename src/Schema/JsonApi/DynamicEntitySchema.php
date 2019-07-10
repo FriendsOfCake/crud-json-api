@@ -107,7 +107,10 @@ class DynamicEntitySchema extends BaseSchema
     protected function entityToShallowArray(EntityInterface $entity)
     {
         $result = [];
-        foreach ($entity->visibleProperties() as $property) {
+        $properties = method_exists($entity, 'getVisible')
+            ? $entity->getVisible()
+            : $entity->visibleProperties();
+        foreach ($properties as $property) {
             if ($property === '_joinData') {
                 continue;
             }
