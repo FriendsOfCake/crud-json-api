@@ -5,6 +5,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Error\Debugger;
+use Cake\Utility\Inflector;
 use Crud\Error\ExceptionRenderer;
 use Crud\Listener\ApiQueryLogListener;
 use Neomerx\JsonApi\Encoder\Encoder;
@@ -251,6 +252,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
             // stil here so array key must be a string (and thus a built-in rule)
             $rule = key($validationFeedback);
             $message = $validationFeedback[$rule];
+            $field = Inflector::dasherize($field);
 
             $result[] = [
                 'fields' => [$field],
