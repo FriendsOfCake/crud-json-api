@@ -209,7 +209,10 @@ class JsonApiListener extends ApiListener
 
             // prevent clients attempting to side-post/create related hasMany records
             if ($this->_request()->getMethod() === 'POST') {
-                throw new BadRequestException("JSON API 1.1 does not support sideposting (hasMany relationships detected in the request body)");
+                throw new BadRequestException(
+                    'JSON API 1.1 does not support sideposting
+                    (hasMany relationships detected in the request body)'
+                );
             }
 
             // hasMany found in the entity, extract ids from the request data
@@ -237,7 +240,10 @@ class JsonApiListener extends ApiListener
 
             // throw an exception if number of database records does not exactly matches passed ids
             if (count($hasManyIds) !== $query->count()) {
-                throw new BadRequestException("One or more of the provided relationship ids for $associationName do not exist in the database");
+                throw new BadRequestException(
+                    "One or more of the provided relationship ids for
+                    $associationName do not exist in the database"
+                );
             }
 
             // all good, replace entity data with fetched entities before saving
@@ -359,14 +365,17 @@ class JsonApiListener extends ApiListener
             $includePath = array_merge($path, [$include]);
             $includeDotPath = implode('.', $includePath);
 
-            if ($blacklist === true || ($blacklist !== false && ($wildcardBlacklist === true || Hash::get($blacklist, $includeDotPath) === true))) {
+            if (
+                $blacklist === true || ($blacklist !== false &&
+                ($wildcardBlacklist === true || Hash::get($blacklist, $includeDotPath) === true))
+            ) {
                 continue;
             }
 
             if (
                 $whitelist === false || ($whitelist !== true
                 && !$wildcardWhitelist
-                && Hash::get($whitelist, $includeDotPath) === null                )
+                && Hash::get($whitelist, $includeDotPath) === null)
             ) {
                 continue;
             }
@@ -376,22 +385,28 @@ class JsonApiListener extends ApiListener
             if ($repository !== null) {
                 $association = $this->_getAssociation($repository, $include);
                 if ($association === null) {
-                    throw new BadRequestException("Invalid relationship path '{$includeDotPath}' supplied in include parameter");
+                    throw new BadRequestException(
+                        "Invalid relationship path '{$includeDotPath}' supplied in include parameter"
+                    );
                 }
             }
 
             if (!empty($nestedIncludes)) {
-                $nestedContains = $this->_parseIncludes($nestedIncludes, $blacklist, $whitelist, $association ? $association->getTarget() : null, $includePath);
+                $nestedContains = $this->_parseIncludes(
+                    $nestedIncludes,
+                    $blacklist,
+                    $whitelist,
+                    $association ? $association->getTarget() : null,
+                    $includePath
+                );
             }
 
             if (!empty($nestedContains)) {
                 if (!empty($association)) {
                     $contains[$association->getAlias()] = $nestedContains;
                 }
-            } else {
-                if (!empty($association)) {
-                    $contains[] = $association->getAlias();
-                }
+            } elseif (!empty($association)) {
+                $contains[] = $association->getAlias();
             }
         }
 
@@ -426,8 +441,12 @@ class JsonApiListener extends ApiListener
         $this->setConfig('include', []);
 
         $includes = Hash::expand(Hash::normalize($includes));
-        $blacklist = is_array($options['blacklist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true))) : $options['blacklist'];
-        $whitelist = is_array($options['whitelist']) ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true))) : $options['whitelist'];
+        $blacklist = is_array($options['blacklist'])
+            ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true)))
+            : $options['blacklist'];
+        $whitelist = is_array($options['whitelist'])
+            ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true)))
+            : $options['whitelist'];
         $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->getRepository());
 
         $subject->query->contain($contains);
@@ -717,8 +736,13 @@ class JsonApiListener extends ApiListener
     protected function _validateConfigOptions(): void
     {
         if ($this->getConfig('withJsonApiVersion')) {
-            if (!is_bool($this->getConfig('withJsonApiVersion')) && !is_array($this->getConfig('withJsonApiVersion'))) {
-                throw new CrudException('JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array');
+            if (
+                !is_bool($this->getConfig('withJsonApiVersion')) &&
+                !is_array($this->getConfig('withJsonApiVersion'))
+            ) {
+                throw new CrudException(
+                    'JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array'
+                );
             }
         }
 
@@ -727,11 +751,15 @@ class JsonApiListener extends ApiListener
         }
 
         if (!is_bool($this->getConfig('absoluteLinks'))) {
-            throw new CrudException('JsonApiListener configuration option `absoluteLinks` only accepts a boolean');
+            throw new CrudException(
+                'JsonApiListener configuration option `absoluteLinks` only accepts a boolean'
+            );
         }
 
         if (!is_bool($this->getConfig('jsonApiBelongsToLinks'))) {
-            throw new CrudException('JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean');
+            throw new CrudException(
+                'JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean'
+            );
         }
 
         if (!is_array($this->getConfig('include'))) {
@@ -774,7 +802,9 @@ class JsonApiListener extends ApiListener
         $jsonApiMimeType = $this->_response()->getMimeType('jsonapi');
 
         if ($this->_request()->contentType() !== $jsonApiMimeType) {
-            throw new BadRequestException("JSON API requests with data require the \"$jsonApiMimeType\" Content-Type header");
+            throw new BadRequestException(
+                "JSON API requests with data require the \"$jsonApiMimeType\" Content-Type header"
+            );
         }
 
         return true;
@@ -878,7 +908,10 @@ class JsonApiListener extends ApiListener
             ];
 
             if (!empty($nestedContains)) {
-                $associations[$associationKey]['children'] = $this->_getContainedAssociations($association->getTarget(), $nestedContains);
+                $associations[$associationKey]['children'] = $this->_getContainedAssociations(
+                    $association->getTarget(),
+                    $nestedContains
+                );
             }
         }
 
@@ -1002,7 +1035,10 @@ class JsonApiListener extends ApiListener
         $requestData = $this->_controller()->request->getData();
 
         if (empty($requestData)) {
-            throw new BadRequestException('Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.');
+            throw new BadRequestException(
+                'Missing request data required for POST and PATCH methods.
+                 Make sure that you are sending a request body and that it is valid JSON.'
+            );
         }
 
         $validator = new DocumentValidator($requestData, $this->getConfig());
@@ -1020,8 +1056,13 @@ class JsonApiListener extends ApiListener
 
         // For PATCH operations the `id` field in the request data MUST match the URL id
         // because JSON API considers it immutable. https://github.com/json-api/json-api/issues/481
-        if (($requestMethod === 'PATCH') && ($this->_controller()->request->getParam('id') !== $decodedJsonApi['id'])) {
-            throw new BadRequestException("URL id does not match request data id as required for JSON API PATCH actions");
+        if (
+            ($requestMethod === 'PATCH') &&
+            ($this->_controller()->request->getParam('id') !== $decodedJsonApi['id'])
+        ) {
+            throw new BadRequestException(
+                "URL id does not match request data id as required for JSON API PATCH actions"
+            );
         }
 
         $this->_controller()->request = $this->_controller()->request->withParsedBody($decodedJsonApi);

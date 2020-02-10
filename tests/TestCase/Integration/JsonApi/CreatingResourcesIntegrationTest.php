@@ -5,7 +5,7 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
-class PostRequestIntegrationTest extends JsonApiBaseTestCase
+class CreatingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
     /**
      * Make sure attempts to side-post/create related hasMany records throws an exception.

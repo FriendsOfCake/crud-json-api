@@ -238,7 +238,11 @@ class JsonApiView extends View
             }
 
             if ($entityClass === Entity::class) {
-                throw new CrudException(sprintf('Entity classes must not be the generic "%s" class for repository "%s"', $entityClass, $repositoryName));
+                throw new CrudException(sprintf(
+                    'Entity classes must not be the generic "%s" class for repository "%s"',
+                    $entityClass,
+                    $repositoryName
+                ));
             }
 
             // Turn full class name back into plugin split format
@@ -326,7 +330,10 @@ class JsonApiView extends View
     protected function _getDataToSerializeFromViewVars($serialize = true)
     {
         if (is_object($serialize)) {
-            throw new CrudException('Assigning an object to JsonApiListener "_serialize" is deprecated, assign the object to its own variable and assign "_serialize" = true instead.');
+            throw new CrudException(
+                'Assigning an object to JsonApiListener "_serialize" is deprecated,
+                assign the object to its own variable and assign "_serialize" = true instead.'
+            );
         }
 
         if ($serialize === true) {
