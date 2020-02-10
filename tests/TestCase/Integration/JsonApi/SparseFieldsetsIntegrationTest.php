@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\Core\Configure;
-use Cake\Event\Event;
-use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
@@ -25,7 +25,7 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
             ],
             'combined single-field sparse index (both primary and included data)' => [
                 '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
-                'index-single-field-sparse-for-primary-and-included-data.json'
+                'index-single-field-sparse-for-primary-and-included-data.json',
             ],
 
             // assert "single-field" sparse for view actions
@@ -39,7 +39,7 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
             ],
             'combined single-field sparse view (both primary and included data)' => [
                 '/countries/1?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
-                'view-single-field-sparse-for-primary-and-included-data.json'
+                'view-single-field-sparse-for-primary-and-included-data.json',
             ],
 
             // assert "multi-field" sparse for index actions
@@ -49,11 +49,11 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
             ],
             'multi-field sparse for included index data' => [
                 '/countries?include=currencies&fields[currencies]=id,name,code',
-                'index-multi-field-sparse-for-included-data.json'
+                'index-multi-field-sparse-for-included-data.json',
             ],
             'combined multi-field sparse index (both primary and included data)' => [
                 '/countries?fields[countries]=code,name,currency&include=currencies&fields[currencies]=id,code,name',
-                'index-multi-field-sparse-for-primary-and-included-data.json'
+                'index-multi-field-sparse-for-primary-and-included-data.json',
             ],
 
             // assert "multi-field" sparse for view actions
@@ -67,7 +67,7 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
             ],
             'combined multi-field sparse view (both primary and included data)' => [
                 '/countries/1?fields[countries]=name,code,currency&include=currencies&fields[currencies]=id,code,name',
-                'view-multi-field-sparse-for-primary-and-included-data.json'
+                'view-multi-field-sparse-for-primary-and-included-data.json',
             ],
 
             'sparse fieldsets - view no relationship' => [

@@ -1,14 +1,15 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Listener;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Crud\Listener\BaseListener;
 use RuntimeException;
 
 class SearchListener extends BaseListener
 {
-
     /**
      * Settings
      *
@@ -17,9 +18,9 @@ class SearchListener extends BaseListener
     protected $_defaultConfig = [
         'enabled' => [
             'Crud.beforeLookup',
-            'Crud.beforePaginate'
+            'Crud.beforePaginate',
         ],
-        'collection' => 'default'
+        'collection' => 'default',
     ];
 
     /**
@@ -28,21 +29,21 @@ class SearchListener extends BaseListener
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Crud.beforeLookup' => ['callable' => 'injectSearch'],
-            'Crud.beforePaginate' => ['callable' => 'injectSearch']
+            'Crud.beforePaginate' => ['callable' => 'injectSearch'],
         ];
     }
 
     /**
      * Inject search conditions into the query object.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      */
-    public function injectSearch(Event $event)
+    public function injectSearch(EventInterface $event): void
     {
         if (!in_array($event->getName(), $this->getConfig('enabled'))) {
             return;
@@ -50,10 +51,12 @@ class SearchListener extends BaseListener
 
         $repository = $this->_table();
         if ($repository instanceof Table && !$repository->behaviors()->has('Search')) {
-            throw new RuntimeException(sprintf(
-                'Missing Search.Search behavior on %s',
-                get_class($repository)
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Missing Search.Search behavior on %s',
+                    get_class($repository)
+                )
+            );
         }
 
         $filterParams = ['search' => $this->_request()->getQuery('filter', [])];

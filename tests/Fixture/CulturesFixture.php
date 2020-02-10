@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class CulturesFixture extends TestFixture
 {
-
     public $fields = [
         'id' => ['type' => 'integer'],
         'code' => ['type' => 'string', 'length' => 5, 'null' => false],

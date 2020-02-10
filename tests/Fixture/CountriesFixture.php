@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class CountriesFixture extends TestFixture
 {
-
     public $fields = [
         'id' => ['type' => 'integer'],
         'code' => ['type' => 'string', 'length' => 2, 'null' => false],

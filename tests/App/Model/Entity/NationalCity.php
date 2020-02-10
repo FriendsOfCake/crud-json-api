@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Model\Entity;
 
-class NationalCity extends \Cake\ORM\Entity
-{
+use Cake\ORM\Entity;
 
+class NationalCity extends Entity
+{
 }

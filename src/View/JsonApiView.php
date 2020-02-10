@@ -1,21 +1,19 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\View;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use Crud\Error\Exception\CrudException;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Encoder\Encoder;
-use Neomerx\JsonApi\Encoder\EncoderOptions;
-use Neomerx\JsonApi\Encoder\Parameters\EncodingParameters;
 use Neomerx\JsonApi\Schema\Link;
 
 class JsonApiView extends View
@@ -23,15 +21,15 @@ class JsonApiView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Http\ServerRequest $request ServerRequest
-     * @param \Cake\Http\Response $response Response
+     * @param \Cake\Http\ServerRequest $request      ServerRequest
+     * @param \Cake\Http\Response      $response     Response
      * @param \Cake\Event\EventManager $eventManager EventManager
-     * @param array $viewOptions An array of view options
+     * @param array                    $viewOptions  An array of view options
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
         parent::__construct($request, $response, $eventManager, $viewOptions);
@@ -71,11 +69,11 @@ class JsonApiView extends View
      * - with empty body
      * - with body containing only the meta node
      *
-     * @param string|null $view Name of view file to use
-     * @param string|null $layout Layout to use.
+     * @param  string|null $view   Name of view file to use
+     * @param  string|null $layout Layout to use.
      * @return string
      */
-    public function render($view = null, $layout = null)
+    public function render(?string $view = null, $layout = null): string
     {
         if ($this->get('_repositories')) {
             $json = $this->_encodeWithSchemas();
@@ -191,13 +189,18 @@ class JsonApiView extends View
         // user using listener config option.
         if ($this->get('_links')) {
             $links = $this->get('_links');
-            $encoder->withLinks(array_map(function ($link) {
-                if ($link instanceof Link) {
-                    return $link;
-                }
+            $encoder->withLinks(
+                array_map(
+                    function ($link) {
+                        if ($link instanceof Link) {
+                            return $link;
+                        }
 
-                return new Link(false, $link, false);
-            }, $links));
+                        return new Link(false, $link, false);
+                    },
+                    $links
+                )
+            );
         }
 
         // Add optional top-level `meta` node to the response if enabled by
@@ -220,7 +223,7 @@ class JsonApiView extends View
      * 2. custom dynamic schema
      * 3. Crud's dynamic schema
      *
-     * @param \Cake\ORM\Table[] $repositories List holding repositories used to map entities to schema classes
+     * @param  \Cake\ORM\Table[] $repositories List holding repositories used to map entities to schema classes
      * @throws \Crud\Error\Exception\CrudException
      * @return array A list with Entity class names as key holding NeoMerx Closure object
      */
@@ -283,7 +286,7 @@ class JsonApiView extends View
     /**
      * Returns an array with NeoMerx Link objects to be used for pagination.
      *
-     * @param array $pagination ApiPaginationListener pagination response
+     * @param  array $pagination ApiPaginationListener pagination response
      * @return array
      */
     protected function _getPaginationLinks($pagination): array
@@ -316,8 +319,8 @@ class JsonApiView extends View
     /**
      * Returns data to be serialized.
      *
-     * @param array|string|bool|object $serialize The name(s) of the view variable(s) that
-     *   need(s) to be serialized. If true all available view variables will be used.
+     * @param  array|string|bool|object $serialize The name(s) of the view variable(s) that
+     *                                             need(s) to be serialized. If true all available view variables will be used.
      * @return mixed The data to serialize.
      */
     protected function _getDataToSerializeFromViewVars($serialize = true)

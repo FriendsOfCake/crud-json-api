@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Listener\JsonApi;
 
-use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use Crud\TestSuite\TestCase;
+use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Schema\ErrorCollection;
 use stdClass;
@@ -22,14 +24,14 @@ class DocumentValidatorTest extends TestCase
      * Create a DocumentValidator instance for every test with disabled
      * aboutLinks config option.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->_validator = new DocumentValidator([], []);
         $this->setReflectionClassInstance($this->_validator);
 
         $listenerConfig = [
-            'docValidatorAboutLinks' => false
+            'docValidatorAboutLinks' => false,
         ];
         $this->setProtectedProperty('_config', $listenerConfig, $this->_validator);
     }
@@ -37,7 +39,7 @@ class DocumentValidatorTest extends TestCase
     /**
      * tearDown.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->_validator);
@@ -45,18 +47,17 @@ class DocumentValidatorTest extends TestCase
 
     /**
      * _validateCreateDocument()
-     *
-     * @expectedException \Crud\Error\Exception\ValidationException
-     * @expectedExceptionMessage A validation error occurred
      */
     public function testValidateCreateDocument()
     {
+        $this->expectException('Crud\Error\Exception\ValidationException');
+        $this->expectExceptionMessage('A validation error occurred');
         // assert success
         $document = [
             'data' => [
                 'type' => 'must-be-string',
-                'id' => 'd0b31ee1-4637-48c9-b9ef-fcefbb83d86f'
-            ]
+                'id' => 'd0b31ee1-4637-48c9-b9ef-fcefbb83d86f',
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertNull($this->_validator->validateCreateDocument());
@@ -69,18 +70,17 @@ class DocumentValidatorTest extends TestCase
 
     /**
      * _validateUpdateDocument()
-     *
-     * @expectedException \Crud\Error\Exception\ValidationException
-     * @expectedExceptionMessage A validation error occurred
      */
     public function testValidateUpdateDocument()
     {
+        $this->expectException('Crud\Error\Exception\ValidationException');
+        $this->expectExceptionMessage('A validation error occurred');
         // assert success
         $document = [
             'data' => [
                 'type' => 'must-be-string',
                 'id' => 'must-be-string',
-            ]
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertNull($this->_validator->validateUpdateDocument());
@@ -93,15 +93,14 @@ class DocumentValidatorTest extends TestCase
 
     /**
      * _documentMustHavePrimaryData()
-     *
-     * @expectedException \Crud\Error\Exception\ValidationException
-     * @expectedExceptionMessage A validation error occurred
      */
     public function testDocumentMustHavePrimaryData()
     {
+        $this->expectException('Crud\Error\Exception\ValidationException');
+        $this->expectExceptionMessage('A validation error occurred');
         // assert success
         $document = [
-            'data' => []
+            'data' => [],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_documentMustHavePrimaryData', [], $this->_validator));
@@ -122,8 +121,8 @@ class DocumentValidatorTest extends TestCase
         // assert success
         $document = [
             'data' => [
-                'type' => 'must-be-string'
-            ]
+                'type' => 'must-be-string',
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_primaryDataMustHaveType', [], $this->_validator));
@@ -149,8 +148,8 @@ class DocumentValidatorTest extends TestCase
         // assert success
         $document = [
             'data' => [
-                'id' => 'edd28c99-216b-4ef7-a806-d865aca14f17'
-            ]
+                'id' => 'edd28c99-216b-4ef7-a806-d865aca14f17',
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_primaryDataMayHaveUuid', [], $this->_validator));
@@ -178,7 +177,7 @@ class DocumentValidatorTest extends TestCase
             'data' => [
                 'type' => 'must-be-string',
                 'id' => 'must-be-string',
-            ]
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_primaryDataMustHaveId', [], $this->_validator));
@@ -210,18 +209,18 @@ class DocumentValidatorTest extends TestCase
                         'data' => [
                             [
                                 'type' => 'cultures',
-                                'id' => '1'
-                            ]
-                        ]
+                                'id' => '1',
+                            ],
+                        ],
                     ],
                     'currency' => [
                         'data' => [
                             'type' => 'currencies',
-                            'id' => '2'
-                        ]
-                    ]
-                ]
-            ]
+                            'id' => '2',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->setProtectedProperty('_document', $document, $this->_validator);
@@ -273,18 +272,18 @@ class DocumentValidatorTest extends TestCase
                         'data' => [
                             [
                                 'type' => 'cultures',
-                                'id' => '1'
-                            ]
-                        ]
+                                'id' => '1',
+                            ],
+                        ],
                     ],
                     'currency' => [
                         'data' => [
                             'type' => 'currencies',
-                            'id' => '2'
-                        ]
-                    ]
-                ]
-            ]
+                            'id' => '2',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         // assert success when belongsTo relation has data node
@@ -321,18 +320,18 @@ class DocumentValidatorTest extends TestCase
                         'data' => [
                             [
                                 'type' => 'cultures',
-                                'id' => '1'
-                            ]
-                        ]
+                                'id' => '1',
+                            ],
+                        ],
                     ],
                     'currency' => [
                         'data' => [
                             'type' => 'currencies',
-                            'id' => '2'
-                        ]
-                    ]
-                ]
-            ]
+                            'id' => '2',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         // assert success when belongsTo relationship data has valid type node
@@ -379,18 +378,18 @@ class DocumentValidatorTest extends TestCase
                         'data' => [
                             [
                                 'type' => 'cultures',
-                                'id' => '1'
-                            ]
-                        ]
+                                'id' => '1',
+                            ],
+                        ],
                     ],
                     'currency' => [
                         'data' => [
                             'type' => 'currencies',
-                            'id' => '2'
-                        ]
-                    ]
-                ]
-            ]
+                            'id' => '2',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         // assert success when belongsTo relationship data has valid id node
@@ -425,15 +424,15 @@ class DocumentValidatorTest extends TestCase
     /**
      * _isString()
      *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage Document member 'dummy.path' does not exist
      * @return void
      */
     public function testIsString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('Document member \'dummy.path\' does not exist');
         // assert success
         $document = [
-            'data' => 'some-string'
+            'data' => 'some-string',
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_isString', ['data'], $this->_validator));
@@ -451,15 +450,15 @@ class DocumentValidatorTest extends TestCase
     /**
      * _isString()
      *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage Document member 'dummy.path' does not exist
      * @return void
      */
     public function testIsUuid()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('Document member \'dummy.path\' does not exist');
         // assert success
         $document = [
-            'data' => 'edd28c99-216b-4ef7-a806-d865aca14f17'
+            'data' => 'edd28c99-216b-4ef7-a806-d865aca14f17',
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
         $this->assertTrue($this->callProtectedMethod('_isUuid', ['data'], $this->_validator));
@@ -489,17 +488,17 @@ class DocumentValidatorTest extends TestCase
                     'name' => 'bravo-kernel',
                     'test-null' => null,
                     'test-true' => true,
-                    'test-false' => false
+                    'test-false' => false,
                 ],
                 'sub-array' => [
                     [
                         'name' => 'bravo-kernel',
                         'test-null' => null,
                         'test-true' => true,
-                        'test-false' => false
-                    ]
-                ]
-            ]
+                        'test-false' => false,
+                    ],
+                ],
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
 
@@ -523,26 +522,25 @@ class DocumentValidatorTest extends TestCase
 
     /**
      * _getProperty()
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage Error retrieving a value for non-existing JSON API document property 'path.does.not.exist'
      */
     public function testGetProperty()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('Error retrieving a value for non-existing JSON API document property \'path.does.not.exist\'');
         $this->_validator = new DocumentValidator([], []);
         $this->setReflectionClassInstance($this->_validator);
         $document = [
             'data' => [
                 'attributes' => [
-                    'name' => 'bravo-kernel'
-                ]
-            ]
+                    'name' => 'bravo-kernel',
+                ],
+            ],
         ];
         $this->setProtectedProperty('_document', $document, $this->_validator);
 
         //assert test single and multi-level lookups
         $expected = [
-           'name' => 'bravo-kernel'
+           'name' => 'bravo-kernel',
         ];
         $this->assertEquals($expected, $this->callProtectedMethod('_getProperty', ['data.attributes'], $this->_validator));
         $this->assertEquals('bravo-kernel', $this->callProtectedMethod('_getProperty', ['data.attributes.name'], $this->_validator));
@@ -616,7 +614,7 @@ class DocumentValidatorTest extends TestCase
 
         // assert no link is created if disabled in listener config
         $listenerConfig = [
-            'docValidatorAboutLinks' => false
+            'docValidatorAboutLinks' => false,
         ];
 
         $this->setProtectedProperty('_config', $listenerConfig, $this->_validator);
@@ -624,7 +622,7 @@ class DocumentValidatorTest extends TestCase
 
         // assert link is created when enabled in listener config
         $listenerConfig = [
-            'docValidatorAboutLinks' => true
+            'docValidatorAboutLinks' => true,
         ];
 
         $this->setProtectedProperty('_config', $listenerConfig, $this->_validator);

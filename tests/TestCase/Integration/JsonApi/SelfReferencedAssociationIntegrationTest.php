@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
@@ -13,12 +15,12 @@ class SelfReferencedAssociationIntegrationTest extends JsonApiBaseTestCase
         return [
             'get supercountry with subcountries' => [
                 '/countries/3?include=subcountries',
-                'get_supercountry_with_subcountries.json'
+                'get_supercountry_with_subcountries.json',
             ],
             'get subcountry with supercountry' => [
                 '/countries/4?include=supercountries',
-                'get_subcountry_with_supercountry.json'
-            ]
+                'get_subcountry_with_supercountry.json',
+            ],
         ];
     }
 

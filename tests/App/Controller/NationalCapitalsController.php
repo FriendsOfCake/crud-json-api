@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Crud\Controller\ControllerTrait;
 
 /**
@@ -10,7 +11,6 @@ use Crud\Controller\ControllerTrait;
  */
 class NationalCapitalsController extends Controller
 {
-
     use ControllerTrait;
 
     public $components = [
@@ -27,7 +27,7 @@ class NationalCapitalsController extends Controller
             'listeners' => [
                 'CrudJsonApi.JsonApi',
                 'CrudJsonApi.Pagination',
-            ]
-        ]
+            ],
+        ],
     ];
 }

@@ -1,23 +1,21 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Filesystem\File;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\StringCompareTrait;
-use Cake\Utility\Inflector;
-use CrudJsonApi\Listener\JsonApiListener;
-use CrudJsonApi\View\JsonApiView;
-use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
+use CrudJsonApi\Listener\JsonApiListener;
+use CrudJsonApi\View\JsonApiView;
 use Neomerx\JsonApi\Schema\Link;
 use StdClass;
 
@@ -57,13 +55,13 @@ class JsonApiViewTest extends TestCase
     /**
      * setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->deprecated(function () {
-            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+            Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
         });
 
         $listener = new JsonApiListener(new Controller());
@@ -79,7 +77,7 @@ class JsonApiViewTest extends TestCase
             '_fieldSets' => $listener->getConfig('fieldSets'),
             '_jsonOptions' => $listener->getConfig('jsonOptions'),
             '_debugPrettyPrint' => $listener->getConfig('debugPrettyPrint'),
-            '_inflect' => $listener->getConfig('inflect')
+            '_inflect' => $listener->getConfig('inflect'),
         ];
 
         // override some defaults to create more DRY tests
@@ -104,11 +102,11 @@ class JsonApiViewTest extends TestCase
             '_include' => [],
             '_fieldSets' => [],
             '_jsonOptions' => [
-                JSON_PRETTY_PRINT
+                JSON_PRETTY_PRINT,
             ],
             '_debugPrettyPrint' => true,
             '_inflect' => 'dasherize',
-            '_serialize' => true
+            '_serialize' => true,
         ];
         $this->assertSame($expected, $this->_defaultViewVars);
     }
@@ -203,11 +201,11 @@ class JsonApiViewTest extends TestCase
      * Make sure that an exception is thrown for generic entity classes
      *
      * @return void
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage Entity classes must not be the generic "Cake\ORM\Entity" class for repository "Countries"
      */
     public function testEncodeWithGenericEntity()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('Entity classes must not be the generic "Cake\ORM\Entity" class for repository "Countries"');
         TableRegistry::get('Countries')->setEntityClass(Entity::class);
 
         // test collection of entities without relationships
@@ -215,7 +213,7 @@ class JsonApiViewTest extends TestCase
             ->find()
             ->all();
         $view = $this->_getView('Countries', [
-            'countries' => $countries
+            'countries' => $countries,
         ]);
 
         $view->render();
@@ -236,7 +234,7 @@ class JsonApiViewTest extends TestCase
         // test collection of entities without relationships
         $countries = TableRegistry::get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
-            'countries' => $countries
+            'countries' => $countries,
         ]);
 
         $this->assertSameAsFile(
@@ -265,15 +263,15 @@ class JsonApiViewTest extends TestCase
     {
         // make sure empty body is rendered
         $view = $this->_getView(false, [
-            '_meta' => false
+            '_meta' => false,
         ]);
         $this->assertNull($view->render());
 
         // make sure body with only/just `meta` node is rendered
         $view = $this->_getView(false, [
             '_meta' => [
-                'author' => 'bravo-kernel'
-            ]
+                'author' => 'bravo-kernel',
+            ],
         ]);
 
         $this->assertSameAsFile(
@@ -293,15 +291,15 @@ class JsonApiViewTest extends TestCase
         $countries = TableRegistry::get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_withJsonApiVersion' => true
+            '_withJsonApiVersion' => true,
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
-                'version' => '1.1'
-            ]
+                'version' => '1.1',
+            ],
         ];
-
-        $this->assertArraySubset($expectedVersionArray, json_decode($view->render(), true));
+        $this->assertArrayHasKey('jsonapi', json_decode($view->render(), true));
+        $this->assertSame(['version' => '1.1'], json_decode($view->render(), true)['jsonapi']);
 
         // make sure top-level node is added when passed an array
         $countries = TableRegistry::get('Countries')->find()->all();
@@ -310,7 +308,7 @@ class JsonApiViewTest extends TestCase
             '_withJsonApiVersion' => [
                 'meta-key-1' => 'meta-val-1',
                 'meta-key-2' => 'meta-val-2',
-            ]
+            ],
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
@@ -318,11 +316,11 @@ class JsonApiViewTest extends TestCase
                 'meta' => [
                     'meta-key-1' => 'meta-val-1',
                     'meta-key-2' => 'meta-val-2',
-                ]
-            ]
+                ],
+            ],
         ];
-
-        $this->assertArraySubset($expectedVersionArray, json_decode($view->render(), true));
+        $this->assertArrayHasKey('jsonapi', json_decode($view->render(), true));
+        $this->assertSame(['version' => '1.1', 'meta' => ['meta-key-1' => 'meta-val-1', 'meta-key-2' => 'meta-val-2']], json_decode($view->render(), true)['jsonapi']);
 
         // make sure top-level node is not added when false
         $view = $this->_getView('Countries', [
@@ -344,16 +342,16 @@ class JsonApiViewTest extends TestCase
         $view = $this->_getView('Countries', [
             'countries' => $countries,
             '_meta' => [
-                'author' => 'bravo-kernel'
+                'author' => 'bravo-kernel',
             ],
         ]);
         $expectedMetaArray = [
             'meta' => [
-                'author' => 'bravo-kernel'
-            ]
+                'author' => 'bravo-kernel',
+            ],
         ];
-
-        $this->assertArraySubset($expectedMetaArray, json_decode($view->render(), true));
+        $this->assertArrayHasKey('meta', json_decode($view->render(), true));
+        $this->assertSame(['author' => 'bravo-kernel'], json_decode($view->render(), true)['meta']);
 
         // make sure top-level node is not added when false
         $view = $this->_getView('Countries', [
@@ -368,13 +366,13 @@ class JsonApiViewTest extends TestCase
         $view = $this->_getView('Countries', [
             'countries' => null,
             '_meta' => [
-                'author' => 'bravo-kernel'
+                'author' => 'bravo-kernel',
             ],
         ]);
         $expectedResponseArray = [
             'meta' => [
-                'author' => 'bravo-kernel'
-            ]
+                'author' => 'bravo-kernel',
+            ],
         ];
 
         $this->assertSame($expectedResponseArray, json_decode($view->render(), true));
@@ -465,7 +463,7 @@ class JsonApiViewTest extends TestCase
         // only _specialVars were set and since these are all flipped it leads
         // to a null result)
         $view->viewVars = [
-            '_meta' => false
+            '_meta' => false,
             ];
         $this->assertNull($this->callProtectedMethod('_getDataToSerializeFromViewVars', [], $view));
 
@@ -478,7 +476,7 @@ class JsonApiViewTest extends TestCase
 
         $parameters = [
             'countries',
-            'currencies'
+            'currencies',
         ];
 
         $this->assertSame(
@@ -494,7 +492,7 @@ class JsonApiViewTest extends TestCase
 
         $parameters = [
             'countries',
-            'currencies'
+            'currencies',
         ];
 
         $this->assertNull($this->callProtectedMethod('_getDataToSerializeFromViewVars', [$parameters], $view));
@@ -502,12 +500,11 @@ class JsonApiViewTest extends TestCase
 
     /**
      * Make sure `_serialize` will not accept an object
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage Assigning an object to JsonApiListener "_serialize" is deprecated, assign the object to its own variable and assign "_serialize" = true instead.
      */
     public function testGetDataToSerializeFromViewVarsObjectExcecption()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('Assigning an object to JsonApiListener "_serialize" is deprecated, assign the object to its own variable and assign "_serialize" = true instead.');
         $view = $this
             ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
             ->disableOriginalConstructor()
@@ -540,7 +537,7 @@ class JsonApiViewTest extends TestCase
             '_jsonOptions' => [
                 JSON_HEX_AMP, // 2
                 JSON_HEX_QUOT, // 8
-            ]
+            ],
         ];
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
 
@@ -551,7 +548,7 @@ class JsonApiViewTest extends TestCase
             '_jsonOptions' => [
                 JSON_HEX_AMP, // 2
                 JSON_HEX_QUOT, // 8
-            ]
+            ],
         ];
         $this->assertEquals(138, $this->callProtectedMethod('_jsonOptions', [], $view));
 
@@ -563,7 +560,7 @@ class JsonApiViewTest extends TestCase
             '_jsonOptions' => [
                 JSON_HEX_AMP, // 2
                 JSON_HEX_QUOT, // 8
-            ]
+            ],
         ];
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
 
@@ -574,7 +571,7 @@ class JsonApiViewTest extends TestCase
             '_jsonOptions' => [
                 JSON_HEX_AMP, // 2
                 JSON_HEX_QUOT, // 8
-            ]
+            ],
         ];
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
     }
@@ -600,7 +597,7 @@ class JsonApiViewTest extends TestCase
                 'record_count' => 28,
                 'page_count' => 3,
                 'page_limit' => 10,
-            ]
+            ],
         ]);
 
         $jsonArray = json_decode($view->render(), true);
@@ -640,7 +637,7 @@ class JsonApiViewTest extends TestCase
             'next' => 'http://api.app/v0/countries?page=3',
             'record_count' => 42, // should be skipped
             'page_count' => 3, // should be skipped
-            'page_limit' => 10 // should be skipped
+            'page_limit' => 10, // should be skipped
         ];
 
         $view = $this
@@ -671,7 +668,7 @@ class JsonApiViewTest extends TestCase
 
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            'queryLog' => 'viewVar only set by ApiQueryLogListener'
+            'queryLog' => 'viewVar only set by ApiQueryLogListener',
         ]);
 
         $jsonArray = json_decode($view->render(), true);

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
@@ -9,7 +11,6 @@ use Crud\Controller\ControllerTrait;
  */
 class CurrenciesController extends Controller
 {
-
     use ControllerTrait;
 
     public $paginate = ['limit' => 3];
@@ -27,7 +28,7 @@ class CurrenciesController extends Controller
             ],
             'listeners' => [
                 'CrudJsonApi.JsonApi',
-            ]
-        ]
+            ],
+        ],
     ];
 }

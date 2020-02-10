@@ -1,9 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Model\Table;
 
-class CurrenciesTable extends \Cake\ORM\Table
+use Cake\ORM\Table;
+
+class CurrenciesTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->hasMany('Countries');
     }

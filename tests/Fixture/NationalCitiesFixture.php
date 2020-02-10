@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class NationalCitiesFixture extends TestFixture
 {
-
     public $fields = [
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'length' => 100, 'null' => false],

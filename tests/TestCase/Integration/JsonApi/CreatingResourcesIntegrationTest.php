@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class PostRequestIntegrationTest extends JsonApiBaseTestCase
 {
-
     /**
      * Make sure attempts to side-post/create related hasMany records throws an exception.
      *
@@ -16,9 +17,9 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/vnd.api+json',
-                'Content-Type' => 'application/vnd.api+json'
+                'Content-Type' => 'application/vnd.api+json',
             ],
-            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . 'create-country-throw-side-posting-exception.json')
+            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . 'create-country-throw-side-posting-exception.json'),
         ]);
 
         $this->post('/countries');
@@ -30,9 +31,9 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
                 [
                     'status' => 400,
                     'title' => 'Bad Request',
-                    'detail' => 'JSON API 1.1 does not support sideposting (hasMany relationships detected in the request body)'
-                ]
-            ]
+                    'detail' => 'JSON API 1.1 does not support sideposting (hasMany relationships detected in the request body)',
+                ],
+            ],
         ];
 
         $this->assertArraySubset($expectedErrorMessage, $responseBodyArray);
@@ -51,25 +52,25 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
             'create-single-word-resource-no-relationships' => [
                 '/currencies', // URL
                 'create-currency-no-relationships.json', // Fixtures/JsonApiRequestBodies/CreatingResources
-                'created-currency-no-relationships.json' // Fixtures/JsonApiResponseBodies/CreatingResources
+                'created-currency-no-relationships.json', // Fixtures/JsonApiResponseBodies/CreatingResources
             ],
 
             'create-single-word-resource-multiple-existing-belongsto-relationships' => [
                 '/countries',
                 'create-country-multiple-existing-belongsto-relationships.json',
-                'created-country-multiple-existing-belongsto-relationships.json'
+                'created-country-multiple-existing-belongsto-relationships.json',
             ],
 
             'create-multi-word-resource-no-relationships' => [
                 '/national-capitals',
                 'create-national-capital-no-relationships.json',
-                'created-national-capital-no-relationships.json'
+                'created-national-capital-no-relationships.json',
             ],
 
             'create-multi-word-resource-single-existing-belongsto-relationships' => [
                 '/national-cities',
                 'create-national-city-single-existing-belongsto-relationship.json',
-                'created-national-city-single-existing-belongsto-relationship.json'
+                'created-national-city-single-existing-belongsto-relationship.json',
             ],
 
         ];
@@ -87,9 +88,9 @@ class PostRequestIntegrationTest extends JsonApiBaseTestCase
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/vnd.api+json',
-                'Content-Type' => 'application/vnd.api+json'
+                'Content-Type' => 'application/vnd.api+json',
             ],
-            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . $requestBodyFile)
+            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . $requestBodyFile),
         ]);
 
         # execute the POST request

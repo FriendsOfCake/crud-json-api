@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
@@ -9,7 +11,6 @@ use Crud\Controller\ControllerTrait;
  */
 class CountriesController extends Controller
 {
-
     use ControllerTrait;
 
     public $paginate = ['limit' => 3];
@@ -28,8 +29,8 @@ class CountriesController extends Controller
             'listeners' => [
                 'CrudJsonApi.JsonApi',
                 'CrudJsonApi.Pagination',
-                'Crud.Search'
-            ]
-        ]
+                'Crud.Search',
+            ],
+        ],
     ];
 }

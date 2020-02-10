@@ -1,12 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Schema\JsonApi;
 
 use Cake\Controller\Controller;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
+use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema;
-use Crud\TestSuite\TestCase;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaInterface;
 use Neomerx\JsonApi\Factories\Factory;
@@ -18,7 +20,6 @@ use Neomerx\JsonApi\Schema\Identifier;
  */
 class DynamicEntitySchemaTest extends TestCase
 {
-
     /**
      * fixtures property
      *
@@ -41,7 +42,7 @@ class DynamicEntitySchemaTest extends TestCase
         $table = TableRegistry::get('Countries');
         $query = $table->find()
             ->where([
-                'Countries.id' => 2
+                'Countries.id' => 2,
             ])
             ->contain([
                 'Cultures',
@@ -117,7 +118,7 @@ class DynamicEntitySchemaTest extends TestCase
         $table = TableRegistry::get('Countries');
         $query = $table->find()
             ->where([
-                'Countries.id' => 2
+                'Countries.id' => 2,
             ])
             ->contain([
                 'Cultures',
@@ -201,7 +202,7 @@ class DynamicEntitySchemaTest extends TestCase
         $table = TableRegistry::get('Countries');
         $query = $table->find()
             ->where([
-                'Countries.id' => 2
+                'Countries.id' => 2,
             ])
             ->contain([
                 'Cultures',
@@ -219,7 +220,7 @@ class DynamicEntitySchemaTest extends TestCase
         // test custom foreign key
         $query = $table->find()
             ->where([
-                'Countries.id' => 4
+                'Countries.id' => 4,
             ])
             ->contain([
                 'SuperCountries',
@@ -232,7 +233,7 @@ class DynamicEntitySchemaTest extends TestCase
         // test custom propertyName
         $query = $table->find()
             ->where([
-                'Countries.id' => 3
+                'Countries.id' => 3,
             ])
             ->contain([
                 'SubCountries',

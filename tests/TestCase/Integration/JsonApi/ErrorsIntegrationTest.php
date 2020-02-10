@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\Core\Configure;

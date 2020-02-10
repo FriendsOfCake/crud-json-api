@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Error;
 
 use Cake\Core\Configure;
@@ -33,14 +35,14 @@ class JsonApiExceptionRendererTest extends TestCase
     /**
      * setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', true);
 
         $this->deprecated(function () {
-            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
+            Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
+            Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
         });
 
         // set path to the JSON API response fixtures
@@ -61,8 +63,8 @@ class JsonApiExceptionRendererTest extends TestCase
             ->getMock();
         $controller->request = new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
         ]);
         $controller->response = new Response();
 
@@ -106,7 +108,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $countries = TableRegistry::get('Countries');
 
         $invalidCountry = $countries->newEntity([
-            'code' => 'not-all-uppercase'
+            'code' => 'not-all-uppercase',
         ]);
 
         $exception = new ValidationException($invalidCountry);
@@ -116,8 +118,8 @@ class JsonApiExceptionRendererTest extends TestCase
             ->getMock();
         $controller->request = new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
         ]);
         $controller->response = new Response();
 
@@ -164,8 +166,8 @@ class JsonApiExceptionRendererTest extends TestCase
 
         $controller->request = new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
         ]);
 
         $res = new Response();
@@ -211,19 +213,19 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         $errors = [
             'name' => [
-                '_empty' => 'This is a single word built-in rule'
+                '_empty' => 'This is a single word built-in rule',
             ],
             'dummy_counter' => [
-                'integer' => 'This is a two word built-in rule'
+                'integer' => 'This is a two word built-in rule',
             ],
             'code' => [
                 0 => [
                     'fields' => [
-                        0 => 'code'
+                        0 => 'code',
                     ],
                     'name' => 'EXACT_LENGTH',
-                    'message' => 'This is a user-defined rule'
-                ]
+                    'message' => 'This is a user-defined rule',
+                ],
             ],
         ];
 
@@ -237,24 +239,24 @@ class JsonApiExceptionRendererTest extends TestCase
         $expected = [
             0 => [
                 'fields' => [
-                    'name'
+                    'name',
                 ],
                 'name' => '_empty',
-                'message' => 'This is a single word built-in rule'
+                'message' => 'This is a single word built-in rule',
             ],
             1 => [
                 'fields' => [
-                    'dummy-counter'
+                    'dummy-counter',
                 ],
                 'name' => 'integer',
-                'message' => 'This is a two word built-in rule'
+                'message' => 'This is a two word built-in rule',
             ],
             2 => [
                 'fields' => [
-                    'code'
+                    'code',
                 ],
                 'name' => 'EXACT_LENGTH',
-                'message' => 'This is a user-defined rule'
+                'message' => 'This is a user-defined rule',
             ],
         ];
 
@@ -284,8 +286,8 @@ class JsonApiExceptionRendererTest extends TestCase
         $collection->addDataError('My manual test error');
         $validationErrors = [
             'CrudJsonApiListener' => [
-                'NeoMerxErrorCollection' => $collection
-            ]
+                'NeoMerxErrorCollection' => $collection,
+            ],
         ];
 
         $result = $this->callProtectedMethod('_getNeoMerxErrorCollection', [$validationErrors], $renderer);
@@ -295,8 +297,8 @@ class JsonApiExceptionRendererTest extends TestCase
         // contain an error collection and thus a new collection is created.
         $validationErrors = [
             'CrudJsonApiListener' => [
-                'NeoMerxErrorCollection' => 'not-a-neomerx-error-collection'
-            ]
+                'NeoMerxErrorCollection' => 'not-a-neomerx-error-collection',
+            ],
         ];
 
         $result = $this->callProtectedMethod('_getNeoMerxErrorCollection', [$validationErrors], $renderer);
@@ -309,10 +311,10 @@ class JsonApiExceptionRendererTest extends TestCase
         // assert basic collections are created as well
         $nonStandardizedValidationErrors = [
             'name' => [
-                '_required' => 'This is a built-in rule'
+                '_required' => 'This is a built-in rule',
             ],
             'code' => [
-                '_required' => 'This is a built-in rule'
+                '_required' => 'This is a built-in rule',
             ],
         ];
 
@@ -344,7 +346,7 @@ class JsonApiExceptionRendererTest extends TestCase
             ->method('getQueryLogs')
             ->with()
             ->will($this->returnValue([
-                'dummy' => 'log-entry'
+                'dummy' => 'log-entry',
             ]));
 
         $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')

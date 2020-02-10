@@ -1,13 +1,16 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Listener;
 
-use InvalidArgumentException;
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -15,10 +18,11 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\Listener\ApiListener;
+use CrudJsonApi\Listener\JsonApi\DocumentValidator;
+use InvalidArgumentException;
 
 /**
  * Extends Crud ApiListener to respond in JSON API format.
@@ -28,7 +32,6 @@ use Crud\Listener\ApiListener;
  */
 class JsonApiListener extends ApiListener
 {
-
     /**
      * Default configuration
      *
@@ -60,9 +63,9 @@ class JsonApiListener extends ApiListener
             'include' => [
                 'whitelist' => true,
                 'blacklist' => false,
-            ]
+            ],
         ], //Array of query parameters and associated transformers
-        'inflect' => 'dasherize'
+        'inflect' => 'dasherize',
     ];
 
     /**
@@ -80,7 +83,7 @@ class JsonApiListener extends ApiListener
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $this->setupDetectors();
 
@@ -91,9 +94,12 @@ class JsonApiListener extends ApiListener
         }
 
         // accept body data posted with Content-Type `application/vnd.api+json`
-        $this->_controller()->RequestHandler->setConfig('inputTypeMap', [
-            'jsonapi' => ['json_decode', true]
-        ]);
+        $this->_controller()->RequestHandler->setConfig(
+            'inputTypeMap',
+            [
+            'jsonapi' => ['json_decode', true],
+            ]
+        );
 
         return [
             'Crud.beforeHandle' => ['callable' => [$this, 'beforeHandle'], 'priority' => 10],
@@ -117,7 +123,7 @@ class JsonApiListener extends ApiListener
      *
      * @return void
      */
-    public function setup()
+    public function setup(): void
     {
         if (!$this->_checkRequestType('jsonapi')) {
             return;
@@ -137,10 +143,10 @@ class JsonApiListener extends ApiListener
      *
      * Called before the crud action is executed.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      */
-    public function beforeHandle(Event $event)
+    public function beforeHandle(EventInterface $event): void
     {
         $this->_checkRequestMethods();
         $this->_validateConfigOptions();
@@ -152,10 +158,10 @@ class JsonApiListener extends ApiListener
      * a single primary resource. Does NOT execute when either a Controller has set `contain` or the
      * `?include=` query parameter was passed because that would override/break previously generated data.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return null
      */
-    public function afterFind($event)
+    public function afterFind(EventInterface $event)
     {
         if (!$this->_request()->isGet()) {
             return null;
@@ -178,11 +184,11 @@ class JsonApiListener extends ApiListener
      * to prevent them from sending `hasMany` relationships not belonging to this primary resource
      * when PATCHing.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      * @throws \Cake\Http\Exception\BadRequestException
      */
-    public function beforeSave($event)
+    public function beforeSave(EventInterface $event): void
     {
         // generate a flat list of hasMany relationships for the current model
         $entity = $event->getSubject()->entity;
@@ -209,19 +215,25 @@ class JsonApiListener extends ApiListener
             // hasMany found in the entity, extract ids from the request data
             $primaryResourceId = $this->_controller()->request->getData('id');
 
-            /** @var array $hasManyIds */
+            /**
+ * @var array $hasManyIds
+*/
             $hasManyIds = Hash::extract($this->_controller()->request->getData($key), '{n}.id');
             $hasManyTable = TableRegistry::get($associationName);
 
             // query database only for hasMany that match both passed id and the id of the primary resource
-            /** @var string $entityForeignKey */
+            /**
+ * @var string $entityForeignKey
+*/
             $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
             $query = $hasManyTable->find()
                 ->select(['id'])
-                ->where([
+                ->where(
+                    [
                     $entityForeignKey => $primaryResourceId,
                     'id IN' => $hasManyIds,
-                ]);
+                    ]
+                );
 
             // throw an exception if number of database records does not exactly matches passed ids
             if (count($hasManyIds) !== $query->count()) {
@@ -240,10 +252,10 @@ class JsonApiListener extends ApiListener
     /**
      * afterSave() event.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return false|null
      */
-    public function afterSave($event)
+    public function afterSave(EventInterface $event)
     {
         if (!$event->getSubject()->success) {
             return false;
@@ -260,7 +272,9 @@ class JsonApiListener extends ApiListener
             $this->_controller()->response = $this->_controller()->response->withStatus(201);
         }
 
-        /** @var \Crud\Event\Subject $subject */
+        /**
+ * @var \Crud\Event\Subject $subject
+*/
         $subject = $event->getSubject();
         $this->render($subject);
     }
@@ -272,10 +286,10 @@ class JsonApiListener extends ApiListener
      * only meta node after a successful delete as well but this has not
      * been implemented here yet. http://jsonapi.org/format/#crud-deleting
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return false|null
      */
-    public function afterDelete(Event $event)
+    public function afterDelete(EventInterface $event)
     {
         if (!$event->getSubject()->success) {
             return false;
@@ -287,20 +301,20 @@ class JsonApiListener extends ApiListener
     /**
      * beforeRedirect() event used to stop the event and thus redirection.
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      */
-    public function beforeRedirect(Event $event)
+    public function beforeRedirect(EventInterface $event)
     {
         $event->stopPropagation();
     }
 
     /**
-     * @param \Cake\ORM\Table $repository Repository
-     * @param string $include The association include path
+     * @param  \Cake\ORM\Table $repository Repository
+     * @param  string          $include    The association include path
      * @return \Cake\ORM\Association|null
      */
-    protected function _getAssociation(Table $repository, $include)
+    protected function _getAssociation(Table $repository, $include): ?Association
     {
         $delimiter = '-';
         if (strpos($include, '_') !== false) {
@@ -325,15 +339,15 @@ class JsonApiListener extends ApiListener
     /**
      * Takes a "include" string and converts it into a correct CakePHP ORM association alias
      *
-     * @param array $includes The relationships to include
-     * @param array|bool $blacklist Blacklisted includes
-     * @param array|bool $whitelist Whitelisted options
-     * @param \Cake\ORM\Table|null $repository The repository
-     * @param array $path Include path
+     * @param  array                $includes   The relationships to include
+     * @param  array|bool           $blacklist  Blacklisted includes
+     * @param  array|bool           $whitelist  Whitelisted options
+     * @param  \Cake\ORM\Table|null $repository The repository
+     * @param  array                $path       Include path
      * @return array
      * @throws \Cake\Http\Exception\BadRequestException
      */
-    protected function _parseIncludes($includes, $blacklist, $whitelist, Table $repository = null, $path = [])
+    protected function _parseIncludes($includes, $blacklist, $whitelist, ?Table $repository = null, $path = []): array
     {
         $wildcard = implode('.', array_merge($path, ['*']));
         $wildcardWhitelist = Hash::get((array)$whitelist, $wildcard);
@@ -349,11 +363,11 @@ class JsonApiListener extends ApiListener
                 continue;
             }
 
-            if ($whitelist === false || (
-                $whitelist !== true &&
-                !$wildcardWhitelist &&
-                Hash::get($whitelist, $includeDotPath) === null
-            )) {
+            if (
+                $whitelist === false || ($whitelist !== true
+                && !$wildcardWhitelist
+                && Hash::get($whitelist, $includeDotPath) === null                )
+            ) {
                 continue;
             }
 
@@ -389,12 +403,12 @@ class JsonApiListener extends ApiListener
      *
      * Supported options is "Whitelist" and "Blacklist"
      *
-     * @param string|array $includes The query data
-     * @param \Crud\Event\Subject $subject The subject
-     * @param array $options Array of options for includes.
+     * @param  string|array        $includes The query data
+     * @param  \Crud\Event\Subject $subject  The subject
+     * @param  array               $options  Array of options for includes.
      * @return void
      */
-    protected function _includeParameter($includes, Subject $subject, $options)
+    protected function _includeParameter($includes, Subject $subject, $options): void
     {
         if (is_string($includes)) {
             $includes = explode(',', $includes);
@@ -428,12 +442,12 @@ class JsonApiListener extends ApiListener
     /**
      * Parses out fields query parameter and apply it to the query
      *
-     * @param string|array|null $fieldSets The query data
-     * @param \Crud\Event\Subject $subject The subject
-     * @param array $options Array of options for includes.
+     * @param  string|array|null   $fieldSets The query data
+     * @param  \Crud\Event\Subject $subject   The subject
+     * @param  array               $options   Array of options for includes.
      * @return void
      */
-    protected function _fieldSetsParameter($fieldSets, Subject $subject, $options)
+    protected function _fieldSetsParameter($fieldSets, Subject $subject, $options): void
     {
         // could be null for e.g. using integration tests
         if ($fieldSets === null) {
@@ -441,9 +455,12 @@ class JsonApiListener extends ApiListener
         }
 
         // format $fieldSets to array acceptable by listener config()
-        $fieldSets = array_map(function ($val) {
-            return explode(',', $val);
-        }, $fieldSets);
+        $fieldSets = array_map(
+            function ($val) {
+                return explode(',', $val);
+            },
+            $fieldSets
+        );
 
         $repository = $subject->query->getRepository();
         $associations = $repository->associations();
@@ -458,13 +475,16 @@ class JsonApiListener extends ApiListener
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
             if ($include === $nodeName) {
-                $aliasFields = array_map(function ($val) use ($repository, $columns) {
-                    if (!in_array($val, $columns)) {
-                        return null;
-                    }
+                $aliasFields = array_map(
+                    function ($val) use ($repository, $columns) {
+                        if (!in_array($val, $columns)) {
+                            return null;
+                        }
 
-                    return $repository->aliasField($val);
-                }, $fields);
+                        return $repository->aliasField($val);
+                    },
+                    $fields
+                );
                 $selectFields = array_merge($selectFields, array_filter($aliasFields));
             }
 
@@ -487,28 +507,31 @@ class JsonApiListener extends ApiListener
     /**
      * BeforeFind event listener to parse any supplied query parameters
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\Event $event Event
      * @return void
      */
-    public function beforeFind(Event $event)
+    public function beforeFind(Event $event): void
     {
         //Inject default query handlers
-        $queryParameters = Hash::merge($this->getConfig('queryParameters'), [
+        $queryParameters = Hash::merge(
+            $this->getConfig('queryParameters'),
+            [
             'sort' => [
                 'callable' => [$this, '_sortParameter'],
             ],
             'include' => [
-                'callable' => [$this, '_includeParameter']
+                'callable' => [$this, '_includeParameter'],
             ],
             'fields' => [
-                'callable' => [$this, '_fieldSetsParameter']
+                'callable' => [$this, '_fieldSetsParameter'],
+            ],
             ]
-        ]);
+        );
 
         foreach ($queryParameters as $parameter => $options) {
             if (is_callable($options)) {
                 $options = [
-                    'callable' => $options
+                    'callable' => $options,
                 ];
             }
 
@@ -523,13 +546,13 @@ class JsonApiListener extends ApiListener
     /**
      * Add 'sort' capability
      *
-     * @see http://jsonapi.org/format/#fetching-sorting
-     * @param string|array $sortFields Field sort request
-     * @param \Crud\Event\Subject $subject The subject
-     * @param array $options Array of options for includes.
+     * @see    http://jsonapi.org/format/#fetching-sorting
+     * @param  string|array        $sortFields Field sort request
+     * @param  \Crud\Event\Subject $subject    The subject
+     * @param  array               $options    Array of options for includes.
      * @return void
      */
-    protected function _sortParameter($sortFields, Subject $subject, $options)
+    protected function _sortParameter($sortFields, Subject $subject, $options): void
     {
         if (is_string($sortFields)) {
             $sortFields = explode(',', $sortFields);
@@ -551,7 +574,7 @@ class JsonApiListener extends ApiListener
             }
 
             if (strpos($sortField, '.') !== false) {
-                list ($include, $field) = explode('.', $sortField);
+                [$include, $field] = explode('.', $sortField);
 
                 if ($include === Inflector::tableize($repository->getAlias())) {
                     $order[$repository->aliasField($field)] = $direction;
@@ -567,14 +590,16 @@ class JsonApiListener extends ApiListener
                     if ($association->getProperty() !== $include) {
                         continue;
                     }
-                    $subject->query->contain([
+                    $subject->query->contain(
+                        [
                         $association->getAlias() => [
                             'sort' => [
                                 $association->aliasField($field) => $direction,
                             ],
                             'strategy' => 'select',
+                        ],
                         ]
-                    ]);
+                    );
                     $subject->query->leftJoinWith($association->getAlias());
 
                     $order[$association->aliasField($field)] = $direction;
@@ -590,10 +615,10 @@ class JsonApiListener extends ApiListener
     /**
      * Set required viewVars before rendering the JsonApiView.
      *
-     * @param \Crud\Event\Subject $subject Subject
+     * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Http\Response
      */
-    public function render(Subject $subject)
+    public function render(Subject $subject): Response
     {
         $controller = $this->_controller();
         $controller->viewBuilder()->setClassName('CrudJsonApi.JsonApi');
@@ -611,9 +636,10 @@ class JsonApiListener extends ApiListener
      *
      * @return \Cake\Http\Response
      */
-    protected function _renderWithoutResources()
+    protected function _renderWithoutResources(): Response
     {
-        $this->_controller()->set([
+        $this->_controller()->set(
+            [
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
             '_links' => $this->getConfig('links'),
@@ -622,7 +648,8 @@ class JsonApiListener extends ApiListener
             '_jsonOptions' => $this->getConfig('jsonOptions'),
             '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             '_serialize' => true,
-        ]);
+            ]
+        );
 
         return $this->_controller()->render();
     }
@@ -630,10 +657,10 @@ class JsonApiListener extends ApiListener
     /**
      * Renders a JSON API response with top-level data node holding resource(s).
      *
-     * @param \Crud\Event\Subject $subject Subject
+     * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Http\Response
      */
-    protected function _renderWithResources($subject)
+    protected function _renderWithResources(Subject $subject): Response
     {
         $repository = $this->_controller()->loadModel(); // Default model class
 
@@ -660,7 +687,8 @@ class JsonApiListener extends ApiListener
         }
 
         // Set data before rendering the view
-        $this->_controller()->set([
+        $this->_controller()->set(
+            [
             '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
             '_meta' => $this->getConfig('meta'),
             '_links' => $this->getConfig('links'),
@@ -673,8 +701,9 @@ class JsonApiListener extends ApiListener
             '_fieldSets' => $this->getConfig('fieldSets'),
             Inflector::tableize($repository->getAlias()) => $this->_getFindResult($subject),
             '_serialize' => true,
-            '_inflect' => $this->getConfig('inflect')
-        ]);
+            '_inflect' => $this->getConfig('inflect'),
+            ]
+        );
 
         return $this->_controller()->render();
     }
@@ -685,7 +714,7 @@ class JsonApiListener extends ApiListener
      * @throws \Crud\Error\Exception\CrudException
      * @return void
      */
-    protected function _validateConfigOptions()
+    protected function _validateConfigOptions(): void
     {
         if ($this->getConfig('withJsonApiVersion')) {
             if (!is_bool($this->getConfig('withJsonApiVersion')) && !is_array($this->getConfig('withJsonApiVersion'))) {
@@ -732,7 +761,7 @@ class JsonApiListener extends ApiListener
      * @throws \Cake\Http\Exception\BadRequestException
      * @return bool
      */
-    protected function _checkRequestMethods()
+    protected function _checkRequestMethods(): bool
     {
         if ($this->_request()->is('put')) {
             throw new BadRequestException('JSON API does not support the PUT method, use PATCH instead');
@@ -754,7 +783,7 @@ class JsonApiListener extends ApiListener
     /**
      * Deduplicate resultset from rows that might have come from joins
      *
-     * @param \Crud\Event\Subject $subject Subject
+     * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Datasource\ResultSetInterface
      */
     protected function _deduplicateResultSet($subject): ResultSetInterface
@@ -784,10 +813,10 @@ class JsonApiListener extends ApiListener
      * Helper function to easily retrieve `find()` result from Crud subject
      * regardless of current action.
      *
-     * @param \Crud\Event\Subject $subject Subject
-     * @return mixed Single Entity or ORM\ResultSet
+     * @param  \Crud\Event\Subject $subject Subject
+     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet Single Entity or ORM\ResultSet
      */
-    protected function _getFindResult($subject)
+    protected function _getFindResult(Subject $subject)
     {
         if (!empty($subject->entities)) {
             if (isset($subject->query)) {
@@ -804,10 +833,10 @@ class JsonApiListener extends ApiListener
      * Helper function to easily retrieve a single entity from Crud subject
      * find result regardless of current action.
      *
-     * @param \Crud\Event\Subject $subject Subject
-     * @return \Cake\ORM\Entity
+     * @param  \Crud\Event\Subject $subject Subject
+     * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getSingleEntity($subject)
+    protected function _getSingleEntity(Subject $subject): EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
             return (clone $subject->entities)->first();
@@ -821,11 +850,11 @@ class JsonApiListener extends ApiListener
     /**
      * Creates a nested array of all associations used in the query
      *
-     * @param \Cake\ORM\Table $repository Repository
-     * @param array $contains Array of contained associations
+     * @param  \Cake\ORM\Table $repository Repository
+     * @param  array           $contains   Array of contained associations
      * @return array Array with \Cake\ORM\AssociationCollection
      */
-    protected function _getContainedAssociations($repository, $contains)
+    protected function _getContainedAssociations(Table $repository, array $contains): array
     {
         $associationCollection = $repository->associations();
         $associations = [];
@@ -845,7 +874,7 @@ class JsonApiListener extends ApiListener
 
             $associations[$associationKey] = [
                 'association' => $association,
-                'children' => []
+                'children' => [],
             ];
 
             if (!empty($nestedContains)) {
@@ -861,11 +890,11 @@ class JsonApiListener extends ApiListener
      * query) in the find result from the entity's AssociationCollection to
      * prevent `null` entries appearing in the json api `relationships` node.
      *
-     * @param \Cake\ORM\Table $repository Repository
-     * @param \Cake\ORM\Entity $entity Entity
+     * @param  \Cake\ORM\Table                  $repository Repository
+     * @param  \Cake\Datasource\EntityInterface $entity     Entity
      * @return array
      */
-    protected function _extractEntityAssociations($repository, $entity)
+    protected function _extractEntityAssociations(Table $repository, EntityInterface $entity): array
     {
         $associationCollection = $repository->associations();
         $associations = [];
@@ -875,7 +904,7 @@ class JsonApiListener extends ApiListener
             if (!empty($entity->$entityKey)) {
                 $associations[$associationKey] = [
                     'association' => $association,
-                    'children' => $this->_extractEntityAssociations($association->getTarget(), $entity->$entityKey)
+                    'children' => $this->_extractEntityAssociations($association->getTarget(), $entity->$entityKey),
                 ];
             }
         }
@@ -886,21 +915,21 @@ class JsonApiListener extends ApiListener
     /**
      * Get a flat list of all repositories indexed by their registry alias.
      *
-     * @param RepositoryInterface $repository Current repository
-     * @param array $associations Nested associations to get repository from
-     * @return array Used repositories indexed by registry alias
+     * @param \Cake\Datasource\RepositoryInterface $repository Current repository
+     * @param    array               $associations Nested associations to get repository from
+     * @return   array Used repositories indexed by registry alias
      * @internal
      */
-    protected function _getRepositoryList(RepositoryInterface $repository, $associations)
+    protected function _getRepositoryList(RepositoryInterface $repository, array $associations): array
     {
         $repositories = [
-            $repository->getRegistryAlias() => $repository
+            $repository->getRegistryAlias() => $repository,
         ];
 
         foreach ($associations as $association) {
             $association += [
                 'association' => null,
-                'children' => []
+                'children' => [],
             ];
 
             if ($association['association'] === null) {
@@ -921,12 +950,12 @@ class JsonApiListener extends ApiListener
      * `included` node in the json response UNLESS user has specified listener
      * config option 'include'.
      *
-     * @param array $associations Array with \Cake\ORM\AssociationCollection(s)
-     * @param bool $last Is this the "top-level"/entry point for the recursive function
+     * @param  array $associations Array with \Cake\ORM\AssociationCollection(s)
+     * @param  bool  $last         Is this the "top-level"/entry point for the recursive function
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function _getIncludeList($associations, $last = true)
+    protected function _getIncludeList(array $associations, bool $last = true): array
     {
         if (!empty($this->getConfig('include'))) {
             return $this->getConfig('include');
@@ -936,7 +965,7 @@ class JsonApiListener extends ApiListener
         foreach ($associations as $name => $association) {
             $association += [
                 'association' => null,
-                'children' => []
+                'children' => [],
             ];
 
             if ($association['association'] === null) {
@@ -962,7 +991,7 @@ class JsonApiListener extends ApiListener
      *
      * @return void
      */
-    protected function _checkRequestData()
+    protected function _checkRequestData(): void
     {
         $requestMethod = $this->_controller()->request->getMethod();
 
@@ -986,7 +1015,7 @@ class JsonApiListener extends ApiListener
             $validator->validateUpdateDocument();
         }
 
-        # decode JSON API to CakePHP array format, then call the action as usual
+        // decode JSON API to CakePHP array format, then call the action as usual
         $decodedJsonApi = $this->_convertJsonApiDocumentArray($requestData);
 
         // For PATCH operations the `id` field in the request data MUST match the URL id
@@ -1002,11 +1031,11 @@ class JsonApiListener extends ApiListener
      * Returns a flat array list with the names of all associations for the given
      * entity, optionally limited to only matching associationTypes.
      *
-     * @param \Cake\ORM\Entity $entity Entity
-     * @param array $associationTypes Array with any combination of Cake\ORM\Association types
+     * @param  \Cake\Datasource\EntityInterface $entity           Entity
+     * @param  array                            $associationTypes Array with any combination of Cake\ORM\Association types
      * @return array
      */
-    protected function _getAssociationsList($entity, array $associationTypes = [])
+    protected function _getAssociationsList(EntityInterface $entity, array $associationTypes = []): array
     {
         $table = $this->_controller()->loadModel();
         $associations = $table->associations();
@@ -1035,17 +1064,17 @@ class JsonApiListener extends ApiListener
      *
      * Please note that decoding hasMany relationships has not yet been implemented.
      *
-     * @param array $document Request data document array
+     * @param  array $document Request data document array
      * @return bool
      */
-    protected function _convertJsonApiDocumentArray($document)
+    protected function _convertJsonApiDocumentArray(array $document): bool
     {
         $result = [];
 
         // convert primary resource
         if (array_key_exists('id', $document['data'])) {
             $result['id'] = $document['data']['id'];
-        };
+        }
 
         if (array_key_exists('attributes', $document['data'])) {
             $result = array_merge_recursive($result, $document['data']['attributes']);
@@ -1095,7 +1124,7 @@ class JsonApiListener extends ApiListener
                     $relationResult = [];
                     if (array_key_exists('id', $relationData)) {
                         $relationResult['id'] = $relationData['id'];
-                    };
+                    }
 
                     if (array_key_exists('attributes', $relationData)) {
                         $relationResult = array_merge_recursive($relationResult, $relationData['attributes']);
@@ -1110,7 +1139,7 @@ class JsonApiListener extends ApiListener
                                 }
                             }
                         }
-                    };
+                    }
 
                     $relationResults[] = $relationResult;
                 }

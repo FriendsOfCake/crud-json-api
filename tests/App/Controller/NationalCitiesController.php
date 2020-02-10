@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
@@ -10,7 +12,6 @@ use Crud\Controller\ControllerTrait;
  */
 class NationalCitiesController extends Controller
 {
-
     use ControllerTrait;
 
     public $components = [
@@ -27,8 +28,8 @@ class NationalCitiesController extends Controller
             'listeners' => [
                 'CrudJsonApi.JsonApi',
                 'CrudJsonApi.Pagination',
-            ]
-        ]
+            ],
+        ],
     ];
 
     public function beforeFilter(Event $event)

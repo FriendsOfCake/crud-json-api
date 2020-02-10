@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Schema\JsonApi;
 
-use InvalidArgumentException;
 use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
@@ -9,6 +10,7 @@ use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
+use InvalidArgumentException;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Schema\BaseSchema;
@@ -22,6 +24,7 @@ class DynamicEntitySchema extends BaseSchema
 {
     /**
      * Holds the instance of Cake\View\View
+     *
      * @var \Cake\View\View
      */
     protected $view;
@@ -33,9 +36,9 @@ class DynamicEntitySchema extends BaseSchema
     /**
      * Class constructor
      *
-     * @param \Neomerx\JsonApi\Contracts\Factories\FactoryInterface $factory ContainerInterface
-     * @param \Cake\View\View $view Instance of the cake view we are rendering this in
-     * @param \Cake\ORM\Table $repository Repository to use
+     * @param \Neomerx\JsonApi\Contracts\Factories\FactoryInterface $factory    ContainerInterface
+     * @param \Cake\View\View                                       $view       Instance of the cake view we are rendering this in
+     * @param \Cake\ORM\Table                                       $repository Repository to use
      */
     public function __construct(
         FactoryInterface $factory,
@@ -73,7 +76,7 @@ class DynamicEntitySchema extends BaseSchema
     /**
      * Get resource id.
      *
-     * @param \Cake\ORM\Entity $entity Entity
+     * @param  \Cake\ORM\Entity $entity Entity
      * @return string
      */
     public function getId($entity): ?string
@@ -82,7 +85,7 @@ class DynamicEntitySchema extends BaseSchema
     }
 
     /**
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param  \Cake\Datasource\EntityInterface $entity Entity
      * @return \Cake\ORM\Table
      */
     protected function getRepository($entity = null): Table
@@ -102,7 +105,7 @@ class DynamicEntitySchema extends BaseSchema
      *
      * This method will ignore any properties that are entities.
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param  \Cake\Datasource\EntityInterface $entity Entity
      * @return array
      */
     protected function entityToShallowArray(EntityInterface $entity)
@@ -136,7 +139,7 @@ class DynamicEntitySchema extends BaseSchema
      * NeoMerx override used to pass entity root properties to be shown
      * as JsonApi `attributes`.
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param  \Cake\Datasource\EntityInterface $entity Entity
      * @return array
      */
     public function getAttributes($entity): iterable
@@ -178,7 +181,7 @@ class DynamicEntitySchema extends BaseSchema
      *
      * JSON API optional `related` links not implemented yet.
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity object
+     * @param  \Cake\Datasource\EntityInterface $entity Entity object
      * @return array
      */
     public function getRelationships($entity): iterable
@@ -229,7 +232,7 @@ class DynamicEntitySchema extends BaseSchema
     /**
      * NeoMerx override used to generate `self` links
      *
-     * @param \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
+     * @param  \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
      * @return string
      */
     public function getSelfSubUrl($entity = null): string
@@ -240,10 +243,13 @@ class DynamicEntitySchema extends BaseSchema
 
         $keys = array_values($entity->extract((array)$this->getRepository()->getPrimaryKey()));
 
-        return Router::url($this->_getRepositoryRoutingParameters($this->repository) + $keys + [
+        return Router::url(
+            $this->_getRepositoryRoutingParameters($this->repository) + $keys + [
             '_method' => 'GET',
             'action' => 'view',
-        ], $this->view->get('_absoluteLinks'));
+            ],
+            $this->view->get('_absoluteLinks')
+        );
     }
 
     /**
@@ -269,7 +275,7 @@ class DynamicEntitySchema extends BaseSchema
      * Example: /cultures?country_id=1 (or /country/1/cultures if your routes are configured like this)
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @param string $name Relationship name in lowercase singular or plural
+     * @param string                           $name   Relationship name in lowercase singular or plural
      *
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
@@ -287,13 +293,16 @@ class DynamicEntitySchema extends BaseSchema
             [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
             $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
-            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + [
+            $url = Router::url(
+                $this->_getRepositoryRoutingParameters($relatedRepository) + [
                 '_method' => 'GET',
                 'action' => 'view',
                 $sourceName . '_id' => $entity->id,
                 'from' => $this->getRepository()->getRegistryAlias(),
                 'type' => $name,
-            ], $this->view->get('_absoluteLinks'));
+                ],
+                $this->view->get('_absoluteLinks')
+            );
         } else {
             $name = Inflector::dasherize($name);
             $relatedEntity = $entity->get($name);
@@ -304,10 +313,13 @@ class DynamicEntitySchema extends BaseSchema
                 $keys = array_values($entity->extract((array)$association->getForeignKey()));
             }
 
-            $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
+            $url = Router::url(
+                $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
                 'action' => 'view',
-            ], $this->view->get('_absoluteLinks'));
+                ],
+                $this->view->get('_absoluteLinks')
+            );
         }
 
         return $this->getFactory()->createLink(false, $url, false);
@@ -320,7 +332,7 @@ class DynamicEntitySchema extends BaseSchema
      * hasMany example"   /countries/1/currencies"
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @param string $name Relationship name in lowercase singular or plural
+     * @param string                           $name   Relationship name in lowercase singular or plural
      *
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
@@ -338,10 +350,13 @@ class DynamicEntitySchema extends BaseSchema
         $primaryKeys = $entity->extract((array)$this->getRepository()->getPrimaryKey());
         $keys = array_combine($foreignKeys, $primaryKeys);
 
-        $url = Router::url($this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
+        $url = Router::url(
+            $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
                 'action' => 'index',
-            ], $this->view->get('_absoluteLinks'));
+            ],
+            $this->view->get('_absoluteLinks')
+        );
 
         return $this->getFactory()
             ->createLink(false, $url, false);
@@ -351,7 +366,7 @@ class DynamicEntitySchema extends BaseSchema
      * Parses the name of an Entity class to build a lowercase plural
      * controller name to be used in links.
      *
-     * @param \Cake\Datasource\RepositoryInterface $repository Repository
+     * @param  \Cake\Datasource\RepositoryInterface $repository Repository
      * @return array Array holding lowercase controller name as the value
      */
     protected function _getRepositoryRoutingParameters($repository)
@@ -361,7 +376,7 @@ class DynamicEntitySchema extends BaseSchema
 
         return [
             'controller' => $controllerName,
-            'plugin' => $pluginName
+            'plugin' => $pluginName,
         ];
     }
 }

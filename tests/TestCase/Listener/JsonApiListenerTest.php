@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Listener;
 
 use Cake\Controller\Controller;
@@ -9,10 +11,10 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
-use CrudJsonApi\Listener\JsonApiListener;
-use CrudJsonApi\Test\App\Model\Entity\Country;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
+use CrudJsonApi\Listener\JsonApiListener;
+use CrudJsonApi\Test\App\Model\Entity\Country;
 
 /**
  * Licensed under The MIT License
@@ -20,7 +22,6 @@ use Crud\TestSuite\TestCase;
  */
 class JsonApiListenerTest extends TestCase
 {
-
     /**
      * Path to directory holding the JSON API documents to be tested against the Decoder
      *
@@ -44,7 +45,7 @@ class JsonApiListenerTest extends TestCase
     /**
      * setUp().
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -83,10 +84,10 @@ class JsonApiListenerTest extends TestCase
             'queryParameters' => [
                 'include' => [
                     'whitelist' => true,
-                    'blacklist' => false
-                ]
+                    'blacklist' => false,
+                ],
             ],
-            'inflect' => 'dasherize'
+            'inflect' => 'dasherize',
         ];
 
         $this->assertSame($expected, $listener->getConfig());
@@ -134,7 +135,7 @@ class JsonApiListenerTest extends TestCase
         // assert that listener does nothing if JSON API Accept header is missing
         $result = $listener->implementedEvents();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         // assert success if a JSON API Accept header is used
         $result = $listener->implementedEvents();
@@ -455,7 +456,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'withJsonApiVersion' => true
+            'withJsonApiVersion' => true,
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -476,7 +477,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'withJsonApiVersion' => ['array' => 'accepted']
+            'withJsonApiVersion' => ['array' => 'accepted'],
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -485,12 +486,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `withJsonApiVersion` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array
      */
     public function testValidateConfigOptionWithJsonApiVersionFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -498,7 +498,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'withJsonApiVersion' => 'string-not-accepted'
+            'withJsonApiVersion' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -519,7 +519,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'meta' => ['array' => 'accepted']
+            'meta' => ['array' => 'accepted'],
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -528,12 +528,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `meta` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `meta` only accepts an array
      */
     public function testValidateConfigOptionMetaFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `meta` only accepts an array');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -541,7 +540,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'meta' => 'string-not-accepted'
+            'meta' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -562,7 +561,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'absoluteLinks' => true
+            'absoluteLinks' => true,
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -571,12 +570,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `absoluteLinks` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `absoluteLinks` only accepts a boolean
      */
     public function testValidateConfigOptionAbsoluteLinksFailsWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `absoluteLinks` only accepts a boolean');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -584,7 +582,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'absoluteLinks' => 'string-not-accepted'
+            'absoluteLinks' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -605,7 +603,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'jsonApiBelongsToLinks' => true
+            'jsonApiBelongsToLinks' => true,
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -614,12 +612,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `jsonApiBelongsToLinks` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean
      */
     public function testValidateConfigOptionJsonApiBelongsToLinksFailsWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -627,7 +624,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'jsonApiBelongsToLinks' => 'string-not-accepted'
+            'jsonApiBelongsToLinks' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -636,12 +633,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `include` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `include` only accepts an array
      */
     public function testValidateConfigOptionIncludeFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `include` only accepts an array');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -649,7 +645,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'include' => 'string-not-accepted'
+            'include' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -658,12 +654,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `fieldSets` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `fieldSets` only accepts an array
      */
     public function testValidateConfigOptionFieldSetsFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `fieldSets` only accepts an array');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -671,7 +666,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'fieldSets' => 'string-not-accepted'
+            'fieldSets' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -680,12 +675,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `jsonOptions` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `jsonOptions` only accepts an array
      */
     public function testValidateConfigOptionJsonOptionsFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `jsonOptions` only accepts an array');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -693,7 +687,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'jsonOptions' => 'string-not-accepted'
+            'jsonOptions' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -702,12 +696,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `debugPrettyPrint` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `debugPrettyPrint` only accepts a boolean
      */
     public function testValidateConfigOptionDebugPrettyPrintFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `debugPrettyPrint` only accepts a boolean');
         $listener = $this
             ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
@@ -715,7 +708,7 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $listener->setConfig([
-            'debugPrettyPrint' => 'string-not-accepted'
+            'debugPrettyPrint' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
@@ -724,24 +717,24 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure config option `queryParameters` does not accept a string
-     *
-     * @expectedException \Crud\Error\Exception\CrudException
-     * @expectedExceptionMessage JsonApiListener configuration option `queryParameters` only accepts an array
      */
     public function testValidateConfigOptionQueryParametersPrintFailWithString()
     {
+        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectExceptionMessage('JsonApiListener configuration option `queryParameters` only accepts an array');
         $listener = $this->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
 
         $listener->setConfig([
-            'queryParameters' => 'string-not-accepted'
+            'queryParameters' => 'string-not-accepted',
         ]);
 
         $this->setReflectionClassInstance($listener);
         $this->callProtectedMethod('_validateConfigOptions', [], $listener);
     }
+
     /**
      * Make sure the listener accepts the correct request headers
      *
@@ -773,12 +766,11 @@ class JsonApiListenerTest extends TestCase
 
     /**
      * Make sure the listener fails on non JSON API request Content-Type header
-     *
-     * @expectedException \Cake\Http\Exception\BadRequestException
-     * @expectedExceptionMessage JSON API requests with data require the "application/vnd.api+json" Content-Type header
      */
     public function testCheckRequestMethodsFailContentHeader()
     {
+        $this->expectException('Cake\Http\Exception\BadRequestException');
+        $this->expectExceptionMessage('JSON API requests with data require the "application/vnd.api+json" Content-Type header');
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
             ->withEnv('CONTENT_TYPE', 'application/json');
@@ -794,12 +786,11 @@ class JsonApiListenerTest extends TestCase
     /**
      * Make sure the listener does not accept the PUT method (since the JSON
      * API spec only supports PATCH)
-     *
-     * @expectedException \Cake\Http\Exception\BadRequestException
-     * @expectedExceptionMessage JSON API does not support the PUT method, use PATCH instead
      */
     public function testCheckRequestMethodsFailOnPutMethod()
     {
+        $this->expectException('Cake\Http\Exception\BadRequestException');
+        $this->expectExceptionMessage('JSON API does not support the PUT method, use PATCH instead');
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
             ->withEnv('REQUEST_METHOD', 'PUT');
@@ -910,7 +901,7 @@ class JsonApiListenerTest extends TestCase
 
         // make sure cultures are not present in the find result
         $query = $table->find()->contain([
-            'Currencies'
+            'Currencies',
         ]);
         $entity = $query->first();
 
@@ -942,26 +933,26 @@ class JsonApiListenerTest extends TestCase
 
         $table->hasMany('SubCountries', [
             'className' => 'Countries',
-            'propertyName' => 'subcountry'
+            'propertyName' => 'subcountry',
         ]);
 
         $table->belongsTo('SuperCountries', [
             'className' => 'Countries',
-            'propertyName' => 'supercountry'
+            'propertyName' => 'supercountry',
         ]);
 
         $associations = [];
         foreach ($table->associations() as $association) {
             $associations[strtolower($association->getName())] = [
                 'association' => $association,
-                'children' => []
+                'children' => [],
             ];
         }
 
         $associations['currencies']['children'] = [
             'countries' => [
                 'association' => $table->Currencies->Countries,
-            ]
+            ],
         ];
 
         $this->assertArrayHasKey('currencies', $associations);
@@ -978,7 +969,7 @@ class JsonApiListenerTest extends TestCase
             'Cultures' => $table->Cultures->getTarget(),
             'NationalCities' => $table->NationalCities->getTarget(),
             'SubCountries' => $table->SubCountries->getTarget(),
-            'SuperCountries' => $table->SuperCountries->getTarget()
+            'SuperCountries' => $table->SuperCountries->getTarget(),
         ];
 
         $this->assertSame($expected, $result);
@@ -1008,14 +999,14 @@ class JsonApiListenerTest extends TestCase
         foreach ($table->associations() as $association) {
             $associations[strtolower($association->getName())] = [
                 'association' => $association,
-                'children' => []
+                'children' => [],
             ];
         }
 
         $associations['currencies']['children'] = [
             'countries' => [
                 'association' => $table->Currencies->Countries,
-            ]
+            ],
         ];
 
         $expected = [
@@ -1024,7 +1015,7 @@ class JsonApiListenerTest extends TestCase
             'cultures',
             'national-cities',
             'subcountries',
-            'supercountry'
+            'supercountry',
         ];
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
         $this->assertSame($expected, $result);
@@ -1047,7 +1038,7 @@ class JsonApiListenerTest extends TestCase
         $userSpecifiedIncludes = [
             'user-specified-list',
             'with',
-            'associations-to-present-in-included-node'
+            'associations-to-present-in-included-node',
         ];
 
         $listener->setConfig('include', $userSpecifiedIncludes);
@@ -1061,11 +1052,11 @@ class JsonApiListenerTest extends TestCase
      * _checkRequestData()
      *
      * @return void
-     * @expectedException \Cake\Http\Exception\BadRequestException
-     * @expectedExceptionMessage Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.
      */
     public function testCheckRequestData()
     {
+        $this->expectException('Cake\Http\Exception\BadRequestException');
+        $this->expectExceptionMessage('Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.');
         $controller = $this
             ->getMockBuilder('\Cake\Controller\Controller')
             ->setMethods(['_request'])
@@ -1165,12 +1156,12 @@ class JsonApiListenerTest extends TestCase
         // assert posted id attribute gets processed as expected
         $jsonApiArray = [
             'data' => [
-                'id' => '123'
-            ]
+                'id' => '123',
+            ],
         ];
 
         $expected = [
-            'id' => '123'
+            'id' => '123',
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);
@@ -1181,7 +1172,7 @@ class JsonApiListenerTest extends TestCase
         $expected = [
             'code' => 'NL',
             'name' => 'The Netherlands',
-            'dummy_counter' => 11111
+            'dummy_counter' => 11111,
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);
@@ -1200,7 +1191,7 @@ class JsonApiListenerTest extends TestCase
                     'language_name' => 'Dutch',
                 ],
             ],
-            'currency_id' => '3'
+            'currency_id' => '3',
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);
@@ -1214,7 +1205,7 @@ class JsonApiListenerTest extends TestCase
         $expected = [
             'code' => 'NL',
             'name' => 'The Netherlands',
-            'dummy_counter' => 11111
+            'dummy_counter' => 11111,
         ];
         $result = $this->callProtectedMethod('_convertJsonApiDocumentArray', [$jsonApiArray], $listener);
         $this->assertSame($expected, $result);
@@ -1228,7 +1219,7 @@ class JsonApiListenerTest extends TestCase
                 ['blacklist' => false, 'whitelist' => true],
                 [
                     'Cultures',
-                    'Currencies' => ['Countries']
+                    'Currencies' => ['Countries'],
                 ],
                 [
                     'cultures', 'currency.countries',
@@ -1239,7 +1230,7 @@ class JsonApiListenerTest extends TestCase
                 ['blacklist' => false, 'whitelist' => true],
                 [
                     'Cultures',
-                    'Currencies'
+                    'Currencies',
                 ],
                 [
                     'cultures',
@@ -1251,7 +1242,7 @@ class JsonApiListenerTest extends TestCase
                 ['blacklist' => ['currencies.countries'], 'whitelist' => true],
                 [
                     'Cultures',
-                    'Currencies'
+                    'Currencies',
                 ],
                 [
                     'cultures',
@@ -1262,10 +1253,10 @@ class JsonApiListenerTest extends TestCase
                 'cultures,currencies.countries',
                 ['blacklist' => false, 'whitelist' => ['cultures']],
                 [
-                    'Cultures'
+                    'Cultures',
                 ],
                 [
-                    'cultures'
+                    'cultures',
                 ],
             ],
             'multiple whitelists' => [
@@ -1275,11 +1266,11 @@ class JsonApiListenerTest extends TestCase
                     'Cultures',
                     'Currencies' => [
                         'Countries',
-                    ]
+                    ],
                 ],
                 [
                     'cultures',
-                    'currency.countries'
+                    'currency.countries',
                 ],
             ],
             'whitelist wildcard' => [
@@ -1287,8 +1278,8 @@ class JsonApiListenerTest extends TestCase
                 ['blacklist' => false, 'whitelist' => ['currencies.*']],
                 [
                     'Currencies' => [
-                        'Countries'
-                    ]
+                        'Countries',
+                    ],
                 ],
                 ['currency.countries'],
             ],
@@ -1299,7 +1290,7 @@ class JsonApiListenerTest extends TestCase
                     'Cultures',
                     'Currencies',
                 ],
-                ['cultures', 'currency']
+                ['cultures', 'currency'],
             ],
             'blacklist with a whitelist wildcard' => [
                 'cultures,currencies.countries,currencies.names,cultures.countries',
@@ -1310,7 +1301,7 @@ class JsonApiListenerTest extends TestCase
                     ],
                     'Cultures',
                 ],
-                ['cultures', 'currency.countries']
+                ['cultures', 'currency.countries'],
             ],
             'blacklist is more important' => [
                 'cultures,currencies.countries',
@@ -1319,7 +1310,7 @@ class JsonApiListenerTest extends TestCase
                     'Cultures',
                     'Currencies',
                 ],
-                ['cultures', 'currency']
+                ['cultures', 'currency'],
             ],
         ];
     }
@@ -1359,13 +1350,13 @@ class JsonApiListenerTest extends TestCase
                 'cultures,currencies.countries',
                 ['blacklist' => true, 'whitelist' => ['cultures', 'currencies.countries']],
                 [],
-                []
+                [],
             ],
             'whitelist nothing' => [
                 'cultures,currencies.countries',
                 ['blacklist' => false, 'whitelist' => false],
                 [],
-                []
+                [],
             ],
         ];
     }
@@ -1376,10 +1367,10 @@ class JsonApiListenerTest extends TestCase
      *
      * @return void
      * @dataProvider includeQueryBadRequestProvider
-     * @expectedException \Cake\Http\Exception\BadRequestException
      */
     public function testIncludeQueryBadRequest($include, $options, $expectedContain, $expectedInclude)
     {
+        $this->expectException('Cake\Http\Exception\BadRequestException');
         $listener = new JsonApiListener(new Controller());
         $this->setReflectionClassInstance($listener);
 
