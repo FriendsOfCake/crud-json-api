@@ -1,6 +1,7 @@
 <?php
 namespace CrudJsonApi\Listener;
 
+use InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
@@ -512,7 +513,7 @@ class JsonApiListener extends ApiListener
             }
 
             if (!is_callable($options['callable'])) {
-                throw new \InvalidArgumentException('Invalid callable supplied for query parameter ' . $parameter);
+                throw new InvalidArgumentException('Invalid callable supplied for query parameter ' . $parameter);
             }
 
             $options['callable']($this->_request()->getQuery($parameter), $event->getSubject(), $options);
@@ -903,7 +904,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new \InvalidArgumentException("Association does not have an association object set");
+                throw new InvalidArgumentException("Association does not have an association object set");
             }
 
             $associationRepository = $association['association']->getTarget();
@@ -939,7 +940,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new \InvalidArgumentException("Association {$name} does not have an association object set");
+                throw new InvalidArgumentException("Association {$name} does not have an association object set");
             }
 
             $property = $association['association']->getProperty();

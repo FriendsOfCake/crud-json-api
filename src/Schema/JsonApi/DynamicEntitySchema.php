@@ -1,6 +1,7 @@
 <?php
 namespace CrudJsonApi\Schema\JsonApi;
 
+use InvalidArgumentException;
 use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
@@ -276,7 +277,7 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            throw new \InvalidArgumentException('Invalid association ' . $name);
+            throw new InvalidArgumentException('Invalid association ' . $name);
         }
 
         $relatedRepository = $association->getTarget();
@@ -327,7 +328,7 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            throw new \InvalidArgumentException('Invalid association ' . $name);
+            throw new InvalidArgumentException('Invalid association ' . $name);
         }
 
         $relatedRepository = $association->getTarget();
