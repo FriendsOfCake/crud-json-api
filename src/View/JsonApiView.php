@@ -71,11 +71,11 @@ class JsonApiView extends View
      *
      * @param  string|null $view   Name of view file to use
      * @param  string|null $layout Layout to use.
-     * @return string
+     * @return string|null
      */
     public function render(?string $view = null, $layout = null): string
     {
-        if ($this->get('_repositories')) {
+        if ($this->getConfig('repositories')) {
             $json = $this->_encodeWithSchemas();
         } else {
             $json = $this->_encodeWithoutSchemas();
@@ -88,7 +88,7 @@ class JsonApiView extends View
             $json = json_encode($json, $this->_jsonOptions());
         }
 
-        return $json;
+        return $json ?: '';
     }
 
     /**
@@ -98,7 +98,7 @@ class JsonApiView extends View
      */
     protected function _encodeWithoutSchemas(): ?string
     {
-        if (empty($this->get('_meta'))) {
+        if (empty($this->getConfig('meta'))) {
             return null;
         }
 
@@ -107,11 +107,11 @@ class JsonApiView extends View
 
         // Add optional top-level `link` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_links')) {
-            $encoder->withLinks($this->get('_links'));
+        if ($this->getConfig('links')) {
+            $encoder->withLinks($this->getConfig('links'));
         }
 
-        return $encoder->encodeMeta($this->get('_meta'));
+        return $encoder->encodeMeta($this->getConfig('meta'));
     }
 
     /**
@@ -121,24 +121,24 @@ class JsonApiView extends View
      */
     protected function _encodeWithSchemas(): string
     {
-        if ($this->get('_inflect') === 'dasherize') {
+        if ($this->getConfig('inflect') === 'dasherize') {
             $this->_dasherizeIncludesViewVar();
         }
 
         // All "Schema is not registered for a resource at path 'xyz'" errors
         // originate from the line below and are caused by the mentioned Cake Table
-        // object not being present in the  `_repositories` viewVar array.
-        $schemas = $this->_entitiesToNeoMerxSchema($this->get('_repositories'));
+        // object not being present in the  `repositories` option.
+        $schemas = $this->_entitiesToNeoMerxSchema($this->getConfig('repositories'));
 
         // Please note that a third NeoMerx EncoderOptions argument `depth`
         // exists but has not been implemented in this plugin.
         $encoder = Encoder::instance($schemas)
             ->withEncodeOptions($this->_jsonOptions());
 
-        $serialize = $this->get('_serialize');
+        $serialize = $this->getConfig('serialize');
 
-        if ($this->get('_serialize') !== false) {
-            $serialize = $this->_getDataToSerializeFromViewVars($this->get('_serialize'));
+        if ($serialize !== false) {
+            $serialize = $this->_getDataToSerializeFromViewVars($serialize);
         }
 
         // By default the listener will automatically add all associated data
@@ -152,8 +152,8 @@ class JsonApiView extends View
         //
         // Lastly, listener config option `fieldSets` may be used to limit
         // the fields shown in the result.
-        $include = $this->get('_include');
-        $fieldSets = $this->get('_fieldSets');
+        $include = $this->getConfig('include');
+        $fieldSets = $this->getConfig('fieldSets');
 
         $encoder
             ->withIncludedPaths($include)
@@ -161,34 +161,34 @@ class JsonApiView extends View
 
         // Add optional top-level `version` node to the response if enabled
         // by user using listener config option.
-        if ($this->get('_withJsonApiVersion')) {
+        if ($this->getConfig('withJsonApiVersion')) {
             $encoder->withJsonApiVersion('1.1');
-            if (!is_bool($this->get('_withJsonApiVersion'))) {
-                $encoder->withJsonApiMeta($this->get('_withJsonApiVersion'));
+            if (!is_bool($this->getConfig('withJsonApiVersion'))) {
+                $encoder->withJsonApiMeta($this->getConfig('withJsonApiVersion'));
             }
         }
 
         // Add top-level `links` node with pagination information (requires
         // ApiPaginationListener which will have set/filled viewVar).
-        if ($this->get('_pagination')) {
-            $pagination = $this->get('_pagination');
+        if ($this->getConfig('pagination')) {
+            $pagination = $this->getConfig('pagination');
 
-            $links = $this->get('_links', []);
+            $links = $this->getConfig('links', []);
             $paginationLinks = $this->_getPaginationLinks($pagination);
-            $this->set('_links', $links + $paginationLinks);
+            $this->setConfig('links', $links + $paginationLinks);
 
             // Additional pagination information has to be in top-level node `meta`
-            $meta = $this->get('_meta');
+            $meta = $this->getConfig('meta');
             $meta['record_count'] = $pagination['record_count'];
             $meta['page_count'] = $pagination['page_count'];
             $meta['page_limit'] = $pagination['page_limit'];
-            $this->set('_meta', $meta);
+            $this->setConfig('meta', $meta);
         }
 
         // Add optional top-level `link` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_links')) {
-            $links = $this->get('_links');
+        if ($this->getConfig('links')) {
+            $links = $this->getConfig('links');
             $encoder->withLinks(
                 array_map(
                     function ($link) {
@@ -205,12 +205,12 @@ class JsonApiView extends View
 
         // Add optional top-level `meta` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_meta')) {
+        if ($this->getConfig('meta')) {
             if (empty($serialize)) {
-                return $encoder->encodeMeta($this->get('_meta'));
+                return $encoder->encodeMeta($this->getConfig('meta'));
             }
 
-             $encoder->withMeta($this->get('_meta'));
+             $encoder->withMeta($this->getConfig('meta'));
         }
 
         // JSON API as generated by NeoMerx. When things look off,  start debugging here
@@ -331,8 +331,8 @@ class JsonApiView extends View
     {
         if (is_object($serialize)) {
             throw new CrudException(
-                'Assigning an object to JsonApiListener "_serialize" is deprecated,
-                assign the object to its own variable and assign "_serialize" = true instead.'
+                'Assigning an object to JsonApiListener "serialize" is deprecated, ' .
+                'assign the object to its own variable and assign "serialize" = true instead.'
             );
         }
 
@@ -366,8 +366,8 @@ class JsonApiView extends View
     {
         $jsonOptions = 0;
 
-        if (!empty($this->get('_jsonOptions'))) {
-            foreach ($this->get('_jsonOptions') as $jsonOption) {
+        if (!empty($this->getConfig('jsonOptions'))) {
+            foreach ($this->getConfig('jsonOptions') as $jsonOption) {
                 $jsonOptions |= $jsonOption;
             }
 
@@ -380,7 +380,7 @@ class JsonApiView extends View
             return $jsonOptions;
         }
 
-        if ($this->get('_debugPrettyPrint')) {
+        if ($this->getConfig('debugPrettyPrint')) {
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
@@ -394,8 +394,8 @@ class JsonApiView extends View
      */
     protected function _dasherizeIncludesViewVar()
     {
-        foreach ($this->get('_include') as $key => $value) {
-            $this->get('_include')[$key] = Inflector::dasherize($value);
+        foreach ($this->getConfig('include') as $key => $value) {
+            $this->getConfig('include')[$key] = Inflector::dasherize($value);
         }
     }
 }

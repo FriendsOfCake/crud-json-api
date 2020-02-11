@@ -3,14 +3,19 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Test\TestCase\Listener;
 
+use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\Router;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
@@ -49,7 +54,14 @@ class JsonApiListenerTest extends TestCase
     {
         parent::setUp();
 
-        $this->_JsonApiDecoderFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiDecoder';
+        Router::scope(
+            '/',
+            static function (RouteBuilder $routeBuilder) {
+                $routeBuilder->fallbacks();
+            }
+        );
+
+        $this->_JsonApiDecoderFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiDecoder';
     }
 
     /**
@@ -61,7 +73,7 @@ class JsonApiListenerTest extends TestCase
 
         $expected = [
             'detectors' => [
-                'jsonapi' => ['ext' => false, 'accepts' => 'application/vnd.api+json'],
+                'jsonapi' => ['ext' => false, 'accept' => ['application/vnd.api+json']],
             ],
             'exception' => [
                 'type' => 'default',
@@ -100,37 +112,21 @@ class JsonApiListenerTest extends TestCase
      */
     public function testImplementedEvents()
     {
-        $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(['foobar'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $controller->RequestHandler = $this->getMockBuilder('\Cake\Controller\Component\RequestHandlerComponent')
-            ->setMethods(['config'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->setMethods(['setupDetectors', '_checkRequestType', '_controller'])
+            ->getMockBuilder(JsonApiListener::class)
+            ->onlyMethods(['setupDetectors', '_checkRequestType', '_controller'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $listener
             ->expects($this->at(1))
             ->method('_checkRequestType')
-            ->will($this->returnValue(false)); // for asserting missing JSON API Accept header
+            ->willReturn(false); // for asserting missing JSON API Accept header
 
         $listener
             ->expects($this->at(3))
             ->method('_checkRequestType')
-            ->will($this->returnValue(true)); // for asserting valid JSON API Accept header
-
-        $listener
-            ->expects($this->once())
-            ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn(true); // for asserting valid JSON API Accept header
 
         // assert that listener does nothing if JSON API Accept header is missing
         $result = $listener->implementedEvents();
@@ -165,49 +161,42 @@ class JsonApiListenerTest extends TestCase
     public function testBeforeHandle()
     {
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(['_request'])
+            ->getMockBuilder(Controller::class)
+            ->addMethods(['_request'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $controller->request = $this
-            ->getMockBuilder('\Cake\Http\ServerRequest')
-            ->setMethods(null)
+        $controller->setRequest($this
+            ->getMockBuilder(ServerRequest::class)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMock());
 
-        $controller->request = $controller->request->withData('data', [
+        $controller->setRequest($controller->getRequest()->withData('data', [
             'type' => 'dummy',
             'attributes' => [],
-        ]);
+        ]));
 
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->setMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDataArray', '_checkRequestData'])
+            ->getMockBuilder(JsonApiListener::class)
+            ->onlyMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDocumentArray', '_checkRequestData'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $listener
-            ->expects($this->any())
-            ->method('_convertJsonApiDataArray')
-            ->will($this->returnValue(true));
+            ->method('_convertJsonApiDocumentArray')
+            ->willReturn([]);
 
         $listener
-            ->expects($this->any())
             ->method('_checkRequestMethods')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $listener
-            ->expects($this->any())
-            ->method('_checkRequestData')
-            ->will($this->returnValue(true));
-
-            $this->assertNull($listener->beforeHandle(new Event('Crud.beforeHandle')));
+        $listener->beforeHandle(new Event('Crud.beforeHandle'));
+        $this->assertTrue(true);
     }
 
     /**
@@ -218,53 +207,49 @@ class JsonApiListenerTest extends TestCase
     public function testAfterSave()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_response', 'render'])
+            ->onlyMethods(['_controller', '_response', 'render'])
             ->getMock();
 
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
+            ->getMockBuilder(Controller::class)
+            ->onlyMethods([])
             ->getMock();
 
         $response = $this
-            ->getMockBuilder('\Cake\Http\Response')
+            ->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_response')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $listener
-            ->expects($this->any())
             ->method('render')
-            ->will($this->returnValue(null));
+            ->willReturn($response);
 
         $event = $this
-            ->getMockBuilder('\Cake\Event\Event')
+            ->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSubject'])
+            ->onlyMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
+            ->getMockBuilder(Subject::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $event
-            ->expects($this->any())
             ->method('getSubject')
-            ->will($this->returnValue($subject));
+            ->willReturn($subject);
 
         $this->setReflectionClassInstance($listener);
 
@@ -302,51 +287,48 @@ class JsonApiListenerTest extends TestCase
     public function testAfterDelete()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_response'])
+            ->onlyMethods(['_controller', '_response'])
             ->getMock();
 
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
+            ->getMockBuilder(Controller::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $response = $this
-            ->getMockBuilder('\Cake\Http\Response')
+            ->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $controller->response = $response;
 
         $listener
-            ->expects($this->any())
             ->method('_response')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $event = $this
-            ->getMockBuilder('\Cake\Event\Event')
+            ->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSubject'])
+            ->onlyMethods(['getSubject'])
             ->getMock();
 
         $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
+            ->getMockBuilder(Subject::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $event
-            ->expects($this->any())
             ->method('getSubject')
-            ->will($this->returnValue($subject));
+            ->willReturn($subject);
 
         $this->setReflectionClassInstance($listener);
 
@@ -364,9 +346,9 @@ class JsonApiListenerTest extends TestCase
     public function testBeforeRedirect()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $this->assertNull($listener->beforeRedirect(new Event('dogs')));
@@ -380,35 +362,29 @@ class JsonApiListenerTest extends TestCase
     public function testRenderWithResources()
     {
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
+            ->getMockBuilder(Controller::class)
+            ->onlyMethods([])
             ->enableOriginalConstructor()
             ->setConstructorArgs([null, null, 'Countries'])
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_action'])
+            ->onlyMethods(['_controller', '_action'])
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
-            ->getMock();
-
-        $query = $this
-            ->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()
+            ->getMockBuilder(Subject::class)
             ->getMock();
 
         $subject->entity = new Country();
 
-        $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
+        $this->assertInstanceOf(Response::class, $listener->render($subject));
     }
 
     /**
@@ -419,27 +395,26 @@ class JsonApiListenerTest extends TestCase
     public function testRenderWithoutResources()
     {
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
+            ->getMockBuilder(Controller::class)
+            ->onlyMethods([])
             ->enableOriginalConstructor()
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_action'])
+            ->onlyMethods(['_controller', '_action'])
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
+            ->getMockBuilder(Subject::class)
             ->getMock();
 
-            $this->assertInstanceOf('Cake\Http\Response', $listener->render($subject));
+        $this->assertInstanceOf(Response::class, $listener->render($subject));
     }
 
     /**
@@ -450,9 +425,9 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionWithJsonApiVersionSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -471,9 +446,9 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionWithJsonApiVersionSuccessWithArray()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -492,9 +467,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `withJsonApiVersion` only accepts a boolean or an array');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -513,9 +488,9 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionMetaSuccessWithArray()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -534,9 +509,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `meta` only accepts an array');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -555,9 +530,9 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionAbsoluteLinksSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -576,9 +551,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `absoluteLinks` only accepts a boolean');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -597,9 +572,9 @@ class JsonApiListenerTest extends TestCase
     public function testValidateConfigOptionJsonApiBelongsToLinksSuccessWithBoolean()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -618,9 +593,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -639,9 +614,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `include` only accepts an array');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -660,9 +635,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `fieldSets` only accepts an array');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -681,9 +656,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `jsonOptions` only accepts an array');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -702,9 +677,9 @@ class JsonApiListenerTest extends TestCase
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `debugPrettyPrint` only accepts a boolean');
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -722,9 +697,9 @@ class JsonApiListenerTest extends TestCase
     {
         $this->expectException('Crud\Error\Exception\CrudException');
         $this->expectExceptionMessage('JsonApiListener configuration option `queryParameters` only accepts an array');
-        $listener = $this->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+        $listener = $this->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $listener->setConfig([
@@ -811,9 +786,9 @@ class JsonApiListenerTest extends TestCase
     public function testGetFindResult()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller'])
+            ->onlyMethods(['_controller'])
             ->getMock();
 
         $this->setReflectionClassInstance($listener);
@@ -838,44 +813,44 @@ class JsonApiListenerTest extends TestCase
     public function testGetSingleEntity()
     {
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(null)
+            ->getMockBuilder(Controller::class)
+            ->onlyMethods([])
             ->enableOriginalConstructor()
             ->getMock();
 
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_event'])
+            ->addMethods(['_event'])
+            ->onlyMethods(['_controller'])
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
+        $entity = new Entity();
         $subject = $this
-            ->getMockBuilder('\Crud\Event\Subject')
+            ->getMockBuilder(Subject::class)
             ->getMock();
 
         $subject->entities = $this
             ->getMockBuilder('stdClass')
             ->disableOriginalConstructor()
-            ->setMethods(['first'])
+            ->addMethods(['first'])
             ->getMock();
 
         $subject->entities
-            ->expects($this->any())
             ->method('first')
-            ->will($this->returnValue('return-first-entity-if-entities-property-is-set'));
+            ->willReturn($entity);
 
         $this->setReflectionClassInstance($listener);
         $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
-        $this->assertSame('return-first-entity-if-entities-property-is-set', $result);
+        $this->assertSame($entity, $result);
 
         unset($subject->entities);
 
-        $subject->entity = 'return-entity-property-from-subject-if-set';
+        $subject->entity = $entity;
         $this->setReflectionClassInstance($listener);
         $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
         $this->assertSame($subject->entity, $result);
@@ -983,9 +958,10 @@ class JsonApiListenerTest extends TestCase
     public function testGetIncludeList()
     {
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
+            ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(['_controller', '_event'])
+            ->addMethods(['_event'])
+            ->onlyMethods(['_controller'])
             ->getMock();
 
         $this->setReflectionClassInstance($listener);
@@ -1055,29 +1031,32 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestData()
     {
-        $this->expectException('Cake\Http\Exception\BadRequestException');
-        $this->expectExceptionMessage('Missing request data required for POST and PATCH methods. Make sure that you are sending a request body and that it is valid JSON.');
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage(
+            'Missing request data required for POST and PATCH methods. ' .
+            'Make sure that you are sending a request body and that it is valid JSON.'
+        );
         $controller = $this
-            ->getMockBuilder('\Cake\Controller\Controller')
-            ->setMethods(['_request'])
+            ->getMockBuilder(Controller::class)
+            ->addMethods(['_request'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $request = $this
-            ->getMockBuilder('\Cake\Http\ServerRequest')
-            ->setMethods(['contentType', 'getMethod'])
+            ->getMockBuilder(ServerRequest::class)
+            ->onlyMethods(['contentType', 'getMethod'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $request
             ->expects($this->at(0))
             ->method('getMethod')
-            ->will($this->returnValue('GET'));
+            ->willReturn('GET');
 
         $request
             ->expects($this->at(1))
             ->method('getMethod')
-            ->will($this->returnValue('POST'));
+            ->willReturn('POST');
 
         $request
             ->expects($this->at(2))
@@ -1087,30 +1066,27 @@ class JsonApiListenerTest extends TestCase
         $request
             ->expects($this->at(3))
             ->method('getMethod')
-            ->will($this->returnValue('PATCH'));
+            ->willReturn('PATCH');
 
-        $controller->request = $request;
+        $controller->setRequest($request);
 
         $listener = $this
-            ->getMockBuilder('\CrudJsonApi\Listener\JsonApiListener')
-            ->setMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDataArray'])
+            ->getMockBuilder(JsonApiListener::class)
+            ->onlyMethods(['_controller', '_checkRequestMethods', '_convertJsonApiDocumentArray'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $listener
-            ->expects($this->any())
             ->method('_controller')
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $listener
-            ->expects($this->any())
-            ->method('_convertJsonApiDataArray')
-            ->will($this->returnValue(true));
+            ->method('_convertJsonApiDocumentArray')
+            ->willReturn([]);
 
         $listener
-            ->expects($this->any())
             ->method('_checkRequestMethods')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->setReflectionClassInstance($listener);
 
@@ -1118,24 +1094,24 @@ class JsonApiListenerTest extends TestCase
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
 
         // assert POST is processed
-        $controller->request = $controller->request->withData('data', [
+        $controller->setRequest($controller->getRequest()->withData('data', [
             'type' => 'dummy',
             'attributes' => [],
-        ]);
+        ]));
 
         $this->callProtectedMethod('_checkRequestData', [], $listener);
 
         // assert PATCH is processed
-        $controller->request = $controller->request->withData('data', [
+        $controller->setRequest($controller->getRequest()->withData('data', [
             'id' => 'f083ea0b-9e48-44a6-af45-a814127a3a70',
             'type' => 'dummy',
             'attributes' => [],
-        ]);
+        ]));
 
         $this->callProtectedMethod('_checkRequestData', [], $listener);
 
         // make sure the BadRequestException is thrown when request data is missing
-        $controller->request = $controller->request->withParsedBody([]);
+        $controller->setRequest($controller->getRequest()->withParsedBody([]));
         $this->assertNull($this->callProtectedMethod('_checkRequestData', [], $listener));
     }
 
@@ -1335,7 +1311,6 @@ class JsonApiListenerTest extends TestCase
 
         $subject->query = $query;
         $subject->query
-            ->expects($this->any())
             ->method('getRepository')
             ->willReturn(TableRegistry::get('Countries'));
 
@@ -1387,7 +1362,6 @@ class JsonApiListenerTest extends TestCase
             ->method('contain')
             ->with($expectedContain);
         $subject->query
-            ->expects($this->any())
             ->method('repository')
             ->willReturn(TableRegistry::get('Countries'));
 
@@ -1419,7 +1393,6 @@ class JsonApiListenerTest extends TestCase
             ->expects($this->once())
             ->method('contain');
         $subject->query
-            ->expects($this->any())
             ->method('getRepository')
             ->willReturn(TableRegistry::get('Countries'));
 

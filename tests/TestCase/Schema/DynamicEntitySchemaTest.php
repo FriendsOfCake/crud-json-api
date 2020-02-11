@@ -10,6 +10,7 @@ use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
+use Neomerx\JsonApi\Contracts\Schema\ContextInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaInterface;
 use Neomerx\JsonApi\Factories\Factory;
 use Neomerx\JsonApi\Schema\Identifier;
@@ -30,6 +31,17 @@ class DynamicEntitySchemaTest extends TestCase
         'plugin.CrudJsonApi.Cultures',
         'plugin.CrudJsonApi.Currencies',
     ];
+
+    /**
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        require CONFIG . 'routes.php';
+    }
+
 
     /**
      * Test NeoMerx override getAttributes().
@@ -73,12 +85,12 @@ class DynamicEntitySchemaTest extends TestCase
         // make view return associations on get('_associations') call
         $view = $this
             ->getMockBuilder(View::class)
-            ->setMethods(['get'])
+            ->onlyMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $view->set('_repositories', $repositories);
-        $view->set('_inflect', 'dasherize');
+        $view->setConfig('repositories', $repositories);
+        $view->setConfig('inflect', 'dasherize');
 
         // setup the schema
         $schemaFactoryInterface = $this
@@ -88,16 +100,20 @@ class DynamicEntitySchemaTest extends TestCase
 
         $schema = $this
             ->getMockBuilder(DynamicEntitySchema::class)
-            ->setMethods(null)
             ->setConstructorArgs([$schemaFactoryInterface, $view, $table])
+            ->onlyMethods([])
             ->getMock();
 
+        $this->setReflectionClassInstance($schema, DynamicEntitySchema::class);
         $this->setReflectionClassInstance($schema);
 
-        $this->setProtectedProperty('view', $view, $schema);
+        $this->setProtectedProperty('view', $view, DynamicEntitySchema::class);
+
+        $context = $this->getMockBuilder(ContextInterface::class)
+            ->getMock();
 
         // assert method
-        $result = $this->callProtectedMethod('getAttributes', [$entity], $schema);
+        $result = $this->callProtectedMethod('getAttributes', [$entity, $context], $schema);
 
         $this->assertSame('BG', $result['code']);
         $this->assertArrayNotHasKey('id', $result);
@@ -149,15 +165,18 @@ class DynamicEntitySchemaTest extends TestCase
         // make view return associations on get('_associations') call
         $view = new View();
 
-        $view->set('_repositories', $repositories);
-        $view->set('_absoluteLinks', false); // test relative links (listener default)
-        $view->set('_inflect', 'dasherize');
+        $view->setConfig('repositories', $repositories);
+        $view->setConfig('absoluteLinks', false); // test relative links (listener default)
+        $view->setConfig('inflect', 'dasherize');
+
 
         // setup the schema
         $schema = new DynamicEntitySchema(new Factory(), $view, $table);
 
         // assert getRelationships()
-        $relationships = $schema->getRelationships($entity);
+        $context = $this->getMockBuilder(ContextInterface::class)
+            ->getMock();
+        $relationships = $schema->getRelationships($entity, $context);
 
         $this->assertArrayHasKey('currency', $relationships);
         $this->assertSame($expectedCurrencyId, $relationships['currency'][SchemaInterface::RELATIONSHIP_DATA]['id']);
@@ -172,27 +191,27 @@ class DynamicEntitySchemaTest extends TestCase
         $expected = '/currencies/1';
         $result = $schema->getRelationshipSelfLink($entity, 'currency');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', get_class($result)));
 
         // assert generated belongsToLink using JsonApi (indirect link, requires custom JsonApiRoute)
         $view->set('_jsonApiBelongsToLinks', true);
         $expected = '/countries/2/relationships/currency';
         $result = $schema->getRelationshipSelfLink($entity, 'currency');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', get_class($result)));
 
         // assert _ getRelationshipSelfLinks() for plural (hasMany)
         $expected = '/cultures?country_id=2';
 
         $result = $schema->getRelationshipRelatedLink($entity, 'cultures');
         $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('value', $result));
+        $this->assertSame($expected, $this->getProtectedProperty('value', get_class($result)));
 
         // assert N-1 (i.e. belongs-to)  relationships are always included as a relationship
         unset($entity['currency']);
         $this->assertArrayNotHasKey('currency', $entity);
 
-        $result = $schema->getRelationships($entity);
+        $result = $schema->getRelationships($entity, $context);
         $this->assertArrayHasKey('currency', $result);
         $this->assertArrayHasKey('cultures', $result);
         $this->assertInstanceOf(Identifier::class, $result['currency'][DynamicEntitySchema::RELATIONSHIP_DATA]);
@@ -213,7 +232,7 @@ class DynamicEntitySchemaTest extends TestCase
         unset($entity['cultures']);
         $this->assertArrayNotHasKey('cultures', $entity);
 
-        $result = $schema->getRelationships($entity);
+        $result = $schema->getRelationships($entity, $context);
         $this->assertArrayNotHasKey('cultures', $result);
         $this->assertArrayHasKey('currency', $result);
 

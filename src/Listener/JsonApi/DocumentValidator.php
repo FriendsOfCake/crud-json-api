@@ -405,7 +405,7 @@ class DocumentValidator extends stdClass
      * @param string|\stdClass $path Dot separated path of relationship object or path object
      * @return bool
      */
-    protected function _relationshipDataMustHaveId(string $relationship, $path): void
+    protected function _relationshipDataMustHaveId(string $relationship, $path): bool
     {
         $path = $this->_getPathObject($path);
 

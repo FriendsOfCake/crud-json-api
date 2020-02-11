@@ -19,7 +19,7 @@ class ErrorsIntegrationTest extends JsonApiBaseTestCase
         $this->assertResponseCode(404);
         $this->_assertJsonApiResponseHeaders();
 
-        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_getBodyAsString());
+        $actualResponseBody = $this->_getResponseWithEmptyDebugNode($this->_getBodyAsString() . "\n");
         $this->assertResponseSameAsFile('Errors' . DS . '404-error-for-collection-in-debug-mode.json', $actualResponseBody);
     }
 

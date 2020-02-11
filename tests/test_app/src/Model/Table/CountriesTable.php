@@ -38,11 +38,11 @@ class CountriesTable extends Table
         // used for testing built-in validation rules/messages
         $validator
             ->requirePresence('name', 'create')
-            ->notEmpty('name');
+            ->notEmptyString('name');
 
         // used for testing user-defined rules/messages
         $validator
-            ->notEmpty('code')
+            ->notEmptyString('code')
             ->add('code', [
                 'UPPERCASE_ONLY' => [
                     'rule' => ['custom', '/^([A-Z]+)+$/'],

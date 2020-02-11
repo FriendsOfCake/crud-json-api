@@ -27,7 +27,7 @@ class PaginationListener extends BaseListener
     public function implementedEvents(): array
     {
         if (!$this->_checkRequestType('jsonapi')) {
-            return null;
+            return [];
         }
 
         return [
@@ -43,26 +43,18 @@ class PaginationListener extends BaseListener
      */
     public function beforeRender(EventInterface $event): void
     {
-        $request = $this->_request();
+        $paging = $this->_request()->getAttribute('paging');
 
-        if (empty($request->getParam('paging'))) {
+        if (empty($paging)) {
             return;
         }
 
-        $controller = $this->_controller();
-
-        [, $modelClass] = pluginSplit($controller->modelClass);
-
-        if (!array_key_exists($modelClass, $request->getParam('paging'))) {
-            return;
-        }
-
-        $pagination = $request->getParam('paging')[$modelClass];
+        $pagination = current($paging);
         if (empty($pagination)) {
             return;
         }
 
-        $controller->set('_pagination', $this->_getJsonApiPaginationResponse($pagination));
+        $this->_controller->viewBuilder()->setOption('pagination', $this->_getJsonApiPaginationResponse($pagination));
     }
 
     /**
@@ -73,7 +65,7 @@ class PaginationListener extends BaseListener
      */
     protected function _getJsonApiPaginationResponse(array $pagination): array
     {
-        $defaultUrl = array_intersect_key(
+        $query = array_intersect_key(
             $pagination,
             [
             'sort' => null,
@@ -84,14 +76,14 @@ class PaginationListener extends BaseListener
         );
 
         $request = $this->_request();
-        $defaultUrl += [
+        $query += [
             'include' => $request->getQuery('include'),
             'fields' => $request->getQuery('fields'),
             'filter' => $request->getQuery('filter'),
         ];
 
-        if ($defaultUrl['sort'] === null && $request->getQuery('sort')) {
-            $defaultUrl['sort'] = $request->getQuery('sort');
+        if ($query['sort'] === null && $request->getQuery('sort')) {
+            $query['sort'] = $request->getQuery('sort');
         }
 
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
@@ -100,9 +92,9 @@ class PaginationListener extends BaseListener
             [
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
-            'page' => $pagination['page'],
             '_method' => 'GET',
-            ] + $defaultUrl,
+            '?' => ['page' => $pagination['page']] + $query
+            ],
             $fullBase
         );
 
@@ -110,9 +102,9 @@ class PaginationListener extends BaseListener
             [
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
-            'page' => 1,
             '_method' => 'GET',
-            ] + $defaultUrl,
+            '?' => ['page' => 1] + $query
+            ],
             $fullBase
         );
 
@@ -122,7 +114,8 @@ class PaginationListener extends BaseListener
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
-            ] + $defaultUrl,
+            '?' => ['page' => $pagination['pageCount']] + $query
+            ],
             $fullBase
         );
 
@@ -132,9 +125,9 @@ class PaginationListener extends BaseListener
                 [
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
-                'page' => $pagination['page'] - 1,
+                '?' => ['page' => $pagination['page'] - 1] + $query,
                 '_method' => 'GET',
-                ] + $defaultUrl,
+                ],
                 $fullBase
             );
         }
@@ -145,9 +138,9 @@ class PaginationListener extends BaseListener
                 [
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
-                'page' => $pagination['page'] + 1,
+                '?' => ['page' => $pagination['page'] + 1] + $query,
                 '_method' => 'GET',
-                ] + $defaultUrl,
+                ],
                 $fullBase
             );
         }

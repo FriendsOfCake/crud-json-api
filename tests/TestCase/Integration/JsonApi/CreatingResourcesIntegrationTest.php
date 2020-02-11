@@ -4,9 +4,12 @@ declare(strict_types=1);
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 class CreatingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
+    use ArraySubsetAsserts;
+
     /**
      * Make sure attempts to side-post/create related hasMany records throws an exception.
      *
@@ -19,10 +22,14 @@ class CreatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 'Accept' => 'application/vnd.api+json',
                 'Content-Type' => 'application/vnd.api+json',
             ],
-            'input' => $this->_getJsonApiRequestBody('CreatingResources' . DS . 'create-country-throw-side-posting-exception.json'),
         ]);
 
-        $this->post('/countries');
+        $this->post(
+            '/countries',
+                $this->_getJsonApiRequestBody(
+                    'CreatingResources' . DS . 'create-country-throw-side-posting-exception.json'
+                )
+        );
         $this->assertResponseCode(400); // bad request
         $responseBodyArray = json_decode((string)$this->_response->getBody(), true);
 

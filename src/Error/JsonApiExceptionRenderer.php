@@ -33,13 +33,13 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      */
     protected function _outputMessage(string $template): Response
     {
-        if (!$this->controller->request->accepts('application/vnd.api+json')) {
+        if (!$this->controller->getRequest()->accepts('application/vnd.api+json')) {
             return parent::_outputMessage($template);
         }
 
-        $viewVars = $this->controller->viewVars;
-        $status = (string)$this->controller->response->getStatusCode(); // e.g. 404
-        $title = $this->controller->response->getReasonPhrase(); // e,g. Not Found
+        $viewVars = $this->controller->viewBuilder()->getVars();
+        $status = (string)$this->controller->getResponse()->getStatusCode(); // e.g. 404
+        $title = $this->controller->getResponse()->getReasonPhrase(); // e,g. Not Found
 
         // Only set JSON API `detail` field if `message` viewVar field is not
         // identical to the CakePHP HTTP Status Code description.
@@ -74,11 +74,11 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $stream->write($json);
 
         // set up the response
-        $this->controller->response = $this->controller->response
+        $this->controller->setResponse($this->controller->getResponse()
             ->withType('jsonapi')
-            ->withBody($stream);
+            ->withBody($stream));
 
-        return $this->controller->response;
+        return $this->controller->getResponse();
     }
 
     /**
@@ -90,17 +90,17 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      */
     public function validation(ValidationException $exception): Response
     {
-        if (!$this->controller->request->accepts('application/vnd.api+json')) {
+        if (!$this->controller->getRequest()->accepts('application/vnd.api+json')) {
             return parent::validation($exception);
         }
 
         $status = $exception->getCode();
 
         try {
-            $this->controller->response = $this->controller->response->withStatus($status);
+            $this->controller->setResponse($this->controller->getResponse()->withStatus($status));
         } catch (\Exception $e) {
             $status = 422;
-            $this->controller->response = $this->controller->response->withStatus($status);
+            $this->controller->setResponse($this->controller->getResponse()->withStatus($status));
         }
 
         $errorCollection = $this->_getNeoMerxErrorCollection($exception->getValidationErrors());
@@ -118,11 +118,11 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $stream->write($json);
 
         // set up the response
-        $this->controller->response = $this->controller->response
+        $this->controller->setResponse($this->controller->getResponse()
             ->withType('jsonapi')
-            ->withBody($stream);
+            ->withBody($stream));
 
-        return $this->controller->response;
+        return $this->controller->getResponse();
     }
 
     /**
@@ -172,7 +172,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      */
     protected function _addDebugNode(string $json): string
     {
-        $viewVars = $this->controller->viewVars;
+        $viewVars = $this->controller->viewBuilder()->getVars();
 
         if (empty($viewVars['error'])) {
             return $json;

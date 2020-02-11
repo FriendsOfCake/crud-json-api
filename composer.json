@@ -38,7 +38,8 @@
         "phpunit/phpunit": "^8.0",
         "friendsofcake/cakephp-test-utilities": "^2.0",
         "friendsofcake/search": "^6.0.0-beta",
-        "cakephp/cakephp-codesniffer": "^4.0"
+        "cakephp/cakephp-codesniffer": "^4.0",
+        "dms/phpunit-arraysubset-asserts": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
@@ -48,6 +49,7 @@
     "autoload-dev": {
         "psr-4": {
             "CrudJsonApi\\Test\\": "tests",
+            "CrudJsonApi\\Test\\App\\": "tests/test_app/src",
             "Cake\\Test\\Fixture\\": "./vendor/cakephp/cakephp/tests/Fixture"
         }
     },

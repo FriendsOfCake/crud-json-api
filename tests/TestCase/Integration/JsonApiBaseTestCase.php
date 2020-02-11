@@ -51,14 +51,6 @@ abstract class JsonApiBaseTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->deprecated(function () {
-            Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
-        });
-
-        // Enable PSR-7 integration testing
-        $this->useHttpServer(true);
-
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
         Router::scope('/', function ($routes) {
@@ -86,8 +78,8 @@ abstract class JsonApiBaseTestCase extends TestCase
         ]);
 
         // set path to the JSON API fixtures
-        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
-        $this->_JsonApiRequestBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiRequestBodies';
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiRequestBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiRequestBodies';
     }
 
     /**
@@ -131,7 +123,7 @@ abstract class JsonApiBaseTestCase extends TestCase
     {
         $file = $this->_JsonApiRequestBodyFixtures . DS . $file;
 
-        return trim((new File($file))->read());
+        return trim(file_get_contents($file));
     }
 
     /**

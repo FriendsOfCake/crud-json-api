@@ -97,7 +97,7 @@ class DynamicEntitySchema extends BaseSchema
 
         $repositoryName = $entity->getSource();
 
-        return $this->view->get('_repositories')[$repositoryName];
+        return $this->view->getConfig('repositories')[$repositoryName];
     }
 
     /**
@@ -219,7 +219,7 @@ class DynamicEntitySchema extends BaseSchema
 
             if (!$data && !is_array($foreignKey)) {
                 $data = new Identifier(
-                    $entity->get($foreignKey),
+                    (string)$entity->get($foreignKey),
                     $this->getTypeFromRepository($association->getTarget())
                 );
             }
@@ -254,7 +254,7 @@ class DynamicEntitySchema extends BaseSchema
             '_method' => 'GET',
             'action' => 'view',
             ],
-            $this->view->get('_absoluteLinks')
+            $this->view->getConfig('absoluteLinks', false)
         );
     }
 
@@ -307,7 +307,7 @@ class DynamicEntitySchema extends BaseSchema
                 'from' => $this->getRepository()->getRegistryAlias(),
                 'type' => $name,
                 ],
-                $this->view->get('_absoluteLinks')
+                $this->view->getConfig('absoluteLinks', false)
             );
         } else {
             $name = Inflector::dasherize($name);
@@ -324,7 +324,7 @@ class DynamicEntitySchema extends BaseSchema
                 '_method' => 'GET',
                 'action' => 'view',
                 ],
-                $this->view->get('_absoluteLinks')
+                $this->view->getConfig('absoluteLinks', false)
             );
         }
 
@@ -357,11 +357,12 @@ class DynamicEntitySchema extends BaseSchema
         $keys = array_combine($foreignKeys, $primaryKeys);
 
         $url = Router::url(
-            $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
+            $this->_getRepositoryRoutingParameters($relatedRepository) + [
                 '_method' => 'GET',
                 'action' => 'index',
+                '?' => $keys
             ],
-            $this->view->get('_absoluteLinks')
+            $this->view->getConfig('absoluteLinks', false)
         );
 
         return $this->getFactory()

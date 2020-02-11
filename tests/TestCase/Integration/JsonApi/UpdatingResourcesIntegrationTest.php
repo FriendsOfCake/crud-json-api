@@ -6,9 +6,12 @@ namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
+    use ArraySubsetAsserts;
+
     /**
      * PhpUnit Data Provider that will call `testUpdateResource()` for every array entry
      * so we can test multiple successful PATCH requests without repeating ourselves.

@@ -39,7 +39,7 @@ class JsonApiListener extends ApiListener
      */
     protected $_defaultConfig = [
         'detectors' => [
-            'jsonapi' => ['ext' => false, 'accepts' => 'application/vnd.api+json'],
+            'jsonapi' => ['ext' => false, 'accept' => ['application/vnd.api+json']],
         ],
         'exception' => [
             'type' => 'default',
@@ -92,14 +92,6 @@ class JsonApiListener extends ApiListener
         if (!$this->_checkRequestType('jsonapi')) {
             return [];
         }
-
-        // accept body data posted with Content-Type `application/vnd.api+json`
-        $this->_controller()->RequestHandler->setConfig(
-            'inputTypeMap',
-            [
-            'jsonapi' => ['json_decode', true],
-            ]
-        );
 
         return [
             'Crud.beforeHandle' => ['callable' => [$this, 'beforeHandle'], 'priority' => 10],
@@ -210,18 +202,18 @@ class JsonApiListener extends ApiListener
             // prevent clients attempting to side-post/create related hasMany records
             if ($this->_request()->getMethod() === 'POST') {
                 throw new BadRequestException(
-                    'JSON API 1.1 does not support sideposting
-                    (hasMany relationships detected in the request body)'
+                    'JSON API 1.1 does not support sideposting ' .
+                    '(hasMany relationships detected in the request body)'
                 );
             }
 
             // hasMany found in the entity, extract ids from the request data
-            $primaryResourceId = $this->_controller()->request->getData('id');
+            $primaryResourceId = $this->_controller()->getRequest()->getData('id');
 
             /**
  * @var array $hasManyIds
 */
-            $hasManyIds = Hash::extract($this->_controller()->request->getData($key), '{n}.id');
+            $hasManyIds = Hash::extract($this->_controller()->getRequest()->getData($key), '{n}.id');
             $hasManyTable = TableRegistry::get($associationName);
 
             // query database only for hasMany that match both passed id and the id of the primary resource
@@ -259,9 +251,9 @@ class JsonApiListener extends ApiListener
      * afterSave() event.
      *
      * @param  \Cake\Event\EventInterface $event Event
-     * @return false|null
+     * @return true|null
      */
-    public function afterSave(EventInterface $event)
+    public function afterSave(EventInterface $event): ?bool
     {
         if (!$event->getSubject()->success) {
             return false;
@@ -275,7 +267,7 @@ class JsonApiListener extends ApiListener
         // The `add`action (new Resource) MUST respond with HTTP Status Code 201,
         // see http://jsonapi.org/format/#crud-creating-responses-201
         if ($event->getSubject()->created) {
-            $this->_controller()->response = $this->_controller()->response->withStatus(201);
+            $this->_controller()->setResponse($this->_controller()->getResponse()->withStatus(201));
         }
 
         /**
@@ -283,6 +275,8 @@ class JsonApiListener extends ApiListener
 */
         $subject = $event->getSubject();
         $this->render($subject);
+
+        return null;
     }
 
     /**
@@ -301,7 +295,7 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        $this->_controller()->response = $this->_controller()->response->withStatus(204);
+        $this->_controller()->setResponse($this->_controller()->getResponse()->withStatus(204));
     }
 
     /**
@@ -526,10 +520,10 @@ class JsonApiListener extends ApiListener
     /**
      * BeforeFind event listener to parse any supplied query parameters
      *
-     * @param  \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      */
-    public function beforeFind(Event $event): void
+    public function beforeFind(EventInterface $event): void
     {
         //Inject default query handlers
         $queryParameters = Hash::merge(
@@ -657,18 +651,16 @@ class JsonApiListener extends ApiListener
      */
     protected function _renderWithoutResources(): Response
     {
-        $this->_controller()->set(
-            [
-            '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
-            '_meta' => $this->getConfig('meta'),
-            '_links' => $this->getConfig('links'),
-            '_absoluteLinks' => $this->getConfig('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
-            '_jsonOptions' => $this->getConfig('jsonOptions'),
-            '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
-            '_serialize' => true,
-            ]
-        );
+        $this->_controller()->viewBuilder()->setOptions([
+            'withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
+            'meta' => $this->getConfig('meta'),
+            'links' => $this->getConfig('links'),
+            'absoluteLinks' => $this->getConfig('absoluteLinks'),
+            'jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
+            'jsonOptions' => $this->getConfig('jsonOptions'),
+            'debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
+            'serialize' => true,
+        ]);
 
         return $this->_controller()->render();
     }
@@ -706,23 +698,26 @@ class JsonApiListener extends ApiListener
         }
 
         // Set data before rendering the view
-        $this->_controller()->set(
-            [
-            '_withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
-            '_meta' => $this->getConfig('meta'),
-            '_links' => $this->getConfig('links'),
-            '_absoluteLinks' => $this->getConfig('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
-            '_jsonOptions' => $this->getConfig('jsonOptions'),
-            '_debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
-            '_repositories' => $this->_getRepositoryList($repository, $usedAssociations),
-            '_include' => $include,
-            '_fieldSets' => $this->getConfig('fieldSets'),
+        $this->_controller()->viewBuilder()->setOptions([
+            'withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
+            'meta' => $this->getConfig('meta'),
+            'links' => $this->getConfig('links'),
+            'absoluteLinks' => $this->getConfig('absoluteLinks'),
+            'jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
+            'jsonOptions' => $this->getConfig('jsonOptions'),
+            'debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
+            'fieldSets' => $this->getConfig('fieldSets'),
+            'serialize' => true,
+            'inflect' => $this->getConfig('inflect'),
+            'include' => $include,
+            'repositories' => $this->_getRepositoryList(
+                $repository,
+                $usedAssociations
+            ),
+        ]);
+        $this->_controller()->set([
             Inflector::tableize($repository->getAlias()) => $this->_getFindResult($subject),
-            '_serialize' => true,
-            '_inflect' => $this->getConfig('inflect'),
-            ]
-        );
+        ]);
 
         return $this->_controller()->render();
     }
@@ -935,9 +930,11 @@ class JsonApiListener extends ApiListener
             $associationKey = strtolower($association->getName());
             $entityKey = $association->getProperty();
             if (!empty($entity->$entityKey)) {
+                $associationEntity = $entity->$entityKey;
+                $associationEntity = is_array($associationEntity) ? current($associationEntity) : $associationEntity;
                 $associations[$associationKey] = [
                     'association' => $association,
-                    'children' => $this->_extractEntityAssociations($association->getTarget(), $entity->$entityKey),
+                    'children' => $this->_extractEntityAssociations($association->getTarget(), $associationEntity),
                 ];
             }
         }
@@ -1026,18 +1023,18 @@ class JsonApiListener extends ApiListener
      */
     protected function _checkRequestData(): void
     {
-        $requestMethod = $this->_controller()->request->getMethod();
+        $requestMethod = $this->_controller()->getRequest()->getMethod();
 
         if ($requestMethod !== 'POST' && $requestMethod !== 'PATCH') {
             return;
         }
 
-        $requestData = $this->_controller()->request->getData();
+        $requestData = $this->_controller()->getRequest()->getData();
 
         if (empty($requestData)) {
             throw new BadRequestException(
-                'Missing request data required for POST and PATCH methods.
-                 Make sure that you are sending a request body and that it is valid JSON.'
+                'Missing request data required for POST and PATCH methods. ' .
+                 'Make sure that you are sending a request body and that it is valid JSON.'
             );
         }
 
@@ -1058,14 +1055,14 @@ class JsonApiListener extends ApiListener
         // because JSON API considers it immutable. https://github.com/json-api/json-api/issues/481
         if (
             ($requestMethod === 'PATCH') &&
-            ($this->_controller()->request->getParam('id') !== $decodedJsonApi['id'])
+            ($this->_controller()->getRequest()->getParam('id') !== $decodedJsonApi['id'])
         ) {
             throw new BadRequestException(
-                "URL id does not match request data id as required for JSON API PATCH actions"
+                'URL id does not match request data id as required for JSON API PATCH actions'
             );
         }
 
-        $this->_controller()->request = $this->_controller()->request->withParsedBody($decodedJsonApi);
+        $this->_controller()->setRequest($this->_controller()->getRequest()->withParsedBody($decodedJsonApi));
     }
 
     /**
@@ -1106,9 +1103,9 @@ class JsonApiListener extends ApiListener
      * Please note that decoding hasMany relationships has not yet been implemented.
      *
      * @param  array $document Request data document array
-     * @return bool
+     * @return array
      */
-    protected function _convertJsonApiDocumentArray(array $document): bool
+    protected function _convertJsonApiDocumentArray(array $document): array
     {
         $result = [];
 

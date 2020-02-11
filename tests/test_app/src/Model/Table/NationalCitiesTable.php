@@ -18,7 +18,7 @@ class NationalCitiesTable extends Table
     {
         $validator
             ->requirePresence('name', 'create')
-            ->notEmpty('name');
+            ->notEmptyString('name');
 
         return $validator;
     }

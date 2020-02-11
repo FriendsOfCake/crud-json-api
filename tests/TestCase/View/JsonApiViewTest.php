@@ -10,14 +10,16 @@ use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\StringCompareTrait;
+use Cake\View\View;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\View\JsonApiView;
 use Neomerx\JsonApi\Schema\Link;
 use StdClass;
+use Crud\Error\Exception\CrudException;
 
 /**
  * Licensed under The MIT License
@@ -50,7 +52,7 @@ class JsonApiViewTest extends TestCase
      *
      * @var array
      */
-    protected $_defaultViewVars;
+    protected $_defaultOptions;
 
     /**
      * setUp
@@ -59,72 +61,72 @@ class JsonApiViewTest extends TestCase
     {
         parent::setUp();
 
-        $this->deprecated(function () {
-            Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
-        });
+        require CONFIG . 'routes.php';
 
         $listener = new JsonApiListener(new Controller());
-        $this->_defaultViewVars = $listener->getConfig();
 
-        $this->_defaultViewVars = [
-            '_urlPrefix' => $listener->getConfig('urlPrefix'),
-            '_withJsonApiVersion' => $listener->getConfig('withJsonApiVersion'),
-            '_meta' => $listener->getConfig('meta'),
-            '_absoluteLinks' => $listener->getConfig('absoluteLinks'),
-            '_jsonApiBelongsToLinks' => $listener->getConfig('jsonApiBelongsToLinks'),
-            '_include' => $listener->getConfig('include'),
-            '_fieldSets' => $listener->getConfig('fieldSets'),
-            '_jsonOptions' => $listener->getConfig('jsonOptions'),
-            '_debugPrettyPrint' => $listener->getConfig('debugPrettyPrint'),
-            '_inflect' => $listener->getConfig('inflect'),
-        ];
+        $this->_defaultOptions = [
+            'urlPrefix' => $listener->getConfig('urlPrefix'),
+            'withJsonApiVersion' => $listener->getConfig('withJsonApiVersion'),
+            'meta' => $listener->getConfig('meta'),
+            'absoluteLinks' => $listener->getConfig('absoluteLinks'),
+            'jsonApiBelongsToLinks' => $listener->getConfig('jsonApiBelongsToLinks'),
+            'include' => $listener->getConfig('include'),
+            'fieldSets' => $listener->getConfig('fieldSets'),
+            'jsonOptions' => $listener->getConfig('jsonOptions'),
+            'debugPrettyPrint' => $listener->getConfig('debugPrettyPrint'),
+            'inflect' => $listener->getConfig('inflect'),
+        ] + $listener->getConfig();
 
         // override some defaults to create more DRY tests
-        $this->_defaultViewVars['_jsonOptions'] = [JSON_PRETTY_PRINT];
-        $this->_defaultViewVars['_serialize'] = true;
+        $this->_defaultOptions['jsonOptions'] = [JSON_PRETTY_PRINT];
+        $this->_defaultOptions['serialize'] = true;
 
         // set path the the JSON API response fixtures
-        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
     }
 
     /**
      * Make sure we are testing with expected configuration settings.
      */
-    public function testDefaultViewVars()
+    public function testDefaultViewVars(): void
     {
         $expected = [
-            '_urlPrefix' => null,
-            '_withJsonApiVersion' => false,
-            '_meta' => [],
-            '_absoluteLinks' => false,
-            '_jsonApiBelongsToLinks' => false,
-            '_include' => [],
-            '_fieldSets' => [],
-            '_jsonOptions' => [
+            'urlPrefix' => null,
+            'withJsonApiVersion' => false,
+            'meta' => [],
+            'absoluteLinks' => false,
+            'jsonApiBelongsToLinks' => false,
+            'include' => [],
+            'fieldSets' => [],
+            'jsonOptions' => [
                 JSON_PRETTY_PRINT,
             ],
-            '_debugPrettyPrint' => true,
-            '_inflect' => 'dasherize',
-            '_serialize' => true,
+            'debugPrettyPrint' => true,
+            'inflect' => 'dasherize',
+            'serialize' => true,
         ];
-        $this->assertSame($expected, $this->_defaultViewVars);
+        foreach ($expected as $key => $value) {
+            $this->assertArrayHasKey($key, $this->_defaultOptions);
+            $this->assertSame($value, $this->_defaultOptions[$key]);
+        }
     }
 
     /**
      * Helper function to easily create specific view for each test.
      *
-     * @param string|bool $tableName False to get view for resource-less response
+     * @param string|null $tableName False to get view for resource-less response
      * @param array $viewVars
-     * @return string NeoMerx jsonapi encoded array
+     * @param array $options
+     * @return \Cake\View\View NeoMerx jsonapi encoded array
      */
-    protected function _getView($tableName, $viewVars)
+    protected function _getView(?string $tableName, array $viewVars = [], array $options = []): View
     {
         // determine user configurable viewVars
-        if (empty($viewVars)) {
-            $viewVars = $this->_defaultViewVars;
+        if (empty($options)) {
+            $options = $this->_defaultOptions;
         } else {
-            $viewVars = array_replace_recursive($this->_defaultViewVars, $viewVars);
+            $options = array_replace_recursive($this->_defaultOptions, $options);
         }
 
         // create required (but non user configurable) viewVars next
@@ -133,7 +135,9 @@ class JsonApiViewTest extends TestCase
         $controller = new Controller($request, $response, $tableName);
 
         $builder = $controller->viewBuilder();
-        $builder->setClassName(JsonApiView::class);
+        $builder
+            ->setClassName(JsonApiView::class)
+            ->setOptions($options);
 
         // create view with viewVars for resource-less response
         if (!$tableName) {
@@ -147,9 +151,9 @@ class JsonApiViewTest extends TestCase
         $table = $controller->loadModel(); // table object
 
         // fetch data from test viewVar normally found in subject
-        $subject = new Subject(new Event('Crud.beforeHandle'));
+        $subject = new Subject(['event' => new Event('Crud.beforeHandle')]);
         $findResult = $viewVars[$table->getTable()];
-        if (is_a($findResult, '\Cake\ORM\ResultSet')) {
+        if (is_a($findResult, ResultSet::class)) {
             $subject->entities = $findResult;
         } else {
             $subject->entity = $findResult;
@@ -161,17 +165,17 @@ class JsonApiViewTest extends TestCase
         $listener = $this
             ->getMockBuilder(JsonApiListener::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock();
 
         $this->setReflectionClassInstance($listener);
         $associations = $this->callProtectedMethod('_getContainedAssociations', [$table, $subject->query->getContain()], $listener);
         $repositories = $this->callProtectedMethod('_getRepositoryList', [$table, $associations], $listener);
 
-        $viewVars['_repositories'] = $repositories;
-        $viewVars['_associations'] = $associations;
-
         // set viewVars before creating the view
+        $controller->viewBuilder()
+            ->setOption('repositories', $repositories)
+            ->setOption('associations', $associations);
+
         $controller->set($viewVars);
 
         return $controller->createView();
@@ -182,7 +186,7 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testGetSpecialVars()
+    public function testGetSpecialVars(): void
     {
         $view = $this->_getView('Countries', [
             'countries' => 'dummy-value',
@@ -202,14 +206,14 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testEncodeWithGenericEntity()
+    public function testEncodeWithGenericEntity(): void
     {
-        $this->expectException('Crud\Error\Exception\CrudException');
+        $this->expectException(CrudException::class);
         $this->expectExceptionMessage('Entity classes must not be the generic "Cake\ORM\Entity" class for repository "Countries"');
-        TableRegistry::get('Countries')->setEntityClass(Entity::class);
+        $this->getTableLocator()->get('Countries')->setEntityClass(Entity::class);
 
         // test collection of entities without relationships
-        $countries = TableRegistry::get('Countries')
+        $countries = $this->getTableLocator()->get('Countries')
             ->find()
             ->all();
         $view = $this->_getView('Countries', [
@@ -229,10 +233,10 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testEncodeWithDynamicSchemas()
+    public function testEncodeWithDynamicSchemas(): void
     {
         // test collection of entities without relationships
-        $countries = TableRegistry::get('Countries')->find()->all();
+        $countries = $this->getTableLocator()->get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
         ]);
@@ -243,7 +247,7 @@ class JsonApiViewTest extends TestCase
         );
 
         // test single entity without relationships
-        $countries = TableRegistry::get('Countries')->find()->first();
+        $countries = $this->getTableLocator()->get('Countries')->find()->first();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
         ]);
@@ -259,17 +263,17 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testEncodeWithoutSchemas()
+    public function testEncodeWithoutSchemas(): void
     {
         // make sure empty body is rendered
-        $view = $this->_getView(false, [
-            '_meta' => false,
+        $view = $this->_getView(null, [], [
+            'meta' => false,
         ]);
-        $this->assertNull($view->render());
+        $this->assertSame('', $view->render());
 
         // make sure body with only/just `meta` node is rendered
-        $view = $this->_getView(false, [
-            '_meta' => [
+        $view = $this->_getView(null, [], [
+            'meta' => [
                 'author' => 'bravo-kernel',
             ],
         ]);
@@ -285,27 +289,30 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testOptionalWithJsonApiVersion()
+    public function testOptionalWithJsonApiVersion(): void
     {
         // make sure top-level node is added when true
-        $countries = TableRegistry::get('Countries')->find()->all();
+        $countries = $this->getTableLocator()->get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_withJsonApiVersion' => true,
+        ], [
+            'withJsonApiVersion' => true,
         ]);
         $expectedVersionArray = [
             'jsonapi' => [
                 'version' => '1.1',
             ],
         ];
-        $this->assertArrayHasKey('jsonapi', json_decode($view->render(), true));
-        $this->assertSame(['version' => '1.1'], json_decode($view->render(), true)['jsonapi']);
+        $jsonApi = json_decode($view->render(), true);
+        $this->assertArrayHasKey('jsonapi', $jsonApi);
+        $this->assertSame(['version' => '1.1'], $jsonApi['jsonapi']);
 
         // make sure top-level node is added when passed an array
-        $countries = TableRegistry::get('Countries')->find()->all();
+        $countries = $this->getTableLocator()->get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_withJsonApiVersion' => [
+        ], [
+            'withJsonApiVersion' => [
                 'meta-key-1' => 'meta-val-1',
                 'meta-key-2' => 'meta-val-2',
             ],
@@ -335,13 +342,14 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testOptionalMeta()
+    public function testOptionalMeta(): void
     {
         // make sure top-level node is added when passed an array
-        $countries = TableRegistry::get('Countries')->find()->all();
+        $countries = $this->getTableLocator()->get('Countries')->find()->all();
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_meta' => [
+            ], [
+            'meta' => [
                 'author' => 'bravo-kernel',
             ],
         ]);
@@ -365,7 +373,8 @@ class JsonApiViewTest extends TestCase
         // (as supported by the jsonapi spec)
         $view = $this->_getView('Countries', [
             'countries' => null,
-            '_meta' => [
+            ], [
+            'meta' => [
                 'author' => 'bravo-kernel',
             ],
         ]);
@@ -383,10 +392,10 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testOptionalDebugPrettyPrint()
+    public function testOptionalDebugPrettyPrint(): void
     {
         // make sure pretty json is generated when true AND in debug mode
-        $countries = TableRegistry::get('Countries')
+        $countries = $this->getTableLocator()->get('Countries')
             ->find()
             ->first();
         $this->assertTrue(Configure::read('debug'));
@@ -401,14 +410,15 @@ class JsonApiViewTest extends TestCase
         );
 
         // make sure we can produce non-pretty in debug mode as well
-        $countries = TableRegistry::get('Countries')
+        $countries = $this->getTableLocator()->get('Countries')
             ->find()
             ->first();
         $this->assertTrue(Configure::read('debug'));
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_debugPrettyPrint' => false,
-            '_jsonOptions' => 0,
+        ], [
+            'debugPrettyPrint' => false,
+            'jsonOptions' => 0,
         ]);
 
         $this->assertSame(
@@ -422,9 +432,9 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testResourceTypes()
+    public function testResourceTypes(): void
     {
-        $countries = TableRegistry::get('Countries')
+        $countries = $this->getTableLocator()->get('Countries')
             ->find()
             ->first();
         $view = $this->_getView('Countries', [
@@ -439,10 +449,10 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testGetDataToSerializeFromViewVarsSuccess()
+    public function testGetDataToSerializeFromViewVarsSuccess(): void
     {
         $view = $this
-            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
+            ->getMockBuilder(JsonApiView::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -450,9 +460,9 @@ class JsonApiViewTest extends TestCase
         $this->setReflectionClassInstance($view);
 
         // make sure set expected data is returned when _serialize is true
-        $view->viewVars = [
+        $view->set([
             'countries' => 'dummy-would-normally-be-an-entity-or-resultset',
-        ];
+        ]);
 
         $this->assertSame(
             'dummy-would-normally-be-an-entity-or-resultset',
@@ -462,17 +472,16 @@ class JsonApiViewTest extends TestCase
         // make sure null is returned when no data is found (which would mean
         // only _specialVars were set and since these are all flipped it leads
         // to a null result)
-        $view->viewVars = [
-            '_meta' => false,
-            ];
+        $view->setConfig('meta', false);
+        $view->set('countries', null);
         $this->assertNull($this->callProtectedMethod('_getDataToSerializeFromViewVars', [], $view));
 
         // When passing an array as _serialize ONLY the first entity in that
         // array list will be used to return the corresponding viewar as $data.
-        $view->viewVars = [
+        $view->set([
             'countries' => 'dummy-country-would-normally-be-an-entity-or-resultset',
             'currencies' => 'dummy-currency-would-normally-be-an-entity-or-resultset',
-        ];
+        ]);
 
         $parameters = [
             'countries',
@@ -486,9 +495,10 @@ class JsonApiViewTest extends TestCase
 
         // In this case the first entity in the _serialize array does not have
         // a corresponding viewVar so null will be returned as data.
-        $view->viewVars = [
+        $view->set([
             'currencies' => 'dummy-currency-would-normally-be-an-entity-or-resultset',
-        ];
+            'countries' => null,
+        ]);
 
         $parameters = [
             'countries',
@@ -501,14 +511,16 @@ class JsonApiViewTest extends TestCase
     /**
      * Make sure `_serialize` will not accept an object
      */
-    public function testGetDataToSerializeFromViewVarsObjectExcecption()
+    public function testGetDataToSerializeFromViewVarsObjectExcecption(): void
     {
-        $this->expectException('Crud\Error\Exception\CrudException');
-        $this->expectExceptionMessage('Assigning an object to JsonApiListener "_serialize" is deprecated, assign the object to its own variable and assign "_serialize" = true instead.');
+        $this->expectException(CrudException::class);
+        $this->expectExceptionMessage(
+            'Assigning an object to JsonApiListener "serialize" is deprecated, ' .
+            'assign the object to its own variable and assign "serialize" = true instead.'
+        );
         $view = $this
-            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
+            ->getMockBuilder(JsonApiView::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock();
 
         $this->setReflectionClassInstance($view);
@@ -520,10 +532,10 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testJsonOptions()
+    public function testJsonOptions(): void
     {
         $view = $this
-            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
+            ->getMockBuilder(JsonApiView::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -532,47 +544,53 @@ class JsonApiViewTest extends TestCase
 
         // test debug mode with `debugPrettyPrint` option disabled
         $this->assertTrue(Configure::read('debug'));
-        $view->viewVars = [
-            '_debugPrettyPrint' => false,
-            '_jsonOptions' => [
-                JSON_HEX_AMP, // 2
-                JSON_HEX_QUOT, // 8
-            ],
-        ];
+        $view
+            ->setConfig('debugPrettyPrint', false)
+            ->setConfig('jsonOptions',
+                    [
+                        JSON_HEX_AMP, // 2
+                        JSON_HEX_QUOT, // 8
+                    ]);
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
 
         // test debug mode with `debugPrettyPrint` option enabled
         $this->assertTrue(Configure::read('debug'));
-        $view->viewVars = [
-            '_debugPrettyPrint' => true, //128
-            '_jsonOptions' => [
-                JSON_HEX_AMP, // 2
-                JSON_HEX_QUOT, // 8
-            ],
-        ];
+        $view
+            ->setConfig('debugPrettyPrint', true)
+            ->setConfig(
+                'jsonOptions',
+                [
+                    JSON_HEX_AMP, // 2
+                    JSON_HEX_QUOT, // 8
+                ]
+            );
         $this->assertEquals(138, $this->callProtectedMethod('_jsonOptions', [], $view));
 
         // test production mode with `debugPrettyPrint` option disabled
         Configure::write('debug', false);
         $this->assertFalse(Configure::read('debug'));
-        $view->viewVars = [
-            '_debugPrettyPrint' => false,
-            '_jsonOptions' => [
-                JSON_HEX_AMP, // 2
-                JSON_HEX_QUOT, // 8
-            ],
-        ];
+        $view
+            ->setConfig('debugPrettyPrint', false)
+            ->setConfig(
+                'jsonOptions',
+                [
+                    JSON_HEX_AMP, // 2
+                    JSON_HEX_QUOT, // 8
+                ]
+            );
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
 
         // test production mode with `debugPrettyPrint` option enabled
         $this->assertFalse(Configure::read('debug'));
-        $view->viewVars = [
-            '_debugPrettyPrint' => true,
-            '_jsonOptions' => [
-                JSON_HEX_AMP, // 2
-                JSON_HEX_QUOT, // 8
-            ],
-        ];
+        $view
+            ->setConfig('debugPrettyPrint', true)
+            ->setConfig(
+                'jsonOptions',
+                [
+                    JSON_HEX_AMP, // 2
+                    JSON_HEX_QUOT, // 8
+                ]
+            );
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
     }
 
@@ -582,13 +600,14 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testApiPaginationListener()
+    public function testApiPaginationListener(): void
     {
-        $countries = TableRegistry::get('Countries')->find()->first();
+        $countries = $this->getTableLocator()->get('Countries')->find()->first();
 
         $view = $this->_getView('Countries', [
             'countries' => $countries,
-            '_pagination' => [
+        ], [
+            'pagination' => [
                 'self' => '/countries?page=2',
                 'first' => '/countries?page=1',
                 'last' => '/countries?page=3',
@@ -606,11 +625,11 @@ class JsonApiViewTest extends TestCase
         $this->assertArrayHasKey('links', $jsonArray);
         $links = $jsonArray['links'];
 
-        $this->assertEquals($links['self'], '/countries?page=2');
-        $this->assertEquals($links['first'], '/countries?page=1');
-        $this->assertEquals($links['last'], '/countries?page=3');
-        $this->assertEquals($links['prev'], '/countries?page=1');
-        $this->assertEquals($links['next'], '/countries?page=3');
+        $this->assertEquals('/countries?page=2', $links['self']);
+        $this->assertEquals('/countries?page=1', $links['first']);
+        $this->assertEquals('/countries?page=3', $links['last']);
+        $this->assertEquals('/countries?page=1', $links['prev']);
+        $this->assertEquals('/countries?page=3', $links['next']);
 
         // assert `meta` node is filled as expected
         $this->assertArrayHasKey('meta', $jsonArray);
@@ -627,7 +646,7 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testGetPaginationLinks()
+    public function testGetPaginationLinks(): void
     {
         $pagination = [
             'self' => 'http://api.app/v0/countries?page=2',
@@ -641,7 +660,7 @@ class JsonApiViewTest extends TestCase
         ];
 
         $view = $this
-            ->getMockBuilder('\CrudJsonApi\View\JsonApiView')
+            ->getMockBuilder(JsonApiView::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -662,9 +681,9 @@ class JsonApiViewTest extends TestCase
      *
      * @return void
      */
-    public function testApiQueryLogListener()
+    public function testApiQueryLogListener(): void
     {
-        $countries = TableRegistry::get('Countries')->find()->first();
+        $countries = $this->getTableLocator()->get('Countries')->find()->first();
 
         $view = $this->_getView('Countries', [
             'countries' => $countries,
