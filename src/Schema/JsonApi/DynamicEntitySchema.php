@@ -12,6 +12,7 @@ use Cake\Utility\Inflector;
 use Cake\View\View;
 use InvalidArgumentException;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
+use Neomerx\JsonApi\Contracts\Schema\ContextInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Schema\BaseSchema;
 use Neomerx\JsonApi\Schema\Identifier;
@@ -139,10 +140,11 @@ class DynamicEntitySchema extends BaseSchema
      * NeoMerx override used to pass entity root properties to be shown
      * as JsonApi `attributes`.
      *
-     * @param  \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
      */
-    public function getAttributes($entity): iterable
+    public function getAttributes($entity, ContextInterface $context): iterable
     {
         $entity->setHidden((array)$this->getRepository()->getPrimaryKey(), true);
 
@@ -182,9 +184,10 @@ class DynamicEntitySchema extends BaseSchema
      * JSON API optional `related` links not implemented yet.
      *
      * @param  \Cake\Datasource\EntityInterface $entity Entity object
+     * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
      */
-    public function getRelationships($entity): iterable
+    public function getRelationships($entity, ContextInterface $context): iterable
     {
         $relations = [];
 
