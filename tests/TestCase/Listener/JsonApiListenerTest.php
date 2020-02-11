@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Test\TestCase\Listener;
 
-use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Event\Event;

@@ -42,7 +42,6 @@ class DynamicEntitySchemaTest extends TestCase
         require CONFIG . 'routes.php';
     }
 
-
     /**
      * Test NeoMerx override getAttributes().
      *
@@ -168,7 +167,6 @@ class DynamicEntitySchemaTest extends TestCase
         $view->setConfig('repositories', $repositories);
         $view->setConfig('absoluteLinks', false); // test relative links (listener default)
         $view->setConfig('inflect', 'dasherize');
-
 
         // setup the schema
         $schema = new DynamicEntitySchema(new Factory(), $view, $table);

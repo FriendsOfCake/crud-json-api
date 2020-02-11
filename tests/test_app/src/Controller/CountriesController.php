@@ -21,8 +21,9 @@ class CountriesController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
-        $this->loadComponent('Crud.Crud',
-                             [
+        $this->loadComponent(
+            'Crud.Crud',
+            [
                                  'actions' => [
                                      'Crud.Index',
                                      'Crud.Add',
@@ -35,6 +36,7 @@ class CountriesController extends Controller
                                      'CrudJsonApi.Pagination',
                                      'Crud.Search',
                                  ],
-                             ]);
+            ]
+        );
     }
 }

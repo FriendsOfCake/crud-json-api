@@ -13,13 +13,13 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\StringCompareTrait;
 use Cake\View\View;
+use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
 use CrudJsonApi\View\JsonApiView;
 use Neomerx\JsonApi\Schema\Link;
 use StdClass;
-use Crud\Error\Exception\CrudException;
 
 /**
  * Licensed under The MIT License
@@ -546,11 +546,13 @@ class JsonApiViewTest extends TestCase
         $this->assertTrue(Configure::read('debug'));
         $view
             ->setConfig('debugPrettyPrint', false)
-            ->setConfig('jsonOptions',
-                    [
+            ->setConfig(
+                'jsonOptions',
+                [
                         JSON_HEX_AMP, // 2
                         JSON_HEX_QUOT, // 8
-                    ]);
+                ]
+            );
         $this->assertEquals(10, $this->callProtectedMethod('_jsonOptions', [], $view));
 
         // test debug mode with `debugPrettyPrint` option enabled

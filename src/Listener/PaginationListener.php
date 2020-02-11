@@ -93,7 +93,7 @@ class PaginationListener extends BaseListener
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             '_method' => 'GET',
-            '?' => ['page' => $pagination['page']] + $query
+            '?' => ['page' => $pagination['page']] + $query,
             ],
             $fullBase
         );
@@ -103,7 +103,7 @@ class PaginationListener extends BaseListener
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             '_method' => 'GET',
-            '?' => ['page' => 1] + $query
+            '?' => ['page' => 1] + $query,
             ],
             $fullBase
         );
@@ -114,7 +114,7 @@ class PaginationListener extends BaseListener
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
-            '?' => ['page' => $pagination['pageCount']] + $query
+            '?' => ['page' => $pagination['pageCount']] + $query,
             ],
             $fullBase
         );

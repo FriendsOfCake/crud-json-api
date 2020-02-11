@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace CrudJsonApi\Test\App\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Crud\Controller\ControllerTrait;
 

@@ -360,7 +360,7 @@ class DynamicEntitySchema extends BaseSchema
             $this->_getRepositoryRoutingParameters($relatedRepository) + [
                 '_method' => 'GET',
                 'action' => 'index',
-                '?' => $keys
+                '?' => $keys,
             ],
             $this->view->getConfig('absoluteLinks', false)
         );

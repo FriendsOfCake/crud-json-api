@@ -8,7 +8,6 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
-use http\Message\Body;
 
 class Application extends BaseApplication
 {
