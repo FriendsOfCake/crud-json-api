@@ -28,7 +28,7 @@ matrix:
       env: LOWEST=1 DEFAULT=1
 
 before_install:
-  - phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   - composer self-update
   - if [[ $LOWEST != 1 ]]; then composer install --prefer-dist --no-interaction; fi
