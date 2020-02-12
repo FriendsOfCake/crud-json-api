@@ -30,7 +30,7 @@
     ],
     "require":{
         "php": ">=7.2.0",
-        "cakephp/cakephp": "^4.0",
+        "cakephp/cakephp": "^4.0.2",
         "friendsofcake/crud": "^6.0-beta",
         "neomerx/json-api": "^4.0"
     },

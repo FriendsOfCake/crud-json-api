@@ -32,7 +32,7 @@ use InvalidArgumentException;
  */
 class JsonApiListener extends ApiListener
 {
-    const MIME_TYPE = 'application/vnd.api+json';
+    public const MIME_TYPE = 'application/vnd.api+json';
 
     /**
      * Default configuration
