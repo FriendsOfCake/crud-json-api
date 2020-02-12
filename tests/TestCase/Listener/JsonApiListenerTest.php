@@ -12,6 +12,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -834,9 +835,9 @@ class JsonApiListenerTest extends TestCase
             ->getMock();
 
         $subject->entities = $this
-            ->getMockBuilder('stdClass')
+            ->getMockBuilder(ResultSet::class)
             ->disableOriginalConstructor()
-            ->addMethods(['first'])
+            ->onlyMethods(['first'])
             ->getMock();
 
         $subject->entities
