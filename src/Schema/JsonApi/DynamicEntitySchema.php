@@ -82,7 +82,13 @@ class DynamicEntitySchema extends BaseSchema
      */
     public function getId($entity): ?string
     {
-        return (string)$entity->get($this->repository->getPrimaryKey());
+        $primaryKey = $this->repository->getPrimaryKey();
+
+        if (is_array($primaryKey)) {
+            throw new \RuntimeException('Crud-Json-Api does not support composite keys out of the box.');
+        }
+
+        return (string)$entity->get($primaryKey);
     }
 
     /**

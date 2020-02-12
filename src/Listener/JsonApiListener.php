@@ -32,6 +32,8 @@ use InvalidArgumentException;
  */
 class JsonApiListener extends ApiListener
 {
+    const MIME_TYPE = 'application/vnd.api+json';
+
     /**
      * Default configuration
      *
@@ -39,7 +41,7 @@ class JsonApiListener extends ApiListener
      */
     protected $_defaultConfig = [
         'detectors' => [
-            'jsonapi' => ['ext' => false, 'accept' => ['application/vnd.api+json']],
+            'jsonapi' => ['ext' => false, 'accept' => [self::MIME_TYPE]],
         ],
         'exception' => [
             'type' => 'default',
@@ -155,7 +157,7 @@ class JsonApiListener extends ApiListener
      */
     public function afterFind(EventInterface $event)
     {
-        if (!$this->_request()->isGet()) {
+        if (!$this->_request()->is('get')) {
             return null;
         }
 
@@ -169,6 +171,8 @@ class JsonApiListener extends ApiListener
         if ($this->getConfig('include')) {
             return null;
         }
+
+        return null;
     }
 
     /**
@@ -251,7 +255,7 @@ class JsonApiListener extends ApiListener
      * afterSave() event.
      *
      * @param  \Cake\Event\EventInterface $event Event
-     * @return true|null
+     * @return bool|null
      */
     public function afterSave(EventInterface $event): ?bool
     {
@@ -287,7 +291,7 @@ class JsonApiListener extends ApiListener
      * been implemented here yet. http://jsonapi.org/format/#crud-deleting
      *
      * @param  \Cake\Event\EventInterface $event Event
-     * @return false|null
+     * @return bool|null
      */
     public function afterDelete(EventInterface $event)
     {
@@ -296,6 +300,8 @@ class JsonApiListener extends ApiListener
         }
 
         $this->_controller()->setResponse($this->_controller()->getResponse()->withStatus(204));
+
+        return null;
     }
 
     /**
@@ -396,10 +402,10 @@ class JsonApiListener extends ApiListener
             }
 
             if (!empty($nestedContains)) {
-                if (!empty($association)) {
+                if ($association !== null) {
                     $contains[$association->getAlias()] = $nestedContains;
                 }
-            } elseif (!empty($association)) {
+            } elseif ($association !== null) {
                 $contains[] = $association->getAlias();
             }
         }
@@ -469,10 +475,10 @@ class JsonApiListener extends ApiListener
 
         // format $fieldSets to array acceptable by listener config()
         $fieldSets = array_map(
-            function ($val) {
+            static function ($val) {
                 return explode(',', $val);
             },
-            $fieldSets
+            (array)$fieldSets
         );
 
         $repository = $subject->query->getRepository();
@@ -794,11 +800,9 @@ class JsonApiListener extends ApiListener
             return true;
         }
 
-        $jsonApiMimeType = $this->_response()->getMimeType('jsonapi');
-
-        if ($this->_request()->contentType() !== $jsonApiMimeType) {
+        if ($this->_request()->contentType() !== self::MIME_TYPE) {
             throw new BadRequestException(
-                "JSON API requests with data require the \"$jsonApiMimeType\" Content-Type header"
+                'JSON API requests with data require the "' . self::MIME_TYPE . '" Content-Type header'
             );
         }
 
@@ -860,12 +864,15 @@ class JsonApiListener extends ApiListener
      *
      * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Datasource\EntityInterface
+     * @phpstan-ignore
      */
     protected function _getSingleEntity(Subject $subject): EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
             return (clone $subject->entities)->first();
-        } elseif (!empty($subject->entities)) {
+        }
+
+        if (!empty($subject->entities) && $subject->entities instanceof ResultSet) {
             return $subject->entities->first();
         }
 
@@ -875,12 +882,16 @@ class JsonApiListener extends ApiListener
     /**
      * Creates a nested array of all associations used in the query
      *
-     * @param  \Cake\ORM\Table $repository Repository
+     * @param  \Cake\Datasource\RepositoryInterface $repository Repository
      * @param  array           $contains   Array of contained associations
      * @return array Array with \Cake\ORM\AssociationCollection
      */
-    protected function _getContainedAssociations(Table $repository, array $contains): array
+    protected function _getContainedAssociations(RepositoryInterface $repository, array $contains): array
     {
+        if (!$repository instanceof Table) {
+            return [];
+        }
+
         $associationCollection = $repository->associations();
         $associations = [];
 
@@ -918,12 +929,16 @@ class JsonApiListener extends ApiListener
      * query) in the find result from the entity's AssociationCollection to
      * prevent `null` entries appearing in the json api `relationships` node.
      *
-     * @param  \Cake\ORM\Table                  $repository Repository
+     * @param  \Cake\Datasource\RepositoryInterface                  $repository Repository
      * @param  \Cake\Datasource\EntityInterface $entity     Entity
      * @return array
      */
-    protected function _extractEntityAssociations(Table $repository, EntityInterface $entity): array
+    protected function _extractEntityAssociations(RepositoryInterface $repository, EntityInterface $entity): array
     {
+        if (!$repository instanceof Table) {
+            return [];
+        }
+
         $associationCollection = $repository->associations();
         $associations = [];
         foreach ($associationCollection as $association) {
@@ -1076,19 +1091,21 @@ class JsonApiListener extends ApiListener
     protected function _getAssociationsList(EntityInterface $entity, array $associationTypes = []): array
     {
         $table = $this->_controller()->loadModel();
+        if (!$table instanceof Table) {
+            return [];
+        }
+
         $associations = $table->associations();
 
         $result = [];
         foreach ($associations as $association) {
-            $associationType = $association->type();
-
             if (empty($associationTypes)) {
-                array_push($result, $association->getName());
+                $result[] = $association->getName();
                 continue;
             }
 
-            if (in_array($association->type(), $associationTypes)) {
-                array_push($result, $association->getName());
+            if (in_array($association->type(), $associationTypes, true)) {
+                $result[] = $association->getName();
             }
         }
 

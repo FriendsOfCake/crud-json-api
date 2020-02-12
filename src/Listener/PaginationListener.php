@@ -22,7 +22,7 @@ class PaginationListener extends BaseListener
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return array|null
+     * @return array
      */
     public function implementedEvents(): array
     {

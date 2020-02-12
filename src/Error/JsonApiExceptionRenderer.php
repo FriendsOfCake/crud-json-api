@@ -195,14 +195,14 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $result['debug'] = $debug;
 
         try {
-            return json_encode($result, JSON_PRETTY_PRINT);
+            return (string)json_encode($result, JSON_PRETTY_PRINT);
         } catch (Exception $e) {
             $result['debug']['message'] = $e->getMessage();
             $result['debug']['trace'] = [
                 'error' => 'Unable to encode stack trace',
             ];
 
-            return json_encode($result, JSON_PRETTY_PRINT);
+            return (string)json_encode($result, JSON_PRETTY_PRINT);
         }
     }
 
@@ -224,7 +224,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
         $result = json_decode($json, true);
         $result['query'] = $logs;
 
-        return json_encode($result, JSON_PRETTY_PRINT);
+        return (string)json_encode($result, JSON_PRETTY_PRINT);
     }
 
     /**

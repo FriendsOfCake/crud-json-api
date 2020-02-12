@@ -71,7 +71,7 @@ class JsonApiView extends View
      *
      * @param  string|null $view   Name of view file to use
      * @param  string|null $layout Layout to use.
-     * @return string|null
+     * @return string
      */
     public function render(?string $view = null, $layout = null): string
     {
@@ -83,7 +83,7 @@ class JsonApiView extends View
 
         // Add query logs node if ApiQueryLogListener is loaded
         if (Configure::read('debug') && $this->get('queryLog')) {
-            $json = json_decode($json, true);
+            $json = json_decode((string)$json, true);
             $json['query'] = $this->get('queryLog');
             $json = json_encode($json, $this->_jsonOptions());
         }

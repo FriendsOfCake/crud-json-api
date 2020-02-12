@@ -36,7 +36,9 @@ class DocumentValidator extends stdClass
     protected $_errorCollection;
 
     /**
-     * var array JsonApiListener config() options
+     * JsonApiListener config() options
+     *
+     * @var array
      */
     protected $_config;
 
