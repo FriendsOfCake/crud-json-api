@@ -1,8 +1,66 @@
 Setup
 =====
 
-Before you can start producing JSON API you will have to set up
+Before you can start producing JSON:API you will have to set up
 your application by following the steps in this section.
+
+Application
+^^^^^^^^^^^
+
+CakePHP needs to be told that JSON:API requests should be parsed
+as JSON.
+
+To do this, the ``BodyParserMiddleware`` must be added to your application
+middleware queue, and a parser for the ``application/vnd.api+json`` mime-type
+must be added.
+
+In your ``Application`` class' ``middleware`` method, add the following.
+
+.. code-block:: phpinline
+
+    $bodies = new BodyParserMiddleware();
+    $bodies->addParser(['application/vnd.api+json'], function ($body) {
+        return json_decode($body, true);
+    });
+
+    $middlewareQueue->add($bodies);
+
+Assuming you are using the default App Skeleton's middleware queue, change it to.
+
+.. code-block:: phpinline
+
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+    {
+        $bodies = new BodyParserMiddleware();
+        $bodies->addParser(['application/vnd.api+json'], function ($body) {
+            return json_decode($body, true);
+        });
+
+        $middlewareQueue
+            // Catch any exceptions in the lower layers,
+            // and make an error page/response
+            ->add(new ErrorHandlerMiddleware(Configure::read('Error')))
+
+            // Handle plugin/theme assets like CakePHP normally does.
+            ->add(new AssetMiddleware([
+                'cacheTime' => Configure::read('Asset.cacheTime'),
+            ]))
+
+            // Add routing middleware.
+            // If you have a large number of routes connected, turning on routes
+            // caching in production could improve performance. For that when
+            // creating the middleware instance specify the cache config name by
+            // using it's second constructor argument:
+            // `new RoutingMiddleware($this, '_cake_routes_')`
+            ->add(new RoutingMiddleware($this))
+
+            // Parse various types of encoded request bodies so that they are
+            // available as array through $request->getData()
+            // https://book.cakephp.org/4/en/controllers/middleware.html#body-parser-middleware
+            ->add($bodies);
+
+        return $middlewareQueue;
+    }
 
 Controller
 ^^^^^^^^^^
