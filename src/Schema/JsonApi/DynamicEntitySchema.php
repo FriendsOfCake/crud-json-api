@@ -363,10 +363,9 @@ class DynamicEntitySchema extends BaseSchema
         $keys = array_combine($foreignKeys, $primaryKeys);
 
         $url = Router::url(
-            $this->_getRepositoryRoutingParameters($relatedRepository) + [
+            $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
                 'action' => 'index',
-                '?' => $keys,
             ],
             $this->view->getConfig('absoluteLinks', false)
         );
