@@ -688,7 +688,9 @@ class JsonApiListener extends ApiListener
 
         if (isset($subject->entities)) {
             $entity = $this->_getSingleEntity($subject);
-            $usedAssociations += $this->_extractEntityAssociations($repository, $entity);
+            if ($entity) {
+                $usedAssociations += $this->_extractEntityAssociations($repository, $entity);
+            }
         }
 
         if (isset($subject->entity)) {
@@ -863,10 +865,10 @@ class JsonApiListener extends ApiListener
      * find result regardless of current action.
      *
      * @param  \Crud\Event\Subject $subject Subject
-     * @return \Cake\Datasource\EntityInterface
+     * @return \Cake\Datasource\EntityInterface|null
      * @phpstan-ignore
      */
-    protected function _getSingleEntity(Subject $subject): EntityInterface
+    protected function _getSingleEntity(Subject $subject): ?EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
             return (clone $subject->entities)->first();
