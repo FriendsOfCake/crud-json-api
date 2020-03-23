@@ -855,6 +855,57 @@ class JsonApiListenerTest extends TestCase
         $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
         $this->assertSame($subject->entity, $result);
     }
+    
+    public function testGetSingleEntityForEmptyResultSet()
+    {
+        $controller = $this
+            ->getMockBuilder(Controller::class)
+            ->onlyMethods([])
+            ->enableOriginalConstructor()
+            ->getMock();
+
+        $listener = $this
+            ->getMockBuilder(JsonApiListener::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['_event'])
+            ->onlyMethods(['_controller'])
+            ->getMock();
+
+        $listener
+            ->method('_controller')
+            ->willReturn($controller);
+
+        $entity = new Entity();
+
+        $subject = $this
+            ->getMockBuilder(Subject::class)
+            ->getMock();
+
+        $subject->entities = $this
+            ->getMockBuilder(ResultSet::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['first'])
+            ->getMock();
+
+        $subject->entities
+            ->method('first')
+            ->willReturn(null);
+
+        $query = $this
+            ->getMockBuilder(Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subject->query = $query;
+        $subject->query
+            ->method('getRepository')
+            ->willReturn(TableRegistry::get('Countries'));
+
+        $this->setReflectionClassInstance($listener);
+        $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
+       
+        $this->assertInstanceOf('Cake\ORM\Entity', $result);
+    }
 
     /**
      * Make sure associations not present in the find result are stripped
