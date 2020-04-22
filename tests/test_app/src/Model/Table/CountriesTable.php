@@ -60,7 +60,7 @@ class CountriesTable extends Table
         $searchManager->like('filter', [
             'before' => true,
             'after' => true,
-            'field' => [$this->aliasField('name')],
+            'fields' => [$this->aliasField('name')],
         ]);
 
         return $searchManager;
