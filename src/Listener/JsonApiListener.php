@@ -470,7 +470,7 @@ class JsonApiListener extends ApiListener
     {
         // could be null for e.g. using integration tests
         if ($fieldSets === null) {
-             return;
+            return;
         }
 
         // format $fieldSets to array acceptable by listener config()
@@ -875,6 +875,12 @@ class JsonApiListener extends ApiListener
         }
 
         if (!empty($subject->entities) && $subject->entities instanceof ResultSet) {
+            if ($subject->entities->first() === null) {
+                $repository = $subject->query->getRepository();
+                $entity = $repository->getEntityClass();
+                return new $entity();
+            }
+
             return $subject->entities->first();
         }
 
