@@ -878,6 +878,7 @@ class JsonApiListener extends ApiListener
             if ($subject->entities->first() === null) {
                 $repository = $subject->query->getRepository();
                 $entity = $repository->getEntityClass();
+
                 return new $entity();
             }
 

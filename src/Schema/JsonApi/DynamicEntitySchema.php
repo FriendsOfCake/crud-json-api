@@ -54,7 +54,6 @@ class DynamicEntitySchema extends BaseSchema
 
     /**
      * @param \Cake\ORM\Table $repository The repository object
-     *
      * @return mixed
      */
     private function getTypeFromRepository(Table $repository)
@@ -266,7 +265,6 @@ class DynamicEntitySchema extends BaseSchema
 
     /**
      * @param string $name Relationship name in lowercase singular or plural
-     *
      * @return \Cake\ORM\Association|null
      */
     protected function getAssociationByProperty(string $name): ?Association
@@ -288,7 +286,6 @@ class DynamicEntitySchema extends BaseSchema
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
-     *
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
     public function getRelationshipSelfLink($entity, string $name): LinkInterface
@@ -345,7 +342,6 @@ class DynamicEntitySchema extends BaseSchema
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
-     *
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
     public function getRelationshipRelatedLink($entity, string $name): LinkInterface
@@ -366,7 +362,7 @@ class DynamicEntitySchema extends BaseSchema
             $this->_getRepositoryRoutingParameters($relatedRepository) + [
                 '_method' => 'GET',
                 'action' => 'index',
-                '?' => $keys
+                '?' => $keys,
             ],
             $this->view->getConfig('absoluteLinks', false)
         );

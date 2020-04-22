@@ -103,7 +103,6 @@ abstract class JsonApiBaseTestCase extends TestCase
 
     /**
      * Helper function to remove content from the `debug` node in JSON API responses
-     *
      */
     protected function _getResponseWithEmptyDebugNode($responseBody)
     {

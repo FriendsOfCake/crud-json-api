@@ -50,7 +50,6 @@ class CreatingResourcesIntegrationTest extends JsonApiBaseTestCase
      * PhpUnit Data Provider that will call `testCreateResource()` for every array entry
      * so we can test multiple successful POST requests without repeating ourselves.
      *
-     *
      * @return array
      */
     public function createResourceProvider()

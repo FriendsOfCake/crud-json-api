@@ -855,7 +855,7 @@ class JsonApiListenerTest extends TestCase
         $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
         $this->assertSame($subject->entity, $result);
     }
-    
+
     public function testGetSingleEntityForEmptyResultSet()
     {
         $controller = $this
@@ -903,7 +903,7 @@ class JsonApiListenerTest extends TestCase
 
         $this->setReflectionClassInstance($listener);
         $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
-       
+
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
     }
 
