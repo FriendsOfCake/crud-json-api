@@ -5,6 +5,7 @@ namespace CrudJsonApi\Test\TestCase\Listener;
 
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
 use Cake\Http\Exception\BadRequestException;
@@ -842,6 +843,18 @@ class JsonApiListenerTest extends TestCase
 
         $subject->entities
             ->method('first')
+            ->willReturn($entity);
+
+        $this->setReflectionClassInstance($listener);
+        $result = $this->callProtectedMethod('_getSingleEntity', [$subject], $listener);
+        $this->assertSame($entity, $result);
+
+        $subject->entities = $this->getMockBuilder(ResultSetDecorator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['first'])
+            ->getMock();
+
+        $subject->entities->method('first')
             ->willReturn($entity);
 
         $this->setReflectionClassInstance($listener);

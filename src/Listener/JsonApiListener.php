@@ -874,7 +874,7 @@ class JsonApiListener extends ApiListener
             return (clone $subject->entities)->first();
         }
 
-        if (!empty($subject->entities) && $subject->entities instanceof ResultSet) {
+        if (!empty($subject->entities) && $subject->entities instanceof ResultSetInterface) {
             if ($subject->entities->first() === null) {
                 $repository = $subject->query->getRepository();
                 $entity = $repository->getEntityClass();
