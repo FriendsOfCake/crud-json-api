@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\App\Model\Table;
 
 use Cake\ORM\Table;
@@ -6,7 +8,7 @@ use Cake\Validation\Validator;
 
 class CountriesTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->addBehavior('Search.Search');
 
@@ -20,32 +22,32 @@ class CountriesTable extends Table
         $this->hasMany('SubCountries', [
             'className' => 'Countries',
             'foreignKey' => 'supercountry_id',
-            'propertyName' => 'subcountries' //not-default to mess a little
+            'propertyName' => 'subcountries', //not-default to mess a little
         ]);
 
         // e.g. Vatican has Italy
         $this->belongsTo('SuperCountries', [
             'className' => 'Countries',
             'foreignKey' => 'supercountry_id',
-            'propertyName' => 'supercountry'
+            'propertyName' => 'supercountry',
         ]);
     }
 
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): Validator
     {
         // used for testing built-in validation rules/messages
         $validator
             ->requirePresence('name', 'create')
-            ->notEmpty('name');
+            ->notEmptyString('name');
 
         // used for testing user-defined rules/messages
         $validator
-            ->notEmpty('code')
+            ->notEmptyString('code')
             ->add('code', [
                 'UPPERCASE_ONLY' => [
                     'rule' => ['custom', '/^([A-Z]+)+$/'],
-                    'message' => "Field must be uppercase only"
-                ]
+                    'message' => "Field must be uppercase only",
+                ],
             ]);
 
         return $validator;
@@ -58,7 +60,7 @@ class CountriesTable extends Table
         $searchManager->like('filter', [
             'before' => true,
             'after' => true,
-            'field' => [$this->aliasField('name')]
+            'fields' => [$this->aliasField('name')],
         ]);
 
         return $searchManager;

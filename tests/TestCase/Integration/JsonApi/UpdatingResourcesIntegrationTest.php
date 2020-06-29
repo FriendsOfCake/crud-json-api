@@ -1,12 +1,16 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 {
+    use ArraySubsetAsserts;
 
     /**
      * PhpUnit Data Provider that will call `testUpdateResource()` for every array entry
@@ -27,8 +31,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 2,
                     'code' => 'RUB', // updated
-                    'name' => 'Russian Ruble' // updated
-                ]
+                    'name' => 'Russian Ruble', // updated
+                ],
             ],
 
             # In this test, by leaving out the `code` attribute, we also assert this JSON API criteria:
@@ -42,8 +46,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 2,
                     'code' => 'USD', // unchanged
-                    'name' => 'Russian Ruble' // updated
-                ]
+                    'name' => 'Russian Ruble', // updated
+                ],
             ],
 
             # Make sure `belongsTo` relationships gets updated when we pass both
@@ -58,8 +62,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                     'name' => 'Jamaica', // updated
                     'dummy_counter' => 12345, // updated
                     'currency_id' => 2, // updated
-                    'national_capital_id' => 5 // updated
-                ]
+                    'national_capital_id' => 5, // updated
+                ],
             ],
 
             # Make sure `belongsTo` relationships get updated when we only pass the `relationships` node to
@@ -74,8 +78,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                     'name' => 'Bulgaria', // unchanged
                     'dummy_counter' => 22222, // unchanged
                     'currency_id' => 2, // updated
-                    'national_capital_id' => 4 // updated
-                ]
+                    'national_capital_id' => 4, // updated
+                ],
             ],
 
             # Make sure `hasMany` relationships get updated (here we provide
@@ -104,8 +108,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 6,
                     'name' => 'Hollywood', // updated
-                    'description' => 'National capital of the cinematic world' // updated
-                ]
+                    'description' => 'National capital of the cinematic world', // updated
+                ],
             ],
 
             # Make sure `belongsTo` relationships gets updated when we pass both
@@ -117,8 +121,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 2,
                     'name' => 'Milan', // updated
-                    'country_id' => 3 // updated
-                ]
+                    'country_id' => 3, // updated
+                ],
             ],
 
             # Make sure `belongsTo` relationships get updated when we only pass the `relationships` node to
@@ -130,8 +134,8 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
                 [
                     'id' => 2,
                     'name' => 'Rotterdam', // unchanged
-                    'country_id' => 3 // updated
-                ]
+                    'country_id' => 3, // updated
+                ],
             ],
 
         ];
@@ -150,9 +154,9 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/vnd.api+json',
-                'Content-Type' => 'application/vnd.api+json'
+                'Content-Type' => 'application/vnd.api+json',
             ],
-            'input' => $this->_getJsonApiRequestBody('UpdatingResources' . DS . $requestBodyFile)
+            'input' => $this->_getJsonApiRequestBody('UpdatingResources' . DS . $requestBodyFile),
         ]);
 
         # execute the PATCH request

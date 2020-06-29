@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
@@ -13,12 +15,10 @@ class FetchingCollectionsIntegrationTest extends JsonApiBaseTestCase
     public function getProvider()
     {
         return [
-            #
             # Test fetching a single-word collection.
-            #
             'fetch-single-word-collection' => [
                 '/countries',
-                'get-countries-with-pagination.json'
+                'get-countries-with-pagination.json',
             ],
         ];
     }
@@ -33,8 +33,8 @@ class FetchingCollectionsIntegrationTest extends JsonApiBaseTestCase
     {
         $this->configRequest([
             'headers' => [
-                'Accept' => 'application/vnd.api+json'
-            ]
+                'Accept' => 'application/vnd.api+json',
+            ],
         ]);
 
         # execute the GET request

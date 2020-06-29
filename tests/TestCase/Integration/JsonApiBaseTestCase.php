@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Routing\Router;
-use Cake\TestSuite\IntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
@@ -46,53 +47,45 @@ abstract class JsonApiBaseTestCase extends TestCase
     /**
      * Set up required RESTful resource routes.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->deprecated(function () {
-            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
-        });
-
-        // Enable PSR-7 integration testing
-        $this->useHttpServer(true);
 
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
         Router::scope('/', function ($routes) {
             $routes->resources('Countries', [
-                'inflect' => 'dasherize'
+                'inflect' => 'dasherize',
             ]);
             $routes->resources('Currencies', [ // single word belongsTo association
-                'inflect' => 'dasherize'
+                'inflect' => 'dasherize',
             ]);
             $routes->resources('Cultures', [ // single word hasMany association
-                'inflect' => 'dasherize'
+                'inflect' => 'dasherize',
             ]);
             $routes->resources('NationalCapitals', [ // multi-word belongsTo association
-                'inflect' => 'dasherize'
+                'inflect' => 'dasherize',
             ]);
             $routes->resources('NationalCities', [ // multi-word hasMany association
-                'inflect' => 'dasherize'
+                'inflect' => 'dasherize',
             ]);
         });
 
         $this->configRequest([
             'headers' => [
-                'Accept' => 'application/vnd.api+json'
-            ]
+                'Accept' => 'application/vnd.api+json',
+            ],
         ]);
 
         // set path to the JSON API fixtures
-        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
-        $this->_JsonApiRequestBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiRequestBodies';
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiRequestBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiRequestBodies';
     }
 
     /**
      * Tear down test.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -110,7 +103,6 @@ abstract class JsonApiBaseTestCase extends TestCase
 
     /**
      * Helper function to remove content from the `debug` node in JSON API responses
-     *
      */
     protected function _getResponseWithEmptyDebugNode($responseBody)
     {
@@ -130,7 +122,7 @@ abstract class JsonApiBaseTestCase extends TestCase
     {
         $file = $this->_JsonApiRequestBodyFixtures . DS . $file;
 
-        return trim((new File($file))->read());
+        return trim(file_get_contents($file));
     }
 
     /**
@@ -140,7 +132,7 @@ abstract class JsonApiBaseTestCase extends TestCase
      * @param string $response Override the response to check
      * @return void
      */
-    public function assertResponseSameAsFile(string $file, string $response = null)
+    public function assertResponseSameAsFile(string $file, ?string $response = null)
     {
         $this->assertSameAsFile($this->_JsonApiResponseBodyFixtures . DS . $file, $response ?: $this->_getBodyAsString());
     }

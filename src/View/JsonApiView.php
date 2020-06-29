@@ -1,21 +1,19 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\View;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use Crud\Error\Exception\CrudException;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Encoder\Encoder;
-use Neomerx\JsonApi\Encoder\EncoderOptions;
-use Neomerx\JsonApi\Encoder\Parameters\EncodingParameters;
 use Neomerx\JsonApi\Schema\Link;
 
 class JsonApiView extends View
@@ -23,15 +21,15 @@ class JsonApiView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Http\ServerRequest $request ServerRequest
-     * @param \Cake\Http\Response $response Response
+     * @param \Cake\Http\ServerRequest $request      ServerRequest
+     * @param \Cake\Http\Response      $response     Response
      * @param \Cake\Event\EventManager $eventManager EventManager
-     * @param array $viewOptions An array of view options
+     * @param array                    $viewOptions  An array of view options
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
         parent::__construct($request, $response, $eventManager, $viewOptions);
@@ -71,13 +69,13 @@ class JsonApiView extends View
      * - with empty body
      * - with body containing only the meta node
      *
-     * @param string|null $view Name of view file to use
-     * @param string|null $layout Layout to use.
+     * @param  string|null $view   Name of view file to use
+     * @param  string|null $layout Layout to use.
      * @return string
      */
-    public function render($view = null, $layout = null)
+    public function render(?string $view = null, $layout = null): string
     {
-        if ($this->get('_repositories')) {
+        if ($this->getConfig('repositories')) {
             $json = $this->_encodeWithSchemas();
         } else {
             $json = $this->_encodeWithoutSchemas();
@@ -85,12 +83,12 @@ class JsonApiView extends View
 
         // Add query logs node if ApiQueryLogListener is loaded
         if (Configure::read('debug') && $this->get('queryLog')) {
-            $json = json_decode($json, true);
+            $json = json_decode((string)$json, true);
             $json['query'] = $this->get('queryLog');
             $json = json_encode($json, $this->_jsonOptions());
         }
 
-        return $json;
+        return $json ?: '';
     }
 
     /**
@@ -100,7 +98,7 @@ class JsonApiView extends View
      */
     protected function _encodeWithoutSchemas(): ?string
     {
-        if (empty($this->get('_meta'))) {
+        if (empty($this->getConfig('meta'))) {
             return null;
         }
 
@@ -109,11 +107,11 @@ class JsonApiView extends View
 
         // Add optional top-level `link` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_links')) {
-            $encoder->withLinks($this->get('_links'));
+        if ($this->getConfig('links')) {
+            $encoder->withLinks($this->getConfig('links'));
         }
 
-        return $encoder->encodeMeta($this->get('_meta'));
+        return $encoder->encodeMeta($this->getConfig('meta'));
     }
 
     /**
@@ -123,24 +121,24 @@ class JsonApiView extends View
      */
     protected function _encodeWithSchemas(): string
     {
-        if ($this->get('_inflect') === 'dasherize') {
+        if ($this->getConfig('inflect') === 'dasherize') {
             $this->_dasherizeIncludesViewVar();
         }
 
         // All "Schema is not registered for a resource at path 'xyz'" errors
         // originate from the line below and are caused by the mentioned Cake Table
-        // object not being present in the  `_repositories` viewVar array.
-        $schemas = $this->_entitiesToNeoMerxSchema($this->get('_repositories'));
+        // object not being present in the  `repositories` option.
+        $schemas = $this->_entitiesToNeoMerxSchema($this->getConfig('repositories'));
 
         // Please note that a third NeoMerx EncoderOptions argument `depth`
         // exists but has not been implemented in this plugin.
         $encoder = Encoder::instance($schemas)
             ->withEncodeOptions($this->_jsonOptions());
 
-        $serialize = $this->get('_serialize');
+        $serialize = $this->getConfig('serialize');
 
-        if ($this->get('_serialize') !== false) {
-            $serialize = $this->_getDataToSerializeFromViewVars($this->get('_serialize'));
+        if ($serialize !== false) {
+            $serialize = $this->_getDataToSerializeFromViewVars($serialize);
         }
 
         // By default the listener will automatically add all associated data
@@ -154,8 +152,8 @@ class JsonApiView extends View
         //
         // Lastly, listener config option `fieldSets` may be used to limit
         // the fields shown in the result.
-        $include = $this->get('_include');
-        $fieldSets = $this->get('_fieldSets');
+        $include = $this->getConfig('include');
+        $fieldSets = $this->getConfig('fieldSets');
 
         $encoder
             ->withIncludedPaths($include)
@@ -163,51 +161,56 @@ class JsonApiView extends View
 
         // Add optional top-level `version` node to the response if enabled
         // by user using listener config option.
-        if ($this->get('_withJsonApiVersion')) {
+        if ($this->getConfig('withJsonApiVersion')) {
             $encoder->withJsonApiVersion('1.1');
-            if (!is_bool($this->get('_withJsonApiVersion'))) {
-                $encoder->withJsonApiMeta($this->get('_withJsonApiVersion'));
+            if (!is_bool($this->getConfig('withJsonApiVersion'))) {
+                $encoder->withJsonApiMeta($this->getConfig('withJsonApiVersion'));
             }
         }
 
         // Add top-level `links` node with pagination information (requires
         // ApiPaginationListener which will have set/filled viewVar).
-        if ($this->get('_pagination')) {
-            $pagination = $this->get('_pagination');
+        if ($this->getConfig('pagination')) {
+            $pagination = $this->getConfig('pagination');
 
-            $links = $this->get('_links', []);
+            $links = $this->getConfig('links', []);
             $paginationLinks = $this->_getPaginationLinks($pagination);
-            $this->set('_links', $links + $paginationLinks);
+            $this->setConfig('links', $links + $paginationLinks);
 
             // Additional pagination information has to be in top-level node `meta`
-            $meta = $this->get('_meta');
+            $meta = $this->getConfig('meta');
             $meta['record_count'] = $pagination['record_count'];
             $meta['page_count'] = $pagination['page_count'];
             $meta['page_limit'] = $pagination['page_limit'];
-            $this->set('_meta', $meta);
+            $this->setConfig('meta', $meta);
         }
 
         // Add optional top-level `link` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_links')) {
-            $links = $this->get('_links');
-            $encoder->withLinks(array_map(function ($link) {
-                if ($link instanceof Link) {
-                    return $link;
-                }
+        if ($this->getConfig('links')) {
+            $links = $this->getConfig('links');
+            $encoder->withLinks(
+                array_map(
+                    function ($link) {
+                        if ($link instanceof Link) {
+                            return $link;
+                        }
 
-                return new Link(false, $link, false);
-            }, $links));
+                        return new Link(false, $link, false);
+                    },
+                    $links
+                )
+            );
         }
 
         // Add optional top-level `meta` node to the response if enabled by
         // user using listener config option.
-        if ($this->get('_meta')) {
+        if ($this->getConfig('meta')) {
             if (empty($serialize)) {
-                return $encoder->encodeMeta($this->get('_meta'));
+                return $encoder->encodeMeta($this->getConfig('meta'));
             }
 
-             $encoder->withMeta($this->get('_meta'));
+             $encoder->withMeta($this->getConfig('meta'));
         }
 
         // JSON API as generated by NeoMerx. When things look off,  start debugging here
@@ -220,7 +223,7 @@ class JsonApiView extends View
      * 2. custom dynamic schema
      * 3. Crud's dynamic schema
      *
-     * @param \Cake\ORM\Table[] $repositories List holding repositories used to map entities to schema classes
+     * @param  \Cake\ORM\Table[] $repositories List holding repositories used to map entities to schema classes
      * @throws \Crud\Error\Exception\CrudException
      * @return array A list with Entity class names as key holding NeoMerx Closure object
      */
@@ -235,7 +238,11 @@ class JsonApiView extends View
             }
 
             if ($entityClass === Entity::class) {
-                throw new CrudException(sprintf('Entity classes must not be the generic "%s" class for repository "%s"', $entityClass, $repositoryName));
+                throw new CrudException(sprintf(
+                    'Entity classes must not be the generic "%s" class for repository "%s"',
+                    $entityClass,
+                    $repositoryName
+                ));
             }
 
             // Turn full class name back into plugin split format
@@ -283,7 +290,7 @@ class JsonApiView extends View
     /**
      * Returns an array with NeoMerx Link objects to be used for pagination.
      *
-     * @param array $pagination ApiPaginationListener pagination response
+     * @param  array $pagination ApiPaginationListener pagination response
      * @return array
      */
     protected function _getPaginationLinks($pagination): array
@@ -316,14 +323,17 @@ class JsonApiView extends View
     /**
      * Returns data to be serialized.
      *
-     * @param array|string|bool|object $serialize The name(s) of the view variable(s) that
-     *   need(s) to be serialized. If true all available view variables will be used.
+     * @param  array|string|bool|object $serialize The name(s) of the view variable(s) that
+     *                                             need(s) to be serialized. If true all available view variables will be used.
      * @return mixed The data to serialize.
      */
     protected function _getDataToSerializeFromViewVars($serialize = true)
     {
         if (is_object($serialize)) {
-            throw new CrudException('Assigning an object to JsonApiListener "_serialize" is deprecated, assign the object to its own variable and assign "_serialize" = true instead.');
+            throw new CrudException(
+                'Assigning an object to JsonApiListener "serialize" is deprecated, ' .
+                'assign the object to its own variable and assign "serialize" = true instead.'
+            );
         }
 
         if ($serialize === true) {
@@ -356,8 +366,8 @@ class JsonApiView extends View
     {
         $jsonOptions = 0;
 
-        if (!empty($this->get('_jsonOptions'))) {
-            foreach ($this->get('_jsonOptions') as $jsonOption) {
+        if (!empty($this->getConfig('jsonOptions'))) {
+            foreach ($this->getConfig('jsonOptions') as $jsonOption) {
                 $jsonOptions |= $jsonOption;
             }
 
@@ -370,7 +380,7 @@ class JsonApiView extends View
             return $jsonOptions;
         }
 
-        if ($this->get('_debugPrettyPrint')) {
+        if ($this->getConfig('debugPrettyPrint')) {
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
@@ -384,8 +394,8 @@ class JsonApiView extends View
      */
     protected function _dasherizeIncludesViewVar()
     {
-        foreach ($this->get('_include') as $key => $value) {
-            $this->get('_include')[$key] = Inflector::dasherize($value);
+        foreach ($this->getConfig('include') as $key => $value) {
+            $this->getConfig('include')[$key] = Inflector::dasherize($value);
         }
     }
 }

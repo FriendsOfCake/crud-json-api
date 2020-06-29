@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\Event\Event;
@@ -16,45 +18,45 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
             // assert single-word associations
             'include currency belongsTo plural' => [
                 '/countries/1?include=currencies',
-                'get-country-include-currency.json'
+                'get-country-include-currency.json',
             ],
             'include currency belongsTo singular' => [
                 '/countries/1?include=currency',
-                'get-country-include-currency.json'
+                'get-country-include-currency.json',
             ],
             'include culture hasMany' => [
                 '/countries/1?include=cultures',
-                'get-country-include-culture.json'
+                'get-country-include-culture.json',
             ],
             'include currency and culture' => [
                 '/countries/1?include=currencies,cultures',
-                'get-country-include-currency-and-culture.json'
+                'get-country-include-currency-and-culture.json',
             ],
             'include currency and deep countries' => [
                 '/countries/1?include=currencies.countries',
-                'get-country-include-currency-and-countries.json'
+                'get-country-include-currency-and-countries.json',
             ],
             // assert multi-word associations
             'include national-capital belongsTo singular' => [
                 '/countries/1?include=national-capital',
-                'get-country-include-national-capital.json'
+                'get-country-include-national-capital.json',
             ],
             'include national-capital belongsTo plural' => [
                 '/countries/1?include=national-capitals',
-                'get-country-include-national-capital.json'
+                'get-country-include-national-capital.json',
             ],
             'include national-cities hasMany' => [
                 '/countries/1?include=national-cities',
-                'get-country-include-national-cities.json'
+                'get-country-include-national-cities.json',
             ],
             // assert all of the above in a single request
             'include all supported associations (singular belongsTo)' => [
                 '/countries/1?include=currency,cultures,national-capital,national-cities',
-                'get-country-include-all-supported-associations.json'
+                'get-country-include-all-supported-associations.json',
             ],
             'include all supported associations (plural belongsTo)' => [
                 '/countries/1?include=currencies,cultures,national-capitals,national-cities',
-                'get-country-include-all-supported-associations.json'
+                'get-country-include-all-supported-associations.json',
             ],
         ];
     }

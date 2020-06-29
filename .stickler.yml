@@ -1,0 +1,5 @@
+---
+linters:
+  phpcs:
+    standard: CakePHP4
+    extensions: 'php'

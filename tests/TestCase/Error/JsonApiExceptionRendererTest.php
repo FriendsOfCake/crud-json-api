@@ -1,15 +1,18 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Error;
 
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
-use Cake\Filesystem\File;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Crud\Error\Exception\ValidationException;
 use Crud\TestSuite\TestCase;
+use CrudJsonApi\Error\JsonApiExceptionRenderer;
 use Neomerx\JsonApi\Schema\ErrorCollection;
 
 class JsonApiExceptionRendererTest extends TestCase
@@ -33,18 +36,13 @@ class JsonApiExceptionRendererTest extends TestCase
     /**
      * setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', true);
 
-        $this->deprecated(function () {
-            \Cake\Core\Plugin::load('Crud', ['path' => ROOT . DS, 'autoload' => true]);
-            \Cake\Core\Plugin::load('CrudJsonApi', ['path' => ROOT . DS, 'autoload' => true]);
-        });
-
         // set path to the JSON API response fixtures
-        $this->_JsonApiResponseBodyFixtures = Plugin::path('Crud') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
+        $this->_JsonApiResponseBodyFixtures = Plugin::path('CrudJsonApi') . 'tests' . DS . 'Fixture' . DS . 'JsonApiResponseBodies';
     }
 
     /**
@@ -56,41 +54,42 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         $exception = new Exception('Hello World');
 
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
+        $controller = $this->getMockBuilder(Controller::class)
+            ->onlyMethods(['render'])
             ->getMock();
-        $controller->request = new ServerRequest([
+        $controller->setRequest(new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
-        ]);
-        $controller->response = new Response();
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
+        ]));
+        $controller->setResponse(new Response());
 
-        $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
-            ->setMethods(['_getController'])
+        $renderer = $this->getMockBuilder(JsonApiExceptionRenderer::class)
+            ->onlyMethods(['_getController'])
             ->disableOriginalConstructor()
             ->getMock();
         $renderer
             ->expects($this->once())
             ->method('_getController')
             ->with()
-            ->will($this->returnValue($controller));
+            ->willReturn($controller);
 
         $renderer->__construct($exception);
         $renderer->render();
 
-        $viewVars = $controller->viewVars;
+        $serialize = $controller->viewBuilder()->getOption('serialize');
 
         // assert viewVars required to generate JSON API error are present
-        $this->assertTrue(!empty($viewVars['_serialize']));
+        $this->assertNotEmpty($serialize);
 
         $expected = ['message', 'url', 'code'];
-        $actual = $viewVars['_serialize'];
+        $actual = $serialize;
         $actual = array_flip($actual);
         unset($actual['file'], $actual['line']);
         $actual = array_flip($actual);
         $this->assertEquals($expected, $actual);
 
+        $viewVars = $controller->viewBuilder()->getVars();
         $this->assertEquals($viewVars['message'], 'Hello World');
         $this->assertEquals($viewVars['code'], 500);
         $this->assertEquals($viewVars['url'], '/');
@@ -106,7 +105,7 @@ class JsonApiExceptionRendererTest extends TestCase
         $countries = TableRegistry::get('Countries');
 
         $invalidCountry = $countries->newEntity([
-            'code' => 'not-all-uppercase'
+            'code' => 'not-all-uppercase',
         ]);
 
         $exception = new ValidationException($invalidCountry);
@@ -116,8 +115,8 @@ class JsonApiExceptionRendererTest extends TestCase
             ->getMock();
         $controller->request = new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
         ]);
         $controller->response = new Response();
 
@@ -135,10 +134,10 @@ class JsonApiExceptionRendererTest extends TestCase
         $result = $renderer->render();
 
         // assert expected exception is generated
-        $jsonApiFixture = new File($this->_JsonApiResponseBodyFixtures . DS . 'Errors' . DS . 'validation-error-multiple-reasons.json');
-        $jsonApiArray = json_decode($jsonApiFixture->read(), true);
+        $jsonApiFixture = file_get_contents($this->_JsonApiResponseBodyFixtures . DS . 'Errors' . DS . 'validation-error-multiple-reasons.json');
+        $jsonApiArray = json_decode($jsonApiFixture, true);
 
-        $result = json_decode($result->getBody(), true);
+        $result = json_decode((string)$result->getBody(), true);
         unset($result['query']);
 
         $this->assertSame($jsonApiArray, $result);
@@ -164,8 +163,8 @@ class JsonApiExceptionRendererTest extends TestCase
 
         $controller->request = new ServerRequest([
             'environment' => [
-                'HTTP_ACCEPT' => 'application/vnd.api+json'
-            ]
+                'HTTP_ACCEPT' => 'application/vnd.api+json',
+            ],
         ]);
 
         $res = new Response();
@@ -211,19 +210,19 @@ class JsonApiExceptionRendererTest extends TestCase
     {
         $errors = [
             'name' => [
-                '_empty' => 'This is a single word built-in rule'
+                '_empty' => 'This is a single word built-in rule',
             ],
             'dummy_counter' => [
-                'integer' => 'This is a two word built-in rule'
+                'integer' => 'This is a two word built-in rule',
             ],
             'code' => [
                 0 => [
                     'fields' => [
-                        0 => 'code'
+                        0 => 'code',
                     ],
                     'name' => 'EXACT_LENGTH',
-                    'message' => 'This is a user-defined rule'
-                ]
+                    'message' => 'This is a user-defined rule',
+                ],
             ],
         ];
 
@@ -237,24 +236,24 @@ class JsonApiExceptionRendererTest extends TestCase
         $expected = [
             0 => [
                 'fields' => [
-                    'name'
+                    'name',
                 ],
                 'name' => '_empty',
-                'message' => 'This is a single word built-in rule'
+                'message' => 'This is a single word built-in rule',
             ],
             1 => [
                 'fields' => [
-                    'dummy-counter'
+                    'dummy-counter',
                 ],
                 'name' => 'integer',
-                'message' => 'This is a two word built-in rule'
+                'message' => 'This is a two word built-in rule',
             ],
             2 => [
                 'fields' => [
-                    'code'
+                    'code',
                 ],
                 'name' => 'EXACT_LENGTH',
-                'message' => 'This is a user-defined rule'
+                'message' => 'This is a user-defined rule',
             ],
         ];
 
@@ -284,8 +283,8 @@ class JsonApiExceptionRendererTest extends TestCase
         $collection->addDataError('My manual test error');
         $validationErrors = [
             'CrudJsonApiListener' => [
-                'NeoMerxErrorCollection' => $collection
-            ]
+                'NeoMerxErrorCollection' => $collection,
+            ],
         ];
 
         $result = $this->callProtectedMethod('_getNeoMerxErrorCollection', [$validationErrors], $renderer);
@@ -295,8 +294,8 @@ class JsonApiExceptionRendererTest extends TestCase
         // contain an error collection and thus a new collection is created.
         $validationErrors = [
             'CrudJsonApiListener' => [
-                'NeoMerxErrorCollection' => 'not-a-neomerx-error-collection'
-            ]
+                'NeoMerxErrorCollection' => 'not-a-neomerx-error-collection',
+            ],
         ];
 
         $result = $this->callProtectedMethod('_getNeoMerxErrorCollection', [$validationErrors], $renderer);
@@ -304,15 +303,15 @@ class JsonApiExceptionRendererTest extends TestCase
         $error = $errors[0];
         $this->setReflectionClassInstance($error);
 
-        $this->assertSame('not-a-neomerx-error-collection', $this->getProtectedProperty('detail', $error));
+        $this->assertSame('not-a-neomerx-error-collection', $this->getProtectedProperty('detail', get_class($error)));
 
         // assert basic collections are created as well
         $nonStandardizedValidationErrors = [
             'name' => [
-                '_required' => 'This is a built-in rule'
+                '_required' => 'This is a built-in rule',
             ],
             'code' => [
-                '_required' => 'This is a built-in rule'
+                '_required' => 'This is a built-in rule',
             ],
         ];
 
@@ -331,31 +330,33 @@ class JsonApiExceptionRendererTest extends TestCase
     public function testAddQueryLogs()
     {
         $apiQueryLogListener = $this->getMockBuilder('Crud\Listener\ApiQueryLogListener')
-            ->setMethods(['getQueryLogs'])
+            ->onlyMethods(['getQueryLogs'])
             ->disableOriginalConstructor()
             ->getMock();
         $apiQueryLogListener
             ->expects($this->at(0))
             ->method('getQueryLogs')
             ->with()
-            ->will($this->returnValue(null));
+            ->willReturn([]);
         $apiQueryLogListener
             ->expects($this->at(1))
             ->method('getQueryLogs')
             ->with()
-            ->will($this->returnValue([
-                'dummy' => 'log-entry'
-            ]));
+            ->willReturn(
+                [
+                    'dummy' => 'log-entry',
+                ]
+            );
 
         $renderer = $this->getMockBuilder('CrudJsonApi\Error\JsonApiExceptionRenderer')
-            ->setMethods(['_getApiQueryLogListenerObject'])
+            ->onlyMethods(['_getApiQueryLogListenerObject'])
             ->disableOriginalConstructor()
             ->getMock();
         $renderer
             ->expects($this->exactly(2))
             ->method('_getApiQueryLogListenerObject')
             ->with()
-            ->will($this->returnValue($apiQueryLogListener));
+            ->willReturn($apiQueryLogListener);
 
         $this->setReflectionClassInstance($renderer);
 

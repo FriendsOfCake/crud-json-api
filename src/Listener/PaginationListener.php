@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Listener;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Routing\Router;
 use Crud\Listener\ApiPaginationListener as BaseListener;
 
@@ -14,122 +16,133 @@ use Crud\Listener\ApiPaginationListener as BaseListener;
  */
 class PaginationListener extends BaseListener
 {
-
     /**
      * Returns a list of all events that will fire in the controller during its life-cycle.
      * You can override this function to add you own listener callbacks
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return array|null
+     * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         if (!$this->_checkRequestType('jsonapi')) {
-            return null;
+            return [];
         }
 
         return [
-            'Crud.beforeRender' => ['callable' => 'beforeRender', 'priority' => 75]
+            'Crud.beforeRender' => ['callable' => 'beforeRender', 'priority' => 75],
         ];
     }
 
     /**
      * Appends the pagination information to the JSON or XML output
      *
-     * @param \Cake\Event\Event $event Event
+     * @param  \Cake\Event\EventInterface $event Event
      * @return void
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event): void
     {
-        $request = $this->_request();
+        $paging = $this->_request()->getAttribute('paging');
 
-        if (empty($request->getParam('paging'))) {
+        if (empty($paging)) {
             return;
         }
 
-        $controller = $this->_controller();
-
-        list(, $modelClass) = pluginSplit($controller->modelClass);
-
-        if (!array_key_exists($modelClass, $request->getParam('paging'))) {
-            return;
-        }
-
-        $pagination = $request->getParam('paging')[$modelClass];
+        $pagination = current($paging);
         if (empty($pagination)) {
             return;
         }
 
-        $controller->set('_pagination', $this->_getJsonApiPaginationResponse($pagination));
+        $this->_controller->viewBuilder()->setOption('pagination', $this->_getJsonApiPaginationResponse($pagination));
     }
 
     /**
      * Generates pagination viewVars with JSON API compatible hyperlinks.
      *
-     * @param array $pagination CakePHP pagination result
+     * @param  array $pagination CakePHP pagination result
      * @return array
      */
-    protected function _getJsonApiPaginationResponse(array $pagination)
+    protected function _getJsonApiPaginationResponse(array $pagination): array
     {
-        $defaultUrl = array_intersect_key($pagination, [
+        $query = array_intersect_key(
+            $pagination,
+            [
             'sort' => null,
             'page' => null,
             'limit' => null,
-        ], $pagination);
+            ],
+            $pagination
+        );
 
         $request = $this->_request();
-        $defaultUrl += [
+        $query += [
             'include' => $request->getQuery('include'),
             'fields' => $request->getQuery('fields'),
             'filter' => $request->getQuery('filter'),
         ];
 
-        if ($defaultUrl['sort'] === null && $request->getQuery('sort')) {
-            $defaultUrl['sort'] = $request->getQuery('sort');
+        if ($query['sort'] === null && $request->getQuery('sort')) {
+            $query['sort'] = $request->getQuery('sort');
         }
 
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
-        $self = Router::url([
+        $self = Router::url(
+            [
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
-            'page' => $pagination['page'],
             '_method' => 'GET',
-        ] + $defaultUrl, $fullBase);
+            '?' => ['page' => $pagination['page']] + $query,
+            ],
+            $fullBase
+        );
 
-        $first = Router::url([
+        $first = Router::url(
+            [
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
-            'page' => 1,
             '_method' => 'GET',
-        ] + $defaultUrl, $fullBase);
+            '?' => ['page' => 1] + $query,
+            ],
+            $fullBase
+        );
 
-        $last = Router::url([
+        $last = Router::url(
+            [
             'controller' => $this->_controller()->getName(),
             'action' => 'index',
             'page' => $pagination['pageCount'],
             '_method' => 'GET',
-        ] + $defaultUrl, $fullBase);
+            '?' => ['page' => $pagination['pageCount']] + $query,
+            ],
+            $fullBase
+        );
 
         $prev = null;
         if ($pagination['prevPage']) {
-            $prev = Router::url([
+            $prev = Router::url(
+                [
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
-                'page' => $pagination['page'] - 1,
+                '?' => ['page' => $pagination['page'] - 1] + $query,
                 '_method' => 'GET',
-            ] + $defaultUrl, $fullBase);
+                ],
+                $fullBase
+            );
         }
 
         $next = null;
         if ($pagination['nextPage']) {
-            $next = Router::url([
+            $next = Router::url(
+                [
                 'controller' => $this->_controller()->getName(),
                 'action' => 'index',
-                'page' => $pagination['page'] + 1,
+                '?' => ['page' => $pagination['page'] + 1] + $query,
                 '_method' => 'GET',
-            ] + $defaultUrl, $fullBase);
+                ],
+                $fullBase
+            );
         }
 
         return [

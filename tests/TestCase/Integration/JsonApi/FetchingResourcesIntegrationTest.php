@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
@@ -16,22 +18,22 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
         return [
             'fetch-single-word-resource-with-no-relationships' => [
                 '/currencies/1',
-                'get-currency-no-relationships.json'
+                'get-currency-no-relationships.json',
             ],
 
             'fetch-single-word-resource-with-multiple-belongsto-relationships' => [
                 '/countries/1',
-                'get-country-multiple-belongsto-relationships.json'
+                'get-country-multiple-belongsto-relationships.json',
             ],
 
             'fetch-multi-word-resource-with-no-relationships' => [
                 '/national-capitals/1',
-                'get-national-capital-no-relationships.json'
+                'get-national-capital-no-relationships.json',
             ],
 
             'fetch-multi-word-resource-with-single-belongsTo-relationship' => [
                 '/national-cities/1',
-                'get-national-city-single-belongsto-relationship.json'
+                'get-national-city-single-belongsto-relationship.json',
             ],
         ];
     }
@@ -46,8 +48,8 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
     {
         $this->configRequest([
             'headers' => [
-                'Accept' => 'application/vnd.api+json'
-            ]
+                'Accept' => 'application/vnd.api+json',
+            ],
         ]);
 
         # execute the GET request

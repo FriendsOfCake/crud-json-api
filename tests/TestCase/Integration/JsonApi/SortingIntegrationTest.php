@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
 use Cake\Core\Configure;
-use Cake\Event\Event;
-use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class SortingIntegrationTest extends JsonApiBaseTestCase
@@ -48,16 +48,16 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
             ],
             'sorted desc with include' => [
                 '/countries?include=currency&sort=-code',
-                'sorted-desc-with-include.json'
+                'sorted-desc-with-include.json',
             ],
             'multi fields sorting' => [
                 '/countries?include=currency&sort=dummy_counter,code',
-                'multi-fields-sorting.json'
+                'multi-fields-sorting.json',
             ],
             'multi fields sorting with direction' => [
                 '/countries?include=currency&sort=-dummy_counter,-code',
                 //'get_currencies_and_countries_sort_by_code_desc.json',
-                'multi-fields-sorting-with-direction.json'
+                'multi-fields-sorting-with-direction.json',
             ],
 
             'hasMany - index with multi fields sorting with direction' => [

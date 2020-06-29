@@ -1,4 +1,7 @@
 <?php
+
+use Cake\Core\Plugin;
+
 // @codingStandardsIgnoreFile
 
 $findRoot = function () {
@@ -22,10 +25,10 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 define('ROOT', $findRoot());
-define('APP_DIR', 'App');
+define('APP_DIR', 'test_app');
 define('WEBROOT_DIR', 'webroot');
-define('APP', ROOT . '/tests/App/');
-define('CONFIG', ROOT . '/tests/config/');
+define('APP', ROOT . '/tests/test_app/src/');
+define('CONFIG', ROOT . '/tests/test_app/config/');
 define('WWW_ROOT', ROOT . DS . WEBROOT_DIR . DS);
 define('TESTS', ROOT . DS . 'tests' . DS);
 define('TMP', ROOT . DS . 'tmp' . DS);
@@ -38,7 +41,14 @@ define('CAKE', CORE_PATH . 'src' . DS);
 require ROOT . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
-Cake\Core\Configure::write('App', ['namespace' => 'CrudJsonApi\Test\App']);
+Cake\Core\Configure::write(
+    'App',
+    [
+        'namespace' => 'CrudJsonApi\Test\App',
+        'encoding' => 'UTF-8',
+        'fullBaseUrl' => 'http://localhost'
+    ]
+);
 Cake\Core\Configure::write('debug', true);
 
 $TMP = new \Cake\Filesystem\Folder(TMP);
@@ -67,19 +77,25 @@ $cache = [
 ];
 
 Cake\Cache\Cache::setConfig($cache);
-Cake\Core\Configure::write('Session', [
-    'defaults' => 'php'
-]);
+Cake\Core\Configure::write(
+    'Session',
+    [
+        'defaults' => 'php'
+    ]
+);
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
-    'url' => getenv('db_dsn'),
-    'timezone' => 'UTC'
-]);
+Cake\Datasource\ConnectionManager::setConfig(
+    'test',
+    [
+        'url' => getenv('db_dsn'),
+        'timezone' => 'UTC'
+    ]
+);
 
-// Fix multiple http/server requests in a single test method.
-$_SERVER['PHP_SELF'] = '/';
+Plugin::getCollection()->add(new \Crud\Plugin());
+Plugin::getCollection()->add(new \CrudJsonApi\Plugin());

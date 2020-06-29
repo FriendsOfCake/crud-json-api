@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
-use Cake\Event\Event;
-use Cake\Event\EventManager;
 use CrudJsonApi\Test\TestCase\Integration\JsonApiBaseTestCase;
 
 class FilteringIntegrationTest extends JsonApiBaseTestCase
@@ -22,7 +22,7 @@ class FilteringIntegrationTest extends JsonApiBaseTestCase
             'single field partial search-key' => [
                 '/countries?filter=Nether',
                 'filter-single-field-partial.json',
-            ]
+            ],
         ];
     }
 

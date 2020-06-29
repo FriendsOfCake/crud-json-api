@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class CurrenciesFixture extends TestFixture
 {
-
     public $fields = [
         'id' => ['type' => 'integer'],
         'code' => ['type' => 'string', 'length' => 3, 'null' => false],

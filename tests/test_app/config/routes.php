@@ -1,12 +1,12 @@
 <?php
 namespace CrudJsonApi\Test\App\Config;
 
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
+use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 
-Router::scope('/', function ($routes) {
+Router::scope('/', function (RouteBuilder $routes) {
+    $routes->setRouteClass(InflectedRoute::class);
     $routes->setExtensions(['json']);
 
     $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
