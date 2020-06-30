@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Listener;
 
-use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
