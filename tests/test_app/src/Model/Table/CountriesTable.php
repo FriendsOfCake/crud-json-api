@@ -46,7 +46,7 @@ class CountriesTable extends Table
             ->add('code', [
                 'UPPERCASE_ONLY' => [
                     'rule' => ['custom', '/^([A-Z]+)+$/'],
-                    'message' => "Field must be uppercase only",
+                    'message' => 'Field must be uppercase only',
                 ],
             ]);
 

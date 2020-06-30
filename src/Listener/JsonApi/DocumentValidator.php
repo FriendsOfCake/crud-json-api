@@ -259,7 +259,7 @@ class DocumentValidator extends stdClass
         if (empty($relationships)) {
             $this->_errorCollection->addRelationshipsError(
                 $title = '_required',
-                $detail = "Relationships object does not contain any members",
+                $detail = 'Relationships object does not contain any members',
                 $status = null,
                 $idx = null,
                 $aboutLink = $this->_getAboutLink('http://jsonapi.org/format/#crud-creating')

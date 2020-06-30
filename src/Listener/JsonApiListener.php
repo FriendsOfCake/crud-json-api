@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Listener;
 
-use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
@@ -108,28 +108,6 @@ class JsonApiListener extends ApiListener
             'Crud.afterFind' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
             'Crud.afterPaginate' => ['callable' => [$this, 'afterFind'], 'priority' => 50],
         ];
-    }
-
-    /**
-     * setup
-     *
-     * Called when the listener is created
-     *
-     * @return void
-     */
-    public function setup(): void
-    {
-        if (!$this->_checkRequestType('jsonapi')) {
-            return;
-        }
-
-        $appClass = Configure::read('App.namespace') . '\Application';
-
-        // If `App\Application` class exists it means Cake 3.3's PSR7 middleware
-        // implementation is used and it's too late to register new error handler.
-        if (!class_exists($appClass, false)) {
-            $this->registerExceptionHandler();
-        }
     }
 
     /**
@@ -435,7 +413,7 @@ class JsonApiListener extends ApiListener
         }
 
         if ($options['blacklist'] === true || $options['whitelist'] === false) {
-            throw new BadRequestException("The include parameter is not supported");
+            throw new BadRequestException('The include parameter is not supported');
         }
 
         $this->setConfig('include', []);
@@ -790,16 +768,16 @@ class JsonApiListener extends ApiListener
      * Override ApiListener method to enforce required JSON API request methods.
      *
      * @throws \Cake\Http\Exception\BadRequestException
-     * @return bool
+     * @return void
      */
-    protected function _checkRequestMethods(): bool
+    protected function _checkRequestMethods(): void
     {
         if ($this->_request()->is('put')) {
-            throw new BadRequestException('JSON API does not support the PUT method, use PATCH instead');
+            throw new MethodNotAllowedException('JSON API does not support the PUT method, use PATCH instead');
         }
 
         if (!$this->_request()->contentType()) {
-            return true;
+            return;
         }
 
         if ($this->_request()->contentType() !== self::MIME_TYPE) {
@@ -807,8 +785,6 @@ class JsonApiListener extends ApiListener
                 'JSON API requests with data require the "' . self::MIME_TYPE . '" Content-Type header'
             );
         }
-
-        return true;
     }
 
     /**
@@ -866,11 +842,11 @@ class JsonApiListener extends ApiListener
      *
      * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Datasource\EntityInterface|null
-     * @phpstan-ignore
      */
     protected function _getSingleEntity(Subject $subject): ?EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
+            // @phpstan-ignore-next-line
             return (clone $subject->entities)->first();
         }
 
@@ -987,7 +963,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new InvalidArgumentException("Association does not have an association object set");
+                throw new InvalidArgumentException('Association does not have an association object set');
             }
 
             $associationRepository = $association['association']->getTarget();
