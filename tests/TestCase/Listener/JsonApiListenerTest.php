@@ -9,6 +9,7 @@ use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\Filesystem\File;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
@@ -191,10 +192,6 @@ class JsonApiListenerTest extends TestCase
         $listener
             ->method('_convertJsonApiDocumentArray')
             ->willReturn([]);
-
-        $listener
-            ->method('_checkRequestMethods')
-            ->willReturn(true);
 
         $listener->beforeHandle(new Event('Crud.beforeHandle'));
         $this->assertTrue(true);
@@ -737,7 +734,8 @@ class JsonApiListenerTest extends TestCase
         $listener->setupDetectors();
 
         $this->setReflectionClassInstance($listener);
-        $this->assertTrue($this->callProtectedMethod('_checkRequestMethods', [], $listener));
+        $this->callProtectedMethod('_checkRequestMethods', [], $listener);
+        $this->assertTrue(true); //No exception was thrown
     }
 
     /**
@@ -745,7 +743,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsFailContentHeader()
     {
-        $this->expectException('Cake\Http\Exception\BadRequestException');
+        $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage('JSON API requests with data require the "application/vnd.api+json" Content-Type header');
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
@@ -765,7 +763,7 @@ class JsonApiListenerTest extends TestCase
      */
     public function testCheckRequestMethodsFailOnPutMethod()
     {
-        $this->expectException('Cake\Http\Exception\BadRequestException');
+        $this->expectException(MethodNotAllowedException::class);
         $this->expectExceptionMessage('JSON API does not support the PUT method, use PATCH instead');
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/vnd.api+json')
@@ -1147,10 +1145,6 @@ class JsonApiListenerTest extends TestCase
         $listener
             ->method('_convertJsonApiDocumentArray')
             ->willReturn([]);
-
-        $listener
-            ->method('_checkRequestMethods')
-            ->willReturn(true);
 
         $this->setReflectionClassInstance($listener);
 

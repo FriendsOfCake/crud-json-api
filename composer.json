@@ -66,7 +66,7 @@
         "cs-check": "phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
         "cs-fix": "phpcbf --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
         "phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:\"^0.12\" && mv composer.backup composer.json",
-        "phpstan": "phpstan analyse src/",
+        "phpstan": "phpstan analyse --memory-limit=3G src/",
         "test": "phpunit"
     }
 }

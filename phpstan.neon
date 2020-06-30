@@ -9,9 +9,6 @@ parameters:
     ignoreErrors:
         # ORM
         - '#Call to an undefined method Cake\\Datasource\\EntityInterface::visibleProperties\(\)\.#'
-        - '#Call to an undefined method Cake\\ORM\\Association::getAlias\(\)\.#'
-        - '#Method CrudJsonApi\\Listener\\JsonApiListener::_getSingleEntity\(\) should return Cake\\Datasource\\EntityInterface but returns array\|Cake\\Datasource\\EntityInterface\|null\.#'
-        - '#Method CrudJsonApi\\Listener\\JsonApiListener::_getSingleEntity\(\) should return Cake\\Datasource\\EntityInterface but returns array\|object\|null\.#'
 
         # Crud properties
         - '#Access to an undefined property object::\$created#'

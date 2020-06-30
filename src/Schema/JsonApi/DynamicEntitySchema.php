@@ -356,13 +356,13 @@ class DynamicEntitySchema extends BaseSchema
         // generate the link for hasMany relationship
         $foreignKeys = (array)$association->getForeignKey();
         $primaryKeys = $entity->extract((array)$this->getRepository()->getPrimaryKey());
-        $keys = array_combine($foreignKeys, $primaryKeys);
+        $keys = (array)array_combine($foreignKeys, $primaryKeys);
 
         $url = Router::url(
             $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
                 '_method' => 'GET',
                 'action' => 'index',
-                '?' => $keys
+                '?' => $keys,
             ],
             $this->view->getConfig('absoluteLinks', false)
         );

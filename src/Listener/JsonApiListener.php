@@ -112,28 +112,6 @@ class JsonApiListener extends ApiListener
     }
 
     /**
-     * setup
-     *
-     * Called when the listener is created
-     *
-     * @return void
-     */
-    public function setup(): void
-    {
-        if (!$this->_checkRequestType('jsonapi')) {
-            return;
-        }
-
-        $appClass = Configure::read('App.namespace') . '\Application';
-
-        // If `App\Application` class exists it means Cake 3.3's PSR7 middleware
-        // implementation is used and it's too late to register new error handler.
-        if (!class_exists($appClass, false)) {
-            $this->registerExceptionHandler();
-        }
-    }
-
-    /**
      * beforeHandle
      *
      * Called before the crud action is executed.
@@ -436,7 +414,7 @@ class JsonApiListener extends ApiListener
         }
 
         if ($options['blacklist'] === true || $options['whitelist'] === false) {
-            throw new BadRequestException("The include parameter is not supported");
+            throw new BadRequestException('The include parameter is not supported');
         }
 
         $this->setConfig('include', []);
@@ -865,11 +843,11 @@ class JsonApiListener extends ApiListener
      *
      * @param  \Crud\Event\Subject $subject Subject
      * @return \Cake\Datasource\EntityInterface|null
-     * @phpstan-ignore
      */
     protected function _getSingleEntity(Subject $subject): ?EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
+            // @phpstan-ignore-next-line
             return (clone $subject->entities)->first();
         }
 
@@ -986,7 +964,7 @@ class JsonApiListener extends ApiListener
             ];
 
             if ($association['association'] === null) {
-                throw new InvalidArgumentException("Association does not have an association object set");
+                throw new InvalidArgumentException('Association does not have an association object set');
             }
 
             $associationRepository = $association['association']->getTarget();
