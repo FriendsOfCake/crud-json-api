@@ -67,7 +67,7 @@ class JsonApiListener extends ApiListener
                 'blacklist' => false,
             ],
         ], //Array of query parameters and associated transformers
-        'inflect' => 'dasherize',
+        'inflect' => 'variable', //Default to camelBacked as per https://jsonapi.org/recommendations/#naming
     ];
 
     /**
@@ -566,7 +566,7 @@ class JsonApiListener extends ApiListener
                 $sortField = substr($sortField, 1);
             }
 
-            if ($this->getConfig('inflect') === 'dasherize') {
+            if ($this->getConfig('inflect') !== 'underscore') {
                 $sortField = Inflector::underscore($sortField); // e.g. currency, national-capitals
             }
 
@@ -1003,8 +1003,9 @@ class JsonApiListener extends ApiListener
             }
 
             $property = $association['association']->getProperty();
-            if ($this->getConfig('inflect') === 'dasherize') {
-                $property = Inflector::dasherize($property); // e.g. currency, national-capitals
+            $inflect = $this->getConfig('inflect');
+            if ($inflect) {
+                $property = Inflector::$inflect($property); // e.g. currency, national-capitals
             }
 
             $result[$property] = $this->_getIncludeList($association['children'], false);
@@ -1119,8 +1120,8 @@ class JsonApiListener extends ApiListener
         if (array_key_exists('attributes', $document['data'])) {
             $result = array_merge_recursive($result, $document['data']['attributes']);
 
-            // dasherize all attribute keys directly below the primary resource if need be
-            if ($this->getConfig('inflect') === 'dasherize') {
+            // Un-inflect all attribute keys directly below the primary resource if need be
+            if ($this->getConfig('inflect') !== 'underscore') {
                 foreach ($result as $key => $value) {
                     $underscoredKey = Inflector::underscore($key);
 
@@ -1139,8 +1140,8 @@ class JsonApiListener extends ApiListener
 
         // translate relationships into CakePHP array format
         foreach ($document['data']['relationships'] as $key => $details) {
-            if ($this->getConfig('inflect') === 'dasherize') {
-                $key = Inflector::underscore($key); // e.g. currency, national-capitals
+            if ($this->getConfig('inflect') !== 'underscore') {
+                $key = Inflector::underscore($key); // e.g. currency, national_capitals
             }
 
             // allow empty/null data node as per the JSON API specification
@@ -1170,7 +1171,7 @@ class JsonApiListener extends ApiListener
                         $relationResult = array_merge_recursive($relationResult, $relationData['attributes']);
 
                         // dasherize attribute keys if need be
-                        if ($this->getConfig('inflect') === 'dasherize') {
+                        if ($this->getConfig('inflect') !== 'underscore') {
                             foreach ($relationResult as $resultKey => $value) {
                                 $underscoredKey = Inflector::underscore($resultKey);
                                 if (!array_key_exists($underscoredKey, $relationResult)) {

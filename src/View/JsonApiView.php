@@ -121,8 +121,8 @@ class JsonApiView extends View
      */
     protected function _encodeWithSchemas(): string
     {
-        if ($this->getConfig('inflect') === 'dasherize') {
-            $this->_dasherizeIncludesViewVar();
+        if ($this->getConfig('inflect')) {
+            $this->_inflectIncludesViewVar();
         }
 
         // All "Schema is not registered for a resource at path 'xyz'" errors
@@ -388,14 +388,18 @@ class JsonApiView extends View
     }
 
     /**
-     * Dasherizes all values in the '_includes` viewVar array.
+     * Dasherizes all values in the 'includes` config.
      *
      * @return void
      */
-    protected function _dasherizeIncludesViewVar()
+    protected function _inflectIncludesViewVar()
     {
-        foreach ($this->getConfig('include') as $key => $value) {
-            $this->getConfig('include')[$key] = Inflector::dasherize($value);
+        $inflect = $this->getConfig('inflect');
+        $include = $this->getConfig('include');
+        foreach ($include as $key => $value) {
+            $include[$key] = Inflector::$inflect($value);
         }
+
+        $this->setConfig('include', $include);
     }
 }

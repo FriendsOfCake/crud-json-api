@@ -262,7 +262,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
             // stil here so array key must be a string (and thus a built-in rule)
             $rule = key($validationFeedback);
             $message = $validationFeedback[$rule];
-            $field = Inflector::dasherize($field);
+            $field = Inflector::variable($field);
 
             $result[] = [
                 'fields' => [$field],

@@ -60,9 +60,13 @@ class DynamicEntitySchema extends BaseSchema
     {
         $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
         [, $entityName] = pluginSplit($repositoryName);
-        $method = $this->view->get('_inflect', 'dasherize');
+        $inflect = $this->view->getConfig('inflect');
 
-        return Inflector::$method($entityName);
+        if (!$inflect) {
+            return $entityName;
+        }
+
+        return Inflector::$inflect($entityName);
     }
 
     /**
@@ -167,13 +171,14 @@ class DynamicEntitySchema extends BaseSchema
             unset($attributes[$propertyName]);
         }
 
-        // dasherize attribute keys (like `created_by`) if need be
-        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
+        // inflect attribute keys (like `created_by`)
+        $inflect = $this->view->getConfig('inflect');
+        if ($inflect) {
             foreach ($attributes as $key => $value) {
-                $dasherizedKey = Inflector::dasherize($key);
+                $inflectedKey = Inflector::$inflect($key);
 
-                if (!array_key_exists($dasherizedKey, $attributes)) {
-                    $attributes[$dasherizedKey] = $value;
+                if (!array_key_exists($inflectedKey, $attributes)) {
+                    $attributes[$inflectedKey] = $value;
                     unset($attributes[$key]);
                 }
             }
@@ -211,14 +216,15 @@ class DynamicEntitySchema extends BaseSchema
                 continue;
             }
 
-            // change related  data in entity to dasherized if need be
-            if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
-                $dasherizedProperty = Inflector::dasherize($property);
+            // inflect related data in entity if need be
+            $inflect = $this->view->getConfig('inflect');
+            if ($inflect) {
+                $inflectedProperty = Inflector::$inflect($property);
 
-                if (empty($entity->$dasherizedProperty)) {
-                    $entity->$dasherizedProperty = $entity->$property;
+                if (empty($entity->$inflectedProperty)) {
+                    $entity->$inflectedProperty = $entity->$property;
                     unset($entity->$property);
-                    $property = $dasherizedProperty;
+                    $property = $inflectedProperty;
                 }
             }
 
@@ -269,7 +275,8 @@ class DynamicEntitySchema extends BaseSchema
      */
     protected function getAssociationByProperty(string $name): ?Association
     {
-        if ($this->view->get('_inflect', 'dasherize') === 'dasherize') {
+        //If the property name has been inflected to something else, we need to undo that inflection to get the association
+        if ($this->view->getConfig('inflect') !== 'underscore') {
             $name = Inflector::underscore($name);
         }
 
