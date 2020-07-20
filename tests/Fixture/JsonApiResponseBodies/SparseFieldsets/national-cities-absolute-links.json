@@ -5,15 +5,15 @@
         "page_limit": 2
     },
     "links": {
-        "self": "http:\/\/test-server\/national-cities?page=2&limit=2",
-        "first": "http:\/\/test-server\/national-cities?page=1&limit=2",
-        "last": "http:\/\/test-server\/national-cities?page=3&limit=2",
-        "prev": "http:\/\/test-server\/national-cities?page=1&limit=2",
-        "next": "http:\/\/test-server\/national-cities?page=3&limit=2"
+        "self": "http:\/\/test-server\/nationalCities?page=2&limit=2",
+        "first": "http:\/\/test-server\/nationalCities?page=1&limit=2",
+        "last": "http:\/\/test-server\/nationalCities?page=3&limit=2",
+        "prev": "http:\/\/test-server\/nationalCities?page=1&limit=2",
+        "next": "http:\/\/test-server\/nationalCities?page=3&limit=2"
     },
     "data": [
         {
-            "type": "national-cities",
+            "type": "nationalCities",
             "id": "3",
             "attributes": {
                 "name": "Sofia"
@@ -30,11 +30,11 @@
                 }
             },
             "links": {
-                "self": "\/national-cities\/3"
+                "self": "\/nationalCities\/3"
             }
         },
         {
-            "type": "national-cities",
+            "type": "nationalCities",
             "id": "4",
             "attributes": {
                 "name": "Plovdiv"
@@ -51,7 +51,7 @@
                 }
             },
             "links": {
-                "self": "\/national-cities\/4"
+                "self": "\/nationalCities\/4"
             }
         }
     ]

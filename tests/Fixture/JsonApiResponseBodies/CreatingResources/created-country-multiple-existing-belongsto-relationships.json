@@ -5,7 +5,7 @@
         "attributes": {
             "code": "NZ",
             "name": "New Zealand",
-            "dummy-counter": 66666
+            "dummyCounter": 66666
         },
         "relationships": {
             "currency": {
@@ -17,12 +17,12 @@
                     "id": "1"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "links": {
-                    "self": "\/national-capitals\/2"
+                    "self": "\/nationalCapitals\/2"
                 },
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "2"
                 }
             }

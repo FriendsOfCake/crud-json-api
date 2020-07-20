@@ -17,17 +17,6 @@
             "attributes": {
                 "name": "Vatican"
             },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/1"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    }
-                }
-            },
             "links": {
                 "self": "\/countries\/4"
             }
@@ -37,17 +26,6 @@
             "id": "5",
             "attributes": {
                 "name": "United States of America"
-            },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/2"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "2"
-                    }
-                }
             },
             "links": {
                 "self": "\/countries\/5"
@@ -59,41 +37,8 @@
             "attributes": {
                 "name": "The Netherlands"
             },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/1"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    }
-                }
-            },
             "links": {
                 "self": "\/countries\/1"
-            }
-        }
-    ],
-    "included": [
-        {
-            "type": "currencies",
-            "id": "1",
-            "attributes": {
-                "name": "Euro"
-            },
-            "links": {
-                "self": "\/currencies\/1"
-            }
-        },
-        {
-            "type": "currencies",
-            "id": "2",
-            "attributes": {
-                "name": "US Dollar"
-            },
-            "links": {
-                "self": "\/currencies\/2"
             }
         }
     ]

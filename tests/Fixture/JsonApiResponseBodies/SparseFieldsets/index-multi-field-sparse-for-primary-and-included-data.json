@@ -18,17 +18,6 @@
                 "code": "NL",
                 "name": "The Netherlands"
             },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/1"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    }
-                }
-            },
             "links": {
                 "self": "\/countries\/1"
             }
@@ -39,17 +28,6 @@
             "attributes": {
                 "code": "BG",
                 "name": "Bulgaria"
-            },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/1"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    }
-                }
             },
             "links": {
                 "self": "\/countries\/2"
@@ -62,32 +40,8 @@
                 "code": "IT",
                 "name": "Italy"
             },
-            "relationships": {
-                "currency": {
-                    "links": {
-                        "self": "\/currencies\/1"
-                    },
-                    "data": {
-                        "type": "currencies",
-                        "id": "1"
-                    }
-                }
-            },
             "links": {
                 "self": "\/countries\/3"
-            }
-        }
-    ],
-    "included": [
-        {
-            "type": "currencies",
-            "id": "1",
-            "attributes": {
-                "code": "EUR",
-                "name": "Euro"
-            },
-            "links": {
-                "self": "\/currencies\/1"
             }
         }
     ]

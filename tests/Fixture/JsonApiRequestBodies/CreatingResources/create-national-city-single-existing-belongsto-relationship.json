@@ -1,6 +1,6 @@
 {
     "data": {
-        "type": "national-cities",
+        "type": "nationalCities",
         "attributes": {
             "name": "Rotterdam"
         },

@@ -4,13 +4,13 @@
         "attributes": {
             "code": "MC",
             "name": "Monaco",
-            "dummy-counter": 66666
+            "dummyCounter": 66666
         },
         "relationships": {
-            "national-cities": {
+            "nationalCities": {
                 "data": [
                     {
-                        "type": "national-cities",
+                        "type": "nationalCities",
                         "id": "4"
                     }
                 ]

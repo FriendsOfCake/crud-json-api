@@ -12,7 +12,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
     $routes->connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
 
-    $routes->resources('Countries', function (RouteBuilder $routes) {
+    $routes->resources('Countries', ['inflect' => 'variable'], function (RouteBuilder $routes) {
         $routes->connect(
             '/relationships/:type',
             [
@@ -25,6 +25,6 @@ Router::scope('/', function (RouteBuilder $routes) {
 
         return $routes;
     });
-    $routes->resources('Currencies');
-    $routes->resources('Cultures');
+    $routes->resources('Currencies', ['inflect' => 'variable']);
+    $routes->resources('Cultures', ['inflect' => 'variable']);
 });

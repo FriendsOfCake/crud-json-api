@@ -6,32 +6,8 @@
             "name": "The Netherlands",
             "code": "NL"
         },
-        "relationships": {
-            "currency": {
-                "links": {
-                    "self": "\/currencies\/1"
-                },
-                "data": {
-                    "type": "currencies",
-                    "id": "1"
-                }
-            }
-        },
         "links": {
             "self": "\/countries\/1"
         }
-    },
-    "included": [
-        {
-            "type": "currencies",
-            "id": "1",
-            "attributes": {
-                "code": "EUR",
-                "name": "Euro"
-            },
-            "links": {
-                "self": "\/currencies\/1"
-            }
-        }
-    ]
+    }
 }

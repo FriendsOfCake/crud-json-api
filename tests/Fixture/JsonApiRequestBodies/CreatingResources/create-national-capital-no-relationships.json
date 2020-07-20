@@ -1,6 +1,6 @@
 {
     "data": {
-        "type": "national-capitals",
+        "type": "nationalCapitals",
         "attributes": {
             "name": "Havana",
             "description": "National capital of Cuba"

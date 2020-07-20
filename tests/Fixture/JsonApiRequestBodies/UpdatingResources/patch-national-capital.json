@@ -1,6 +1,6 @@
 {
     "data": {
-        "type": "national-capitals",
+        "type": "nationalCapitals",
         "id": "1",
         "attributes": {
             "name": "Patched Amsterdam"

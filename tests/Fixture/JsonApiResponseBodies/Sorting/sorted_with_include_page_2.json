@@ -18,7 +18,7 @@
             "attributes": {
                 "code": "US",
                 "name": "United States of America",
-                "dummy-counter": 33333
+                "dummyCounter": 33333
             },
             "relationships": {
                 "currency": {
@@ -41,7 +41,7 @@
             "attributes": {
                 "code": "VT",
                 "name": "Vatican",
-                "dummy-counter": 44444
+                "dummyCounter": 44444
             },
             "relationships": {
                 "currency": {

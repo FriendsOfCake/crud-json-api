@@ -9,9 +9,9 @@
                     "id": "2"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "4"
                 }
             }

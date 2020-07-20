@@ -96,8 +96,8 @@ class SortingIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             'pagination' => [
-                '/national-cities?page=2&limit=2',
-                'national-cities-absolute-links.json',
+                '/nationalCities?page=2&limit=2',
+                'nationalCities-absolute-links.json',
             ],
         ];
     }

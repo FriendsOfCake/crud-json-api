@@ -14,11 +14,11 @@ class SelfReferencedAssociationIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             'get supercountry with subcountries' => [
-                '/countries/3?include=subcountries',
+                '/countries/3?include=subCountries',
                 'get_supercountry_with_subcountries.json',
             ],
             'get subcountry with supercountry' => [
-                '/countries/4?include=supercountries',
+                '/countries/4?include=superCountries',
                 'get_subcountry_with_supercountry.json',
             ],
         ];

@@ -5,7 +5,7 @@
         "attributes": {
             "code": "IT",
             "name": "Italy",
-            "dummy-counter": 33333
+            "dummyCounter": 33333
         },
         "relationships": {
             "currency": {
@@ -17,12 +17,12 @@
                     "id": "1"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "links": {
-                    "self": "\/national-capitals\/4"
+                    "self": "\/nationalCapitals\/4"
                 },
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "4"
                 }
             },
@@ -49,7 +49,7 @@
             "attributes": {
                 "code": "VT",
                 "name": "Vatican",
-                "dummy-counter": 44444
+                "dummyCounter": 44444
             },
             "relationships": {
                 "currency": {
@@ -61,12 +61,12 @@
                         "id": "1"
                     }
                 },
-                "national-capital": {
+                "nationalCapital": {
                     "links": {
-                        "self": "\/national-capitals\/5"
+                        "self": "\/nationalCapitals\/5"
                     },
                     "data": {
-                        "type": "national-capitals",
+                        "type": "nationalCapitals",
                         "id": "5"
                     }
                 },

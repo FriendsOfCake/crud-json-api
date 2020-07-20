@@ -37,25 +37,25 @@ class InclusionIntegrationTest extends JsonApiBaseTestCase
                 'get-country-include-currency-and-countries.json',
             ],
             // assert multi-word associations
-            'include national-capital belongsTo singular' => [
-                '/countries/1?include=national-capital',
+            'include nationalCapital belongsTo singular' => [
+                '/countries/1?include=nationalCapital',
                 'get-country-include-national-capital.json',
             ],
-            'include national-capital belongsTo plural' => [
-                '/countries/1?include=national-capitals',
+            'include nationalCapital belongsTo plural' => [
+                '/countries/1?include=nationalCapitals',
                 'get-country-include-national-capital.json',
             ],
-            'include national-cities hasMany' => [
-                '/countries/1?include=national-cities',
-                'get-country-include-national-cities.json',
+            'include nationalCities hasMany' => [
+                '/countries/1?include=nationalCities',
+                'get-country-include-nationalCities.json',
             ],
             // assert all of the above in a single request
             'include all supported associations (singular belongsTo)' => [
-                '/countries/1?include=currency,cultures,national-capital,national-cities',
+                '/countries/1?include=currency,cultures,nationalCapital,nationalCities',
                 'get-country-include-all-supported-associations.json',
             ],
             'include all supported associations (plural belongsTo)' => [
-                '/countries/1?include=currencies,cultures,national-capitals,national-cities',
+                '/countries/1?include=currencies,cultures,nationalCapitals,nationalCities',
                 'get-country-include-all-supported-associations.json',
             ],
         ];

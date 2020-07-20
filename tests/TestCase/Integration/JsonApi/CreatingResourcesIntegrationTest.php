@@ -68,13 +68,13 @@ class CreatingResourcesIntegrationTest extends JsonApiBaseTestCase
             ],
 
             'create-multi-word-resource-no-relationships' => [
-                '/national-capitals',
+                '/nationalCapitals',
                 'create-national-capital-no-relationships.json',
                 'created-national-capital-no-relationships.json',
             ],
 
             'create-multi-word-resource-single-existing-belongsto-relationships' => [
-                '/national-cities',
+                '/nationalCities',
                 'create-national-city-single-existing-belongsto-relationship.json',
                 'created-national-city-single-existing-belongsto-relationship.json',
             ],

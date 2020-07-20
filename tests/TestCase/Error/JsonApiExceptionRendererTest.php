@@ -243,7 +243,7 @@ class JsonApiExceptionRendererTest extends TestCase
             ],
             1 => [
                 'fields' => [
-                    'dummy-counter',
+                    'dummyCounter',
                 ],
                 'name' => 'integer',
                 'message' => 'This is a two word built-in rule',

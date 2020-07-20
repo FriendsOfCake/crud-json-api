@@ -1,6 +1,6 @@
 {
     "data": {
-        "type": "national-cities",
+        "type": "nationalCities",
         "id": "1",
         "attributes": {
             "name": "Amsterdam"
@@ -17,7 +17,7 @@
             }
         },
         "links": {
-            "self": "\/national-cities\/1"
+            "self": "\/nationalCities\/1"
         }
     }
 }

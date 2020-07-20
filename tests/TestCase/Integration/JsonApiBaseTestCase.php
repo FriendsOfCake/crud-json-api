@@ -55,19 +55,19 @@ abstract class JsonApiBaseTestCase extends TestCase
 
         Router::scope('/', function ($routes) {
             $routes->resources('Countries', [
-                'inflect' => 'dasherize',
+                'inflect' => 'variable',
             ]);
             $routes->resources('Currencies', [ // single word belongsTo association
-                'inflect' => 'dasherize',
+                'inflect' => 'variable',
             ]);
             $routes->resources('Cultures', [ // single word hasMany association
-                'inflect' => 'dasherize',
+                'inflect' => 'variable',
             ]);
             $routes->resources('NationalCapitals', [ // multi-word belongsTo association
-                'inflect' => 'dasherize',
+                'inflect' => 'variable',
             ]);
             $routes->resources('NationalCities', [ // multi-word hasMany association
-                'inflect' => 'dasherize',
+                'inflect' => 'variable',
             ]);
         });
 

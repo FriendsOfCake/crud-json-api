@@ -103,7 +103,7 @@ class JsonApiViewTest extends TestCase
                 JSON_PRETTY_PRINT,
             ],
             'debugPrettyPrint' => true,
-            'inflect' => 'dasherize',
+            'inflect' => 'variable',
             'serialize' => true,
         ];
         foreach ($expected as $key => $value) {
@@ -422,7 +422,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummy-counter":11111},"relationships":{"currency":{"links":{"self":"\/currencies\/1"},"data":{"type":"currencies","id":"1"}},"national-capital":{"links":{"self":"\/national_capitals\/view\/1"},"data":{"type":"national-capitals","id":"1"}}},"links":{"self":"\/countries\/1"}}}',
+            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummyCounter":11111},"relationships":{"currency":{"links":{"self":"\/currencies\/1"},"data":{"type":"currencies","id":"1"}},"nationalCapital":{"links":{"self":"\/national_capitals\/view\/1"},"data":{"type":"nationalCapitals","id":"1"}}},"links":{"self":"\/countries\/1"}}}',
             $view->render()
         );
     }

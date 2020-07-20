@@ -5,7 +5,7 @@
         "attributes": {
             "code": "NL",
             "name": "The Netherlands",
-            "dummy-counter": 11111
+            "dummyCounter": 11111
         },
         "relationships": {
             "currency": {
@@ -17,12 +17,12 @@
                     "id": "1"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "links": {
-                    "self": "\/national-capitals\/1"
+                    "self": "\/nationalCapitals\/1"
                 },
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "1"
                 }
             }
@@ -74,7 +74,7 @@
             "attributes": {
                 "code": "BG",
                 "name": "Bulgaria",
-                "dummy-counter": 22222
+                "dummyCounter": 22222
             },
             "relationships": {
                 "currency": {
@@ -86,12 +86,12 @@
                         "id": "1"
                     }
                 },
-                "national-capital": {
+                "nationalCapital": {
                     "links": {
-                        "self": "\/national-capitals\/2"
+                        "self": "\/nationalCapitals\/2"
                     },
                     "data": {
-                        "type": "national-capitals",
+                        "type": "nationalCapitals",
                         "id": "2"
                     }
                 }
@@ -106,7 +106,7 @@
             "attributes": {
                 "code": "IT",
                 "name": "Italy",
-                "dummy-counter": 33333
+                "dummyCounter": 33333
             },
             "relationships": {
                 "currency": {
@@ -118,12 +118,12 @@
                         "id": "1"
                     }
                 },
-                "national-capital": {
+                "nationalCapital": {
                     "links": {
-                        "self": "\/national-capitals\/4"
+                        "self": "\/nationalCapitals\/4"
                     },
                     "data": {
-                        "type": "national-capitals",
+                        "type": "nationalCapitals",
                         "id": "4"
                     }
                 }
@@ -138,7 +138,7 @@
             "attributes": {
                 "code": "VT",
                 "name": "Vatican",
-                "dummy-counter": 44444
+                "dummyCounter": 44444
             },
             "relationships": {
                 "currency": {
@@ -150,12 +150,12 @@
                         "id": "1"
                     }
                 },
-                "national-capital": {
+                "nationalCapital": {
                     "links": {
-                        "self": "\/national-capitals\/5"
+                        "self": "\/nationalCapitals\/5"
                     },
                     "data": {
-                        "type": "national-capitals",
+                        "type": "nationalCapitals",
                         "id": "5"
                     }
                 },

@@ -5,7 +5,7 @@
         "attributes": {
             "code": "BG",
             "name": "Bulgaria",
-            "dummy-counter": 22222
+            "dummyCounter": 22222
         },
         "relationships": {
             "currency": {
@@ -17,12 +17,12 @@
                     "id": "1"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "links": {
-                    "self": "\/national-capitals\/2"
+                    "self": "\/nationalCapitals\/2"
                 },
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "2"
                 }
             },

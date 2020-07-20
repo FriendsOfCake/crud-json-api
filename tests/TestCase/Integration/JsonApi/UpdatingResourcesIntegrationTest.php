@@ -102,7 +102,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
 
             # Make sure we can update multi-word attributes
             'update-multi-word-resource-attributes-only' => [
-                '/national-capitals/6',
+                '/nationalCapitals/6',
                 'update-national-capital-attributes-only.json',
                 'updated-national-capital-attributes-only.json',
                 [
@@ -115,7 +115,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
             # Make sure `belongsTo` relationships gets updated when we pass both
             # `attributes` and `relationships` nodes to a multi-word Resource.
             'update-multi-word-resource-single-belongsto-relationships' => [
-                '/national-cities/2',
+                '/nationalCities/2',
                 'update-national-city-attributes-and-single-belongsto-relationship.json',
                 'updated-national-city-attributes-and-single-belongsto-relationship.json',
                 [
@@ -128,7 +128,7 @@ class UpdatingResourcesIntegrationTest extends JsonApiBaseTestCase
             # Make sure `belongsTo` relationships get updated when we only pass the `relationships` node to
             # a multi-word Resource (and thus the `attributes` node is absent in the POST request body)
             'update-multi-word-resource-single-belongsto-relationships-only' => [
-                '/national-cities/2',
+                '/nationalCities/2',
                 'update-national-city-single-belongsto-relationship-only.json',
                 'updated-national-city-single-belongsto-relationship-only.json',
                 [

@@ -5,7 +5,7 @@
         "attributes": {
             "code": "JM",
             "name": "Jamaica",
-            "dummy-counter": 12345
+            "dummyCounter": 12345
         },
         "relationships": {
             "currency": {
@@ -14,9 +14,9 @@
                     "id": "2"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "5"
                 }
             }

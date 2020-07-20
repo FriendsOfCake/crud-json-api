@@ -1,6 +1,6 @@
 {
     "data": {
-        "type": "national-cities",
+        "type": "nationalCities",
         "id": "2",
         "attributes": {
             "name": "Milan"
@@ -17,7 +17,7 @@
             }
         },
         "links": {
-            "self": "\/national-cities\/2"
+            "self": "\/nationalCities\/2"
         }
     }
 }

@@ -4,7 +4,7 @@
         "attributes": {
             "code": "NL",
             "name": "The Netherlands",
-            "dummy-counter": 11111
+            "dummyCounter": 11111
         }
     }
 }

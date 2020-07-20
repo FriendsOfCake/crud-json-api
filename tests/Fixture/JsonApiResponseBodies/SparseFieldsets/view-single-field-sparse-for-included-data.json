@@ -5,7 +5,7 @@
         "attributes": {
             "code": "NL",
             "name": "The Netherlands",
-            "dummy-counter": 11111
+            "dummyCounter": 11111
         },
         "relationships": {
             "currency": {
@@ -17,12 +17,12 @@
                     "id": "1"
                 }
             },
-            "national-capital": {
+            "nationalCapital": {
                 "links": {
-                    "self": "\/national-capitals\/1"
+                    "self": "\/nationalCapitals\/1"
                 },
                 "data": {
-                    "type": "national-capitals",
+                    "type": "nationalCapitals",
                     "id": "1"
                 }
             }
