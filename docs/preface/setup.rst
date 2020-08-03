@@ -37,7 +37,7 @@ if you prefer attaching the listener to only specific controllers on the fly.
   class SamplesController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
-      parent::beforeFilter();
+      parent::beforeFilter($event);
       $this->Crud->addListener('CrudJsonApi.JsonApi');
     }
   }
