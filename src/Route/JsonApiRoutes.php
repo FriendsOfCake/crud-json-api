@@ -36,7 +36,8 @@ class JsonApiRoutes
      */
     private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association, $controller): void
     {
-        $type = static::inflect($association->getProperty());
+        $path = static::inflect($association->getProperty());
+        $type = $association->getName();
         $from = $association->getSource()
             ->getRegistryAlias();
 
@@ -49,7 +50,7 @@ class JsonApiRoutes
         $methods = ['GET', 'PATCH', 'POST', 'DELETE'];
         foreach ($methods as $method) {
             $routeBuilder->connect(
-                '/relationships/' . $type,
+                '/relationships/' . $path,
                 $base + ['_method' => $method]
             );
         }
@@ -111,7 +112,7 @@ class JsonApiRoutes
                             '_method' => 'GET',
                             'action' => $isOne ? 'view' : 'index',
                             'from' => $from,
-                            'type' => $pathName,
+                            'type' => $name,
                         ]
                     );
 
@@ -131,7 +132,7 @@ class JsonApiRoutes
                 '_method' => 'GET',
                 'action' => $isOne ? 'view' : 'index',
                 'from' => $from,
-                'type' => $pathName,
+                'type' => $name,
             ]
         );
 

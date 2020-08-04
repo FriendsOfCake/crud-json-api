@@ -346,7 +346,7 @@ class DynamicEntitySchema extends BaseSchema
             'action' => 'relationships',
             $sourceName . '_id' => $entity->id,
             'from' => $this->getRepository()->getRegistryAlias(),
-            'type' => $name,
+            'type' => $association->getName(),
             ],
             $this->view->getConfig('absoluteLinks', false)
         );
@@ -389,7 +389,7 @@ class DynamicEntitySchema extends BaseSchema
         $route = $baseRoute + [
             $sourceName . '_id' => $entity->id,
             'from' => $this->getRepository()->getRegistryAlias(),
-            'type' => $name,
+            'type' => $association->getName(),
         ];
 
         try {
