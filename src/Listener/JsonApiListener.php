@@ -55,7 +55,6 @@ class JsonApiListener extends ApiListener
         'meta' => [], // array or hash with meta information (will add top-level node `meta` to the response)
         'links' => [], // array or hash with link information (will add top-level node `links` to the response)
         'absoluteLinks' => false, // false to generate relative links, true will generate fully qualified URL prefixed with http://domain.name
-        'jsonApiBelongsToLinks' => false, // false to generate JSONAPI links (requires custom Route, included)
         'jsonOptions' => [], // array with predefined JSON constants as described at http://php.net/manual/en/json.constants.php
         'debugPrettyPrint' => true, // true to use JSON_PRETTY_PRINT for generated debug-mode response
         'include' => [],
@@ -621,6 +620,10 @@ class JsonApiListener extends ApiListener
         $controller->viewBuilder()->setClassName('CrudJsonApi.JsonApi');
 
         // render a JSON API response with resource(s) if data is found
+        if (isset($subject->association) && (isset($subject->entity) || isset($subject->entities))) {
+            return $this->_renderWithIdentifiers($subject);
+        }
+
         if (isset($subject->entity) || isset($subject->entities)) {
             return $this->_renderWithResources($subject);
         }
@@ -640,13 +643,52 @@ class JsonApiListener extends ApiListener
             'meta' => $this->getConfig('meta'),
             'links' => $this->getConfig('links'),
             'absoluteLinks' => $this->getConfig('absoluteLinks'),
-            'jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             'jsonOptions' => $this->getConfig('jsonOptions'),
             'debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             'serialize' => true,
         ]);
 
         return $this->_controller()->render();
+    }
+
+    /**
+     * Renders a JSON API response with top-level data node holding identifiers.
+     *
+     * Primarly used for relationship end-points as described in https://jsonapi.org/format/1.1/#fetching-relationships
+     *
+     * @param \Crud\Event\Subject $subject Subject
+     * @return \Cake\Http\Response
+     */
+    protected function _renderWithIdentifiers(Subject $subject): Response
+    {
+        /** @var \Cake\ORM\Association $association */
+        $association = $subject->association;
+
+        $this->_controller()
+            ->viewBuilder()
+            ->setOptions(
+                [
+                    'withJsonApiVersion' => $this->getConfig('withJsonApiVersion'),
+                    'meta' => $this->getConfig('meta'),
+                    'links' => $this->getConfig('links'),
+                    'absoluteLinks' => $this->getConfig('absoluteLinks'),
+                    'jsonOptions' => $this->getConfig('jsonOptions'),
+                    'debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
+                    'serialize' => true,
+                    'association' => $association,
+                    'inflect' => $this->getConfig('inflect'),
+                ]
+            );
+
+        $this->_controller()
+            ->set(
+                [
+                    Inflector::tableize($association->getAlias()) => $this->_getFindResult($subject),
+                ]
+            );
+
+        return $this->_controller()
+            ->render();
     }
 
     /**
@@ -689,7 +731,6 @@ class JsonApiListener extends ApiListener
             'meta' => $this->getConfig('meta'),
             'links' => $this->getConfig('links'),
             'absoluteLinks' => $this->getConfig('absoluteLinks'),
-            'jsonApiBelongsToLinks' => $this->getConfig('jsonApiBelongsToLinks'),
             'jsonOptions' => $this->getConfig('jsonOptions'),
             'debugPrettyPrint' => $this->getConfig('debugPrettyPrint'),
             'fieldSets' => $this->getConfig('fieldSets'),
@@ -734,12 +775,6 @@ class JsonApiListener extends ApiListener
         if (!is_bool($this->getConfig('absoluteLinks'))) {
             throw new CrudException(
                 'JsonApiListener configuration option `absoluteLinks` only accepts a boolean'
-            );
-        }
-
-        if (!is_bool($this->getConfig('jsonApiBelongsToLinks'))) {
-            throw new CrudException(
-                'JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean'
             );
         }
 
