@@ -9,6 +9,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use InvalidArgumentException;
@@ -381,18 +382,48 @@ class DynamicEntitySchema extends BaseSchema
             true
         );
 
-        $route = $this->_getRepositoryRoutingParameters($relatedRepository) + [
+        $baseRoute = $this->_getRepositoryRoutingParameters($relatedRepository) + [
             '_method' => 'GET',
             'action' => $isOne ? 'view' : 'index',
+        ];
+        $route = $baseRoute + [
             $sourceName . '_id' => $entity->id,
             'from' => $this->getRepository()->getRegistryAlias(),
             'type' => $name,
         ];
 
-        $url = Router::url(
-            $route,
-            $this->view->getConfig('absoluteLinks', false)
-        );
+        try {
+            $url = Router::url(
+                $route,
+                $this->view->getConfig('absoluteLinks', false)
+            );
+        } catch (MissingRouteException $e) {
+            //This means that the JSON:API recommended route is missing. We need to try something else.
+
+            $name = Inflector::dasherize($name);
+            $relatedEntity = $entity->get($name);
+
+            if ($relatedEntity) {
+                $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
+            } else {
+                $keys = array_values($entity->extract((array)$association->getForeignKey()));
+            }
+            $keys = Hash::filter($keys);
+            if (empty($keys)) {
+                throw $e;
+            }
+
+            if (!$isOne) {
+                $keys = ['?' => [
+                    'id' => $keys,
+                ]];
+            }
+
+            $url = Router::url(
+                $baseRoute + $keys,
+                $this->view->getConfig('absoluteLinks', false)
+            );
+        }
 
         return $this->getFactory()
             ->createLink(false, $url, false);

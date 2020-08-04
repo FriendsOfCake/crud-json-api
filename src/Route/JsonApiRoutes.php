@@ -73,6 +73,10 @@ class JsonApiRoutes
             return;
         }
 
+        $generateRelationshipLinks = $options['generateRelationshipLinks'] === true ||
+            (is_array($options['generateRelationshipLinks']) &&
+                in_array($name, $options['generateRelationshipLinks'], true));
+
         $from = $association->getSource()->getRegistryAlias();
         $plugin = $routeBuilder->params()['plugin'] ?? null;
 
@@ -97,7 +101,8 @@ class JsonApiRoutes
                     $name,
                     $isOne,
                     $from,
-                    $controller
+                    $controller,
+                    $generateRelationshipLinks
                 ) {
                     $routeBuilder->connect(
                         '/' . $pathName,
@@ -110,7 +115,9 @@ class JsonApiRoutes
                         ]
                     );
 
-                    static::buildRelationshipLink($routeBuilder, $association, $controller);
+                    if ($generateRelationshipLinks) {
+                        static::buildRelationshipLink($routeBuilder, $association, $controller);
+                    }
                 }
             );
 
@@ -127,7 +134,10 @@ class JsonApiRoutes
                 'type' => $pathName,
             ]
         );
-        static::buildRelationshipLink($routeBuilder, $association, $controller);
+
+        if ($generateRelationshipLinks) {
+            static::buildRelationshipLink($routeBuilder, $association, $controller);
+        }
     }
 
     /**
@@ -153,7 +163,7 @@ class JsonApiRoutes
                 'className' => null,
                 'allowedAssociations' => true,
                 'ignoredAssociations' => [],
-                'relationshipLinks' => [],
+                'generateRelationshipLinks' => true,
                 'inflect' => static::getConfig('inflect') ?? 'variable',
             ];
 
