@@ -294,6 +294,24 @@ class JsonApiListener extends ApiListener
     }
 
     /**
+     * Used to test for relationships URLs
+     * In aid of supporting:
+     * https://jsonapi.org/format/#crud-updating-to-many-relationships
+     * https://jsonapi.org/format/#crud-updating-to-one-relationships
+     */
+    protected function _checkIsRelationshipsRequest(): bool
+    {
+        // if URL matches relationship regex, then use custom validator
+        preg_match(
+            '/.*{controller}\/{id}\/relationships\/{foreignTableName}/',
+            $this->_controller()->getRequest()->getParam('_matchedRoute'),
+            $match
+        );
+        $this->isRelationshipsURL = !empty($match);
+        return $this->isRelationshipsURL;
+    }
+
+    /**
      * @param  \Cake\ORM\Table $repository Repository
      * @param  string          $include    The association include path
      * @return \Cake\ORM\Association|null
@@ -1026,7 +1044,7 @@ class JsonApiListener extends ApiListener
     {
         $requestMethod = $this->_controller()->getRequest()->getMethod();
 
-        if ($requestMethod !== 'POST' && $requestMethod !== 'PATCH') {
+        if ($requestMethod !== 'POST' && $requestMethod !== 'PATCH' && $requestMethod !== 'DELETE') {
             return;
         }
 
@@ -1041,23 +1059,40 @@ class JsonApiListener extends ApiListener
 
         $validator = new DocumentValidator($requestData, $this->getConfig());
 
+        $this->isRelationshipsURL = $this->_checkIsRelationshipsRequest();
         if ($requestMethod === 'POST') {
-            $validator->validateCreateDocument();
+            if ($this->isRelationshipsURL) {
+                $relationshipValidator = new DocumentRelationshipValidator($requestData, $this->getConfig());
+                $relationshipValidator->validateUpdateDocument();
+            } else {
+                $validator->validateCreateDocument();
+            }
         }
 
-        if ($requestMethod === 'PATCH') {
-            $validator->validateUpdateDocument();
+        if ($requestMethod === 'PATCH' || $requestMethod === 'DELETE') {
+            if ($this->isRelationshipsURL) {
+                $relationshipValidator = new DocumentRelationshipValidator($requestData, $this->getConfig());
+                $relationshipValidator->validateUpdateDocument();
+            } else {
+                $validator->validateUpdateDocument();
+            }
         }
 
         // decode JSON API to CakePHP array format, then call the action as usual
         $decodedJsonApi = $this->_convertJsonApiDocumentArray($requestData);
 
-        // For PATCH operations the `id` field in the request data MUST match the URL id
-        // because JSON API considers it immutable. https://github.com/json-api/json-api/issues/481
-        if (
-            ($requestMethod === 'PATCH') &&
-            ($this->_controller()->getRequest()->getParam('id') !== $decodedJsonApi['id'])
-        ) {
+        if ($requestMethod === 'PATCH') {
+            if (!$this->isRelationshipsURL) {
+                // For normal PATCH operations the `id` field in the request data MUST match the URL id
+                // because JSON API considers it immutable. https://github.com/json-api/json-api/issues/481
+                $exception = $request->getParam('id') !== $decodedJsonApi['id'];
+            } else {
+                // For relationship PATCH operations, the `id` field need not be present in the data body
+                $exception = empty($request->getParam('id'));
+            }
+        }
+
+        if ($exception) {
             throw new BadRequestException(
                 'URL id does not match request data id as required for JSON API PATCH actions'
             );
@@ -1131,6 +1166,11 @@ class JsonApiListener extends ApiListener
                     }
                 }
             }
+        }
+
+        // handle relationships URL
+        if ($this->isRelationshipsURL) {
+            $result = $document['data'];
         }
 
         // no further action if there are no relationships
