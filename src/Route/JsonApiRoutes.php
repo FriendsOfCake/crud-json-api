@@ -101,6 +101,10 @@ class JsonApiRoutes
             return;
         }
 
+        $generateRelationshipLinks = $options['generateRelationshipLinks'] === true ||
+            (is_array($options['generateRelationshipLinks']) &&
+                in_array($name, $options['generateRelationshipLinks'], true));
+
         $from = $association->getSource()->getRegistryAlias();
         $plugin = $routeBuilder->params()['plugin'] ?? null;
 
@@ -126,7 +130,8 @@ class JsonApiRoutes
                     $name,
                     $isOne,
                     $from,
-                    $controller
+                    $controller,
+                    $generateRelationshipLinks
                 ) {
                     $routeBuilder->connect(
                         '/' . $pathName,
