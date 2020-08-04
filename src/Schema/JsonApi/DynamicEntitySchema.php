@@ -7,6 +7,7 @@ use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
@@ -53,20 +54,31 @@ class DynamicEntitySchema extends BaseSchema
     }
 
     /**
+     * @param string $input Input string
+     *
+     * @return string
+     */
+    protected function inflect(string $input): string
+    {
+        $inflect = $this->view->getConfig('inflect', 'variable');
+
+        if (!$inflect) {
+            return $input;
+        }
+
+        return Inflector::$inflect($input);
+    }
+
+    /**
      * @param \Cake\ORM\Table $repository The repository object
      * @return mixed
      */
-    private function getTypeFromRepository(Table $repository)
+    protected function getTypeFromRepository(Table $repository)
     {
         $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
         [, $entityName] = pluginSplit($repositoryName);
-        $inflect = $this->view->getConfig('inflect');
 
-        if (!$inflect) {
-            return $entityName;
-        }
-
-        return Inflector::$inflect($entityName);
+        return $this->inflect($entityName);
     }
 
     /**
@@ -172,15 +184,12 @@ class DynamicEntitySchema extends BaseSchema
         }
 
         // inflect attribute keys (like `created_by`)
-        $inflect = $this->view->getConfig('inflect');
-        if ($inflect) {
-            foreach ($attributes as $key => $value) {
-                $inflectedKey = Inflector::$inflect($key);
+        foreach ($attributes as $key => $value) {
+            $inflectedKey = $this->inflect($key);
 
-                if (!array_key_exists($inflectedKey, $attributes)) {
-                    $attributes[$inflectedKey] = $value;
-                    unset($attributes[$key]);
-                }
+            if (!array_key_exists($inflectedKey, $attributes)) {
+                unset($attributes[$key]);
+                $attributes[$inflectedKey] = $value;
             }
         }
 
@@ -206,26 +215,50 @@ class DynamicEntitySchema extends BaseSchema
             $foreignKey = $association->getForeignKey();
 
             $data = $entity->get($property);
-            //If no data, and it's not a BelongsTo relationship, skip
+            //If no data, and it's not a BelongsTo relationship, use no data
             if (!$data && $association->type() !== Association::MANY_TO_ONE) {
-                continue;
+                $data = false;
             }
 
             //If there is no data, and the foreignKey field is null, skip
             if (!$data && (is_array($foreignKey) || !$entity->get($foreignKey))) {
-                continue;
+                $data = false;
             }
 
             // inflect related data in entity if need be
-            $inflect = $this->view->getConfig('inflect');
-            if ($inflect) {
-                $inflectedProperty = Inflector::$inflect($property);
+            $inflectedProperty = $this->inflect($property);
 
-                if (empty($entity->$inflectedProperty)) {
-                    $entity->$inflectedProperty = $entity->$property;
-                    unset($entity->$property);
-                    $property = $inflectedProperty;
-                }
+            if (empty($entity->$inflectedProperty)) {
+                $entity->$inflectedProperty = $entity->$property;
+                unset($entity->$property);
+                $property = $inflectedProperty;
+            }
+
+            $hasSelfLink = false;
+            try {
+                $this->getRelationshipSelfLink($entity, $property);
+                $hasSelfLink = true;
+            } catch (MissingRouteException $e) {
+            }
+            $hasRelatedLink = false;
+            try {
+                $this->getRelationshipRelatedLink($entity, $property);
+                $hasRelatedLink = true;
+            } catch (MissingRouteException $e) {
+            }
+
+            //Include link elements for other relations
+            if ($data === false && ($hasSelfLink || $hasRelatedLink)) {
+                $relations[$property] = [
+                    self::RELATIONSHIP_LINKS_SELF => $hasSelfLink,
+                    self::RELATIONSHIP_LINKS_RELATED => $hasRelatedLink,
+                ];
+
+                continue;
+            }
+
+            if ($data === false && !$hasSelfLink && !$hasRelatedLink) {
+                continue;
             }
 
             if (!$data && !is_array($foreignKey)) {
@@ -235,11 +268,10 @@ class DynamicEntitySchema extends BaseSchema
                 );
             }
 
-            $isOne = \in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
             $relations[$property] = [
                 self::RELATIONSHIP_DATA => $data,
-                self::RELATIONSHIP_LINKS_SELF => $isOne,
-                self::RELATIONSHIP_LINKS_RELATED => !$isOne,
+                self::RELATIONSHIP_LINKS_SELF => $hasSelfLink,
+                self::RELATIONSHIP_LINKS_RELATED => $hasRelatedLink,
             ];
         }
 
@@ -304,39 +336,19 @@ class DynamicEntitySchema extends BaseSchema
 
         $relatedRepository = $association->getTarget();
 
-        // generate link for belongsTo relationship
-        if ($this->view->get('_jsonApiBelongsToLinks') === true) {
-            [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
-            $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+        [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
+        $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
-            $url = Router::url(
-                $this->_getRepositoryRoutingParameters($relatedRepository) + [
-                '_method' => 'GET',
-                'action' => 'view',
-                $sourceName . '_id' => $entity->id,
-                'from' => $this->getRepository()->getRegistryAlias(),
-                'type' => $name,
-                ],
-                $this->view->getConfig('absoluteLinks', false)
-            );
-        } else {
-            $name = Inflector::dasherize($name);
-            $relatedEntity = $entity->get($name);
-
-            if ($relatedEntity) {
-                $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
-            } else {
-                $keys = array_values($entity->extract((array)$association->getForeignKey()));
-            }
-
-            $url = Router::url(
-                $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
-                '_method' => 'GET',
-                'action' => 'view',
-                ],
-                $this->view->getConfig('absoluteLinks', false)
-            );
-        }
+        $url = Router::url(
+            $this->_getRepositoryRoutingParameters($relatedRepository) + [
+            '_method' => 'GET',
+            'action' => 'relationships',
+            $sourceName . '_id' => $entity->id,
+            'from' => $this->getRepository()->getRegistryAlias(),
+            'type' => $name,
+            ],
+            $this->view->getConfig('absoluteLinks', false)
+        );
 
         return $this->getFactory()->createLink(false, $url, false);
     }
@@ -360,17 +372,25 @@ class DynamicEntitySchema extends BaseSchema
 
         $relatedRepository = $association->getTarget();
 
-        // generate the link for hasMany relationship
-        $foreignKeys = (array)$association->getForeignKey();
-        $primaryKeys = $entity->extract((array)$this->getRepository()->getPrimaryKey());
-        $keys = (array)array_combine($foreignKeys, $primaryKeys);
+        ['controller' => $controllerName] = $this->_getRepositoryRoutingParameters($this->getRepository());
+        $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+
+        $isOne = \in_array(
+            $association->type(),
+            [Association::MANY_TO_ONE, Association::ONE_TO_ONE],
+            true
+        );
+
+        $route = $this->_getRepositoryRoutingParameters($relatedRepository) + [
+            '_method' => 'GET',
+            'action' => $isOne ? 'view' : 'index',
+            $sourceName . '_id' => $entity->id,
+            'from' => $this->getRepository()->getRegistryAlias(),
+            'type' => $name,
+        ];
 
         $url = Router::url(
-            $this->_getRepositoryRoutingParameters($relatedRepository) + $keys + [
-                '_method' => 'GET',
-                'action' => 'index',
-                '?' => $keys,
-            ],
+            $route,
             $this->view->getConfig('absoluteLinks', false)
         );
 

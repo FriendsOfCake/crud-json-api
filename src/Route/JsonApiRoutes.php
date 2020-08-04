@@ -1,12 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 namespace CrudJsonApi\Route;
 
+use Cake\Core\App;
 use Cake\Core\StaticConfigTrait;
-use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Association;
+use Cake\ORM\TableRegistry;
 use Cake\Routing\RouteBuilder;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -18,26 +18,24 @@ class JsonApiRoutes
 {
     use StaticConfigTrait;
 
-    protected static $_config = [
-        'inflect' => 'variable'
-    ];
-
+    /**
+     * @param string $string String to inflect
+     * @return string
+     */
     private static function inflect(string $string): string
     {
-        $inflect = static::getConfig('inflect', 'variable');
+        $inflect = static::getConfig('inflect') ?? 'variable';
 
         return Inflector::$inflect($string);
     }
 
     /**
      * @param \Cake\Routing\RouteBuilder $routeBuilder Routebuilder
-     * @param \Cake\ORM\Association $association
+     * @param \Cake\ORM\Association $association Association
      * @return void
      */
-    private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association): void
+    private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association, $controller): void
     {
-        $controller = $association->getTarget()
-            ->getAlias();
         $type = static::inflect($association->getProperty());
         $from = $association->getSource()
             ->getRegistryAlias();
@@ -75,8 +73,7 @@ class JsonApiRoutes
             return;
         }
 
-        $from = $association->getSource()
-            ->getRegistryAlias();
+        $from = $association->getSource()->getRegistryAlias();
         $plugin = $routeBuilder->params()['plugin'] ?? null;
 
         $isOne = \in_array(
@@ -87,7 +84,9 @@ class JsonApiRoutes
 
         $pathName = static::inflect($association->getProperty());
 
-        [$associationPlugin,] = pluginSplit($association->getClassName());
+        $associationRepository = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
+        [$associationPlugin, $controller] = pluginSplit($associationRepository);
+
         if ($associationPlugin !== $plugin) {
             $routeBuilder->scope(
                 '/',
@@ -97,19 +96,21 @@ class JsonApiRoutes
                     $pathName,
                     $name,
                     $isOne,
-                    $from
+                    $from,
+                    $controller
                 ) {
                     $routeBuilder->connect(
-                        '/' . static::inflect($pathName),
+                        '/' . $pathName,
                         [
-                            'controller' => $name,
+                            'controller' => $controller,
                             '_method' => 'GET',
                             'action' => $isOne ? 'view' : 'index',
                             'from' => $from,
+                            'type' => $pathName,
                         ]
                     );
 
-                    static::buildRelationshipLink($routeBuilder, $association);
+                    static::buildRelationshipLink($routeBuilder, $association, $controller);
                 }
             );
 
@@ -119,31 +120,27 @@ class JsonApiRoutes
         $routeBuilder->connect(
             '/' . static::inflect($pathName),
             [
-                'controller' => $name,
+                'controller' => $controller,
                 '_method' => 'GET',
                 'action' => $isOne ? 'view' : 'index',
                 'from' => $from,
+                'type' => $pathName,
             ]
         );
-        static::buildRelationshipLink($routeBuilder, $association);
+        static::buildRelationshipLink($routeBuilder, $association, $controller);
     }
 
     /**
-     * @param iterable $models Array of models
+     * @param array $models Array of models
      * @param \Cake\Routing\RouteBuilder $routeBuilder Route builder
      * @return void
      */
-    public static function mapModels(iterable $models, RouteBuilder $routeBuilder): void
+    public static function mapModels(array $models, RouteBuilder $routeBuilder): void
     {
         $models = Hash::normalize($models);
-        $locator = FactoryLocator::get('Table');
+        $locator = TableRegistry::getTableLocator();
 
         foreach ($models as $model => $options) {
-            if (is_string($options)) {
-                $model = $options;
-                $options = [];
-            }
-
             $options = $options ?: [];
             $callback = null;
             if (isset($options[0])) {
@@ -157,7 +154,7 @@ class JsonApiRoutes
                 'allowedAssociations' => true,
                 'ignoredAssociations' => [],
                 'relationshipLinks' => [],
-                'inflect' => static::getConfig('inflect'),
+                'inflect' => static::getConfig('inflect') ?? 'variable',
             ];
 
             $options['ignoredAssociations'] = array_merge(
@@ -171,17 +168,15 @@ class JsonApiRoutes
             $plugin = $routeBuilder->params()['plugin'] ?? null;
             $className = $options['className'] ?: implode('.', [$plugin, $model]);
 
-            /** @var \Cake\ORM\Table $tableObject */
             $tableObject = $locator->get($className);
 
             $associations = $tableObject->associations();
 
-            $callback = null;
             if ($options['allowedAssociations'] !== false) {
                 $callback = function (RouteBuilder $routeBuilder) use ($associations, $options) {
                     /** @var \Cake\ORM\Association $association */
                     foreach ($associations as $association) {
-                        $this->buildAssociationLinks($routeBuilder, $association, $options);
+                        static::buildAssociationLinks($routeBuilder, $association, $options);
                     }
                 };
             }
