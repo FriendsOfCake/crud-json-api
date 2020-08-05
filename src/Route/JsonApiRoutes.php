@@ -32,23 +32,50 @@ class JsonApiRoutes
     /**
      * @param \Cake\Routing\RouteBuilder $routeBuilder Routebuilder
      * @param \Cake\ORM\Association $association Association
+     * @param array $options Options array
      * @return void
      */
-    private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association, $controller): void
+    private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association, array $options): void
     {
-        $path = static::inflect($association->getProperty());
         $type = $association->getName();
+
+        if (
+            $options['relationshipLinks'] === false ||
+            (is_array($options['relationshipLinks']) && !array_key_exists($type, $options['relationshipLinks']) && $options['relationshipLinks']['*'] === false)
+        ) {
+            return;
+        }
+
+        $methodMap = [
+            'replace' => 'PATCH',
+            'add' => 'POST',
+            'delete' => 'DELETE',
+        ];
+
+        if (isset($options['relationshipLinks'][$type]) && is_array($options['relationshipLinks'][$type])) {
+            $allowedMethods = $options['relationshipLinks'][$type];
+        }
+
+        if (empty($allowedMethods)) {
+            $allowedMethods = array_keys($methodMap);
+        }
+
+        $path = static::inflect($association->getProperty());
         $from = $association->getSource()
             ->getRegistryAlias();
+        [, $controller] = pluginSplit($from);
 
         $base = [
             'controller' => $controller,
             'action' => 'relationships',
-            'from' => $from,
             'type' => $type,
         ];
-        $methods = ['GET', 'PATCH', 'POST', 'DELETE'];
-        foreach ($methods as $method) {
+        $methodMap['read'] = 'GET';
+        foreach ($methodMap as $action => $method) {
+            if ($action !== 'read' && !in_array($action, $allowedMethods, true)) {
+                continue;
+            }
+
             $routeBuilder->connect(
                 '/relationships/' . $path,
                 $base + ['_method' => $method]
@@ -74,10 +101,6 @@ class JsonApiRoutes
             return;
         }
 
-        $generateRelationshipLinks = $options['generateRelationshipLinks'] === true ||
-            (is_array($options['generateRelationshipLinks']) &&
-                in_array($name, $options['generateRelationshipLinks'], true));
-
         $from = $association->getSource()->getRegistryAlias();
         $plugin = $routeBuilder->params()['plugin'] ?? null;
 
@@ -92,18 +115,18 @@ class JsonApiRoutes
         $associationRepository = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
         [$associationPlugin, $controller] = pluginSplit($associationRepository);
 
+        static::buildRelationshipLink($routeBuilder, $association, $options);
+
         if ($associationPlugin !== $plugin) {
             $routeBuilder->scope(
                 '/',
                 ['plugin' => $associationPlugin],
-                function (RouteBuilder $routeBuilder) use (
-                    $association,
+                static function (RouteBuilder $routeBuilder) use (
                     $pathName,
                     $name,
                     $isOne,
                     $from,
-                    $controller,
-                    $generateRelationshipLinks
+                    $controller
                 ) {
                     $routeBuilder->connect(
                         '/' . $pathName,
@@ -115,10 +138,6 @@ class JsonApiRoutes
                             'type' => $name,
                         ]
                     );
-
-                    if ($generateRelationshipLinks) {
-                        static::buildRelationshipLink($routeBuilder, $association, $controller);
-                    }
                 }
             );
 
@@ -135,10 +154,6 @@ class JsonApiRoutes
                 'type' => $name,
             ]
         );
-
-        if ($generateRelationshipLinks) {
-            static::buildRelationshipLink($routeBuilder, $association, $controller);
-        }
     }
 
     /**
@@ -164,7 +179,7 @@ class JsonApiRoutes
                 'className' => null,
                 'allowedAssociations' => true,
                 'ignoredAssociations' => [],
-                'generateRelationshipLinks' => true,
+                'relationshipLinks' => true,
                 'inflect' => static::getConfig('inflect') ?? 'variable',
             ];
 
@@ -175,6 +190,9 @@ class JsonApiRoutes
                     'Accounts',
                 ]
             );
+            if (is_array($options['relationshipLinks'])) {
+                $options['relationshipLinks'] = Hash::normalize($options['relationshipLinks']) + ['*' => false];
+            }
 
             $plugin = $routeBuilder->params()['plugin'] ?? null;
             $className = $options['className'] ?: implode('.', [$plugin, $model]);

@@ -335,13 +335,11 @@ class DynamicEntitySchema extends BaseSchema
             throw new InvalidArgumentException('Invalid association ' . $name);
         }
 
-        $relatedRepository = $association->getTarget();
-
         [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
         $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
         $url = Router::url(
-            $this->_getRepositoryRoutingParameters($relatedRepository) + [
+            $this->_getRepositoryRoutingParameters($this->getRepository()) + [
             '_method' => 'GET',
             'action' => 'relationships',
             $sourceName . '_id' => $entity->id,

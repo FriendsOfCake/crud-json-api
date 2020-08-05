@@ -8,6 +8,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -157,12 +158,16 @@ class JsonApiView extends View
         $association = $this->getConfig('association');
         $sourceRepository = $association->getSource();
         $targetRepository = $association->getTarget();
-
-        [, $controllerName] = pluginSplit($sourceRepository->getRegistryAlias());
+        $isOne = \in_array(
+            $association->type(),
+            [Association::MANY_TO_ONE, Association::ONE_TO_ONE],
+            true
+        );
+        [$pluginName, $controllerName] = pluginSplit($sourceRepository->getRegistryAlias());
         $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
         $repositoryName = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
-        [$pluginName, $controllerName] = pluginSplit($repositoryName);
+        [$foreignPluginName, $foreignControllerName] = pluginSplit($repositoryName);
         $request = $this->getRequest();
         $selfLink = Router::url(
             [
@@ -171,18 +176,19 @@ class JsonApiView extends View
                 '_method' => 'GET',
                 'action' => 'relationships',
                 $sourceName . '_id' => $request->getParam($sourceName . '_id'),
-                'from' => $request->getParam('from'),
                 'type' => $request->getParam('type'),
             ],
             $this->getConfig('absoluteLinks', false)
         );
         $relatedLink = Router::url(
             [
-                'controller' => $controllerName,
-                'plugin' => $pluginName,
+                'controller' => $foreignControllerName,
+                'plugin' => $foreignPluginName,
                 '_method' => 'GET',
-                'action' => 'index',
+                'action' => $isOne ? 'view' : 'index',
                 $sourceName . '_id' => $request->getParam($sourceName . '_id'),
+                'type' => $request->getParam('type'),
+                'from' => $sourceRepository->getRegistryAlias(),
             ],
             $this->getConfig('absoluteLinks', false)
         );
