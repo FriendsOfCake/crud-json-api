@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Action;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
@@ -16,6 +16,7 @@ use Crud\Action\BaseAction;
 use Crud\Error\Exception\ValidationException;
 use Crud\Event\Subject;
 use Crud\Traits\FindMethodTrait;
+use Crud\Traits\RedirectTrait;
 use Crud\Traits\SaveMethodTrait;
 use Crud\Traits\SerializeTrait;
 use Crud\Traits\ViewTrait;
@@ -32,6 +33,7 @@ class RelationshipsAction extends BaseAction
     use SerializeTrait;
     use ViewTrait;
     use ViewVarTrait;
+    use RedirectTrait;
 
     /**
      * Default settings for 'view' actions
@@ -140,10 +142,10 @@ class RelationshipsAction extends BaseAction
 
     /**
      * @param \Crud\Event\Subject $subject Subject object
-     * @return void
+     * @return \Cake\Datasource\EntityInterface
      * @throws \Exception
      */
-    protected function _findRelations(Subject $subject)
+    protected function _findRelations(Subject $subject): EntityInterface
     {
         $relationName = $this->_request()->getParam('type');
         $table = $this->_table();
@@ -194,12 +196,14 @@ class RelationshipsAction extends BaseAction
         if (is_array($relatedEntities)) {
             $subject->set(['entities' => new ResultSetDecorator($relatedEntities)]);
 
-            return;
+            return $entity;
         }
 
         $subject->set([
             'entity' => $relatedEntities,
         ]);
+
+        return $entity;
     }
 
     /**
@@ -225,45 +229,31 @@ class RelationshipsAction extends BaseAction
     {
         $subject = $this->_subject();
         $request = $this->_request();
-        $id = $request->getParam('id');
-        $relationName = $request->getParam('type');
         $data = $request->getData();
-        $requestMethod = $request->getMethod();
-        $subject->set(['id' => $id]);
 
-        $this->_findRelations($subject);
-        dd($subject);
+        $entity = $this->_findRelations($subject);
+        $subject->set(['entity' => $entity, 'entities' => null]);
 
-        $this->_crud('Crud.Crud')
-            ->on(
-                'beforeFind',
-                function (EventInterface $event) use ($data, $foreignTableName, $requestMethod) {
-                    $query = $event->getSubject()->query;
-                    $query->contain(['Dishes']);
-                }
-            );
-        $entity = $this->_table()
-            ->patchEntity(
-                $this->_findRecord($id, $subject),
-                [],
-                $this->saveOptions()
-            );
+        /** @var \Cake\ORM\Association $association */
+        $association = $subject->association;
+        $associationType = $association->type();
+        $property = $association->getProperty();
+
         if (empty((array)$data)) {
-            $entity->$foreignTableName = [];
-        } else {
-            $currentIds = Hash::extract($entity->$foreignTableName, '{n}.id');
+            $entity->$property = [];
+        } elseif ($associationType === Association::MANY_TO_MANY || $associationType === Association::ONE_TO_MANY) {
+            $foreignTable = $association->getTarget();
+            $foreignPrimaryKey = $foreignTable->getPrimaryKey();
+            $currentIds = Hash::extract($entity->$property, '{n}.' . $foreignPrimaryKey);
             $idsToDelete = Hash::extract($data, '{n}.id');
-            $entity->$foreignTableName = [];
-            $foreignTable = $this->getTableLocator()
-                ->get(Inflector::camelize($foreignTableName));
-            $foreignKey = $foreignTableName . '.id';
+            $entity->$property = [];
             foreach ($currentIds as $key => $id) {
-                if (!in_array($id, $idsToDelete)) {
+                if (!in_array($id, $idsToDelete, false)) {
                     // get the record to add
                     $query = $foreignTable->findAllById($id);
                     $foreignRecord = $query->first();
                     if (!empty($foreignRecord)) {
-                        array_push($entity->$foreignTableName, $foreignRecord);
+                        $entity->{$property}[] = $foreignRecord;
                     }
                 }
             }
@@ -285,49 +275,35 @@ class RelationshipsAction extends BaseAction
      */
     protected function _post()
     {
-        $request = $this->_request();
         $subject = $this->_subject();
-        $id = $request->getParam('id');
-        $foreignTableName = $request->getParam('type');
+        $request = $this->_request();
         $data = $request->getData();
-        $requestMethod = $request->getMethod();
 
-        $this->_crud('Crud.Crud')
-            ->on(
-                'beforeFind',
-                function (\Cake\Event\Event $event) use ($data, $foreignTableName, $requestMethod) {
-                    $query = $event->getSubject()->query;
-                    $query->contain(['Dishes']);
-                }
-            );
+        $entity = $this->_findRelations($subject);
+        $subject->set(['entity' => $entity, 'entities' => null]);
 
-        $entity = $this->_table()
-            ->patchEntity(
-                $this->_findRecord($id, $subject),
-                [],
-                $this->saveOptions()
-            );
+        /** @var \Cake\ORM\Association $association */
+        $association = $subject->association;
+        $property = $association->getProperty();
 
         // ensure that only adds new relationships, doesn't destroy old ones
-        $entity->$foreignTableName = empty($entity->$foreignTableName) ? [] : $entity->$foreignTableName;
+        $entity->$property = empty($entity->$property) ? [] : $entity->$property;
 
-        $ids = Hash::extract($entity->$foreignTableName, '{n}.id');
-        $foreignTable = $this->getTableLocator()
-            ->get(Inflector::camelize($foreignTableName));
-        $foreignKey = $foreignTableName . '.id';
+        $ids = Hash::extract($entity->$property, '{n}.id');
+        $foreignTable = $association->getTarget();
         foreach ($data as $key => $recordAttributes) {
             // get the related record
             $query = $foreignTable->findAllById($recordAttributes['id']);
             $foreignRecord = $query->first();
             // push it onto the relationsships array
             if (!empty($foreignRecord)) {
-                if (in_array($foreignRecord->id, $ids)) {
-                    // don't add id's that are already added
-                } else {
-                    array_push($entity->$foreignTableName, $foreignRecord);
+                if (!in_array($foreignRecord->id, $ids, false)) {
+                    $entity->{$property}[] = $foreignRecord;
                 }
             }
         }
+
+        $entity->setDirty($property);
 
         $this->_trigger('beforeSave', $subject);
 
@@ -347,35 +323,33 @@ class RelationshipsAction extends BaseAction
     {
         $subject = $this->_subject();
         $request = $this->_request();
-        $id = $request->getParam('id');
-        $foreignTableName = $request->getParam('foreignTableName');
         $data = $request->getData();
 
-        $subject->set(['id' => $id]);
-        $entity = $this->_table()
-            ->patchEntity(
-                $this->_findRecord($id, $subject),
-                [],
-                $this->saveOptions()
-            );
-        if (empty((array)$data)) {
-            $entity->$foreignTableName = [];
-        } else {
-            $entity->$foreignTableName = [];
+        $entity = $this->_findRelations($subject);
+        $subject->set(['entity' => $entity, 'entities' => null]);
 
-            $foreignTable = $this->getTableLocator()
-                ->get(Inflector::camelize($foreignTableName));
-            $foreignKey = $foreignTableName . '.id';
+        /** @var \Cake\ORM\Association $association */
+        $association = $subject->association;
+        $property = $association->getProperty();
+
+        if (empty((array)$data)) {
+            $entity->$property = [];
+        } else {
+            $entity->$property = [];
+
+            $foreignTable = $association->getTarget();
             foreach ($data as $key => $recordAttributes) {
                 // get the related record
                 $query = $foreignTable->findAllById($recordAttributes['id']);
                 $foreignRecord = $query->first();
                 // push it onto the relationsships array if it exists
                 if (!empty($foreignRecord)) {
-                    array_push($entity->$foreignTableName, $foreignRecord);
+                    $entity->{$property}[] = $foreignRecord;
                 }
             }
         }
+
+        $entity->setDirty($property);
 
         $this->_trigger('beforeSave', $subject);
 
@@ -392,13 +366,10 @@ class RelationshipsAction extends BaseAction
      * @param \Crud\Event\Subject $subject Event subject
      * @return \Cake\Http\Response|null
      */
-    protected function _success(Subject $subject): ?Response
+    protected function _success(Subject $subject): void
     {
-        $subject->set(['success' => true, 'created' => false]);
-
-        $this->setFlash('success', $subject);
-
-        return $this->_redirect($subject, ['action' => 'index']);
+        //A successful change should return the new representation of the resource
+        $this->_get();
     }
 
     /**

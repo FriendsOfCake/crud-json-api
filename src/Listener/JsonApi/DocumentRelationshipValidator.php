@@ -3,16 +3,7 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Listener\JsonApi;
 
-use Cake\ORM\Entity;
-use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
-use Cake\Validation\Validation;
-use Crud\Error\Exception\CrudException;
 use Crud\Error\Exception\ValidationException;
-use CrudJsonApi\Listener\JsonApi\DocumentValidator;
-use Neomerx\JsonApi\Schema\Error;
-use Neomerx\JsonApi\Schema\ErrorCollection;
-use Neomerx\JsonApi\Schema\Link;
 
 /**
  * Validates incoming JSON API documents against the specifications for
