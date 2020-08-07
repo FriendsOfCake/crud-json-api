@@ -401,7 +401,7 @@ class DynamicEntitySchema extends BaseSchema
             $name = Inflector::dasherize($name);
             $relatedEntity = $entity->get($name);
 
-            if ($relatedEntity) {
+            if ($relatedEntity instanceof EntityInterface) {
                 $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
             } else {
                 $keys = array_values($entity->extract((array)$association->getForeignKey()));
