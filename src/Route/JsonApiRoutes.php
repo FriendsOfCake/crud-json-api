@@ -91,7 +91,7 @@ class JsonApiRoutes
      */
     private static function buildAssociationLinks(RouteBuilder $routeBuilder, Association $association, array $options)
     {
-        $name = $association->getAlias();
+        $name = $association->getName();
 
         if (in_array($name, $options['ignoredAssociations'], true)) {
             return;
@@ -141,6 +141,9 @@ class JsonApiRoutes
                             'action' => $isOne ? 'view' : 'index',
                             'from' => $from,
                             'type' => $name,
+                        ],
+                        [
+                            '_name' => "CrudJsonApi.{$from}:{$name}"
                         ]
                     );
                 }
@@ -157,6 +160,9 @@ class JsonApiRoutes
                 'action' => $isOne ? 'view' : 'index',
                 'from' => $from,
                 'type' => $name,
+            ],
+            [
+                '_name' => "CrudJsonApi.{$from}:{$name}"
             ]
         );
     }
@@ -180,8 +186,10 @@ class JsonApiRoutes
                 ];
             }
 
+            $plugin = $routeBuilder->params()['plugin'] ?? null;
+
             $options += [
-                'className' => null,
+                'className' => $plugin ? $plugin . '.' . $model : $model,
                 'allowedAssociations' => true,
                 'ignoredAssociations' => [],
                 'relationshipLinks' => true,
@@ -199,10 +207,7 @@ class JsonApiRoutes
                 $options['relationshipLinks'] = Hash::normalize($options['relationshipLinks']) + ['*' => false];
             }
 
-            $plugin = $routeBuilder->params()['plugin'] ?? null;
-            $className = $options['className'] ?: implode('.', [$plugin, $model]);
-
-            $tableObject = $locator->get($className);
+            $tableObject = $locator->get($options['className']);
 
             $associations = $tableObject->associations();
 

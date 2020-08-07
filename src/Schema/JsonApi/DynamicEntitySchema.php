@@ -335,16 +335,19 @@ class DynamicEntitySchema extends BaseSchema
             throw new InvalidArgumentException('Invalid association ' . $name);
         }
 
-        [, $controllerName] = pluginSplit($this->getRepository()->getRegistryAlias());
+        $from = $this->getRepository()
+            ->getRegistryAlias();
+        $type = $association->getName();
+        [, $controllerName] = pluginSplit($from);
         $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
 
         $url = Router::url(
             $this->_getRepositoryRoutingParameters($this->getRepository()) + [
-            '_method' => 'GET',
-            'action' => 'relationships',
-            $sourceName . '_id' => $entity->id,
-            'from' => $this->getRepository()->getRegistryAlias(),
-            'type' => $association->getName(),
+                '_method' => 'GET',
+                'action' => 'relationships',
+                $sourceName . '_id' => $entity->id,
+                'from' => $from,
+                'type' => $type,
             ],
             $this->view->getConfig('absoluteLinks', false)
         );
@@ -384,10 +387,15 @@ class DynamicEntitySchema extends BaseSchema
             '_method' => 'GET',
             'action' => $isOne ? 'view' : 'index',
         ];
+
+        $from = $this->getRepository()
+            ->getRegistryAlias();
+        $type = $association->getName();
         $route = $baseRoute + [
             $sourceName . '_id' => $entity->id,
-            'from' => $this->getRepository()->getRegistryAlias(),
-            'type' => $association->getName(),
+            'from' => $from,
+            'type' => $type,
+            '_name' => "CrudJsonApi.{$from}:{$type}"
         ];
 
         try {
