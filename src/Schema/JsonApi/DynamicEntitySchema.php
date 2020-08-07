@@ -398,7 +398,6 @@ class DynamicEntitySchema extends BaseSchema
         } catch (MissingRouteException $e) {
             //This means that the JSON:API recommended route is missing. We need to try something else.
 
-            $name = Inflector::dasherize($name);
             $relatedEntity = $entity->get($name);
 
             if ($relatedEntity instanceof EntityInterface) {
