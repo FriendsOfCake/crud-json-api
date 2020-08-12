@@ -137,8 +137,7 @@ class JsonApiRoutes
                     $name,
                     $isOne,
                     $from,
-                    $controller,
-                    $generateRelationshipLinks
+                    $controller
                 ) {
                     $routeBuilder->connect(
                         '/' . $pathName,
@@ -203,13 +202,6 @@ class JsonApiRoutes
                 'inflect' => static::getConfig('inflect') ?? 'variable',
             ];
 
-            $options['ignoredAssociations'] = array_merge(
-                $options['ignoredAssociations'],
-                [
-                    'Users',
-                    'Accounts',
-                ]
-            );
             if (is_array($options['relationshipLinks'])) {
                 $options['relationshipLinks'] = Hash::normalize($options['relationshipLinks']) + ['*' => false];
             }

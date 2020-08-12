@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace CrudJsonApi\Action;
 
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\ORM\Association;
@@ -161,6 +163,12 @@ class RelationshipsAction extends BaseAction
         }
 
         $primaryKey = $table->getPrimaryKey();
+
+        //Does not support composite keys
+        if (is_array($primaryKey)) {
+            throw new BadRequestException('Composite keys are not supported.');
+        }
+
         $primaryQuery = $table->find()
             ->select([
                 $primaryKey,
@@ -223,7 +231,7 @@ class RelationshipsAction extends BaseAction
     /**
      * HTTP DELETE handler
      *
-     * @return \Cake\Http\Response|null
+     * @return void
      */
     protected function _delete()
     {
@@ -244,25 +252,35 @@ class RelationshipsAction extends BaseAction
         } elseif ($associationType === Association::MANY_TO_MANY || $associationType === Association::ONE_TO_MANY) {
             $foreignTable = $association->getTarget();
             $foreignPrimaryKey = $foreignTable->getPrimaryKey();
-            $currentIds = Hash::extract($entity->$property, '{n}.' . $foreignPrimaryKey);
-            $idsToDelete = Hash::extract($data, '{n}.id');
+
+            if (is_array($foreignPrimaryKey)) {
+                throw new BadRequestException('Composite keys are not supported.');
+            }
+
+            $currentIds = (array)Hash::extract($entity->$property, '{n}.' . $foreignPrimaryKey);
+            $idsToDelete = (array)Hash::extract($data, '{n}.id');
             $entity->$property = [];
             foreach ($currentIds as $key => $id) {
                 if (!in_array($id, $idsToDelete, false)) {
                     // get the record to add
-                    $query = $foreignTable->findAllById($id);
-                    $foreignRecord = $query->first();
-                    if (!empty($foreignRecord)) {
-                        $entity->{$property}[] = $foreignRecord;
+                    try {
+                        $foreignRecord = $foreignTable->get($id);
+                    } catch (RecordNotFoundException $e) {
+                        continue;
                     }
+
+                    $entity->{$property}[] = $foreignRecord;
                 }
             }
         }
 
         $this->_trigger('beforeSave', $subject);
 
-        if (call_user_func([$this->_table(), $this->saveMethod()], $entity, $this->saveOptions())) {
-            return $this->_success($subject);
+        $saveMethod = $this->saveMethod();
+        if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
+            $this->_success($subject);
+
+            return;
         }
 
         $this->_error($subject);
@@ -271,7 +289,7 @@ class RelationshipsAction extends BaseAction
     /**
      * HTTP POST handler
      *
-     * @return \Cake\Http\Response|null
+     * @return void
      */
     protected function _post()
     {
@@ -289,17 +307,18 @@ class RelationshipsAction extends BaseAction
         // ensure that only adds new relationships, doesn't destroy old ones
         $entity->$property = empty($entity->$property) ? [] : $entity->$property;
 
-        $ids = Hash::extract($entity->$property, '{n}.id');
+        $ids = (array)Hash::extract($entity->$property, '{n}.id');
         $foreignTable = $association->getTarget();
         foreach ($data as $key => $recordAttributes) {
             // get the related record
-            $query = $foreignTable->findAllById($recordAttributes['id']);
-            $foreignRecord = $query->first();
+            try {
+                $foreignRecord = $foreignTable->get($recordAttributes['id']);
+            } catch (RecordNotFoundException $e) {
+                continue;
+            }
             // push it onto the relationsships array
-            if (!empty($foreignRecord)) {
-                if (!in_array($foreignRecord->id, $ids, false)) {
-                    $entity->{$property}[] = $foreignRecord;
-                }
+            if (!in_array($foreignRecord->id, $ids, false)) {
+                $entity->{$property}[] = $foreignRecord;
             }
         }
 
@@ -307,8 +326,11 @@ class RelationshipsAction extends BaseAction
 
         $this->_trigger('beforeSave', $subject);
 
-        if (call_user_func([$this->_table(), $this->saveMethod()], $entity, $this->saveOptions())) {
-            return $this->_success($subject);
+        $saveMethod = $this->saveMethod();
+        if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
+            $this->_success($subject);
+
+            return;
         }
 
         $this->_error($subject);
@@ -317,7 +339,7 @@ class RelationshipsAction extends BaseAction
     /**
      * HTTP PATCH handler
      *
-     * @return \Cake\Http\Response|null
+     * @return void
      */
     protected function _patch()
     {
@@ -340,12 +362,13 @@ class RelationshipsAction extends BaseAction
             $foreignTable = $association->getTarget();
             foreach ($data as $key => $recordAttributes) {
                 // get the related record
-                $query = $foreignTable->findAllById($recordAttributes['id']);
-                $foreignRecord = $query->first();
-                // push it onto the relationsships array if it exists
-                if (!empty($foreignRecord)) {
-                    $entity->{$property}[] = $foreignRecord;
+                try {
+                    $foreignRecord = $foreignTable->get($recordAttributes['id']);
+                } catch (RecordNotFoundException $e) {
+                    continue;
                 }
+                // push it onto the relationsships array if it exists
+                $entity->{$property}[] = $foreignRecord;
             }
         }
 
@@ -353,8 +376,11 @@ class RelationshipsAction extends BaseAction
 
         $this->_trigger('beforeSave', $subject);
 
-        if (call_user_func([$this->_table(), $this->saveMethod()], $entity, $this->saveOptions())) {
-            return $this->_success($subject);
+        $saveMethod = $this->saveMethod();
+        if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
+            $this->_success($subject);
+
+            return;
         }
 
         $this->_error($subject);
