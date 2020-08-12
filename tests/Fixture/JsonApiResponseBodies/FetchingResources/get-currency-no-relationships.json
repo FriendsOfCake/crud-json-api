@@ -6,6 +6,14 @@
             "code": "EUR",
             "name": "Euro"
         },
+        "relationships": {
+            "countries": {
+                "links": {
+                    "self": "\/currencies\/1\/relationships\/countries",
+                    "related": "\/currencies\/1\/countries"
+                }
+            }
+        },
         "links": {
             "self": "\/currencies\/1"
         }

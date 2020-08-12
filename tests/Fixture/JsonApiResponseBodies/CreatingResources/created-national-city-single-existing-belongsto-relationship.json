@@ -8,7 +8,8 @@
         "relationships": {
             "country": {
                 "links": {
-                    "self": "\/countries\/1"
+                    "self": "\/nationalCities\/7\/relationships\/country",
+                    "related": "\/nationalCities\/7\/country"
                 },
                 "data": {
                     "type": "countries",

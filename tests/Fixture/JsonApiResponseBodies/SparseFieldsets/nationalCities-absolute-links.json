@@ -21,7 +21,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/2"
+                        "self": "\/nationalCities\/3\/relationships\/country",
+                        "related": "\/nationalCities\/3\/country"
                     },
                     "data": {
                         "type": "countries",
@@ -42,7 +43,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/2"
+                        "self": "\/nationalCities\/4\/relationships\/country",
+                        "related": "\/nationalCities\/4\/country"
                     },
                     "data": {
                         "type": "countries",

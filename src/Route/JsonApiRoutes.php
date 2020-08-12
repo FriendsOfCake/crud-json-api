@@ -108,10 +108,6 @@ class JsonApiRoutes
             return;
         }
 
-        $generateRelationshipLinks = $options['generateRelationshipLinks'] === true ||
-            (is_array($options['generateRelationshipLinks']) &&
-                in_array($name, $options['generateRelationshipLinks'], true));
-
         $from = $association->getSource()->getRegistryAlias();
         $plugin = $routeBuilder->params()['plugin'] ?? null;
 

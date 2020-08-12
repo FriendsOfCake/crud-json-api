@@ -17,6 +17,14 @@
             "attributes": {
                 "name": "Vatican"
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/currency",
+                        "related": "\/countries\/4\/currency"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/4"
             }
@@ -27,6 +35,14 @@
             "attributes": {
                 "name": "United States of America"
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/currency",
+                        "related": "\/countries\/5\/currency"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/5"
             }
@@ -36,6 +52,14 @@
             "id": "1",
             "attributes": {
                 "name": "The Netherlands"
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/currency",
+                        "related": "\/countries\/1\/currency"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/1"

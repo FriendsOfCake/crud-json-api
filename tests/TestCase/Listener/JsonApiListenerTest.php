@@ -89,7 +89,6 @@ class JsonApiListenerTest extends TestCase
             'meta' => [],
             'links' => [],
             'absoluteLinks' => false,
-            'jsonApiBelongsToLinks' => false,
             'jsonOptions' => [],
             'debugPrettyPrint' => true,
             'include' => [],
@@ -581,27 +580,6 @@ class JsonApiListenerTest extends TestCase
 
         $this->setReflectionClassInstance($listener);
         $this->assertNull($this->callProtectedMethod('_validateConfigOptions', [], $listener));
-    }
-
-    /**
-     * Make sure config option `jsonApiBelongsToLinks` does not accept a string
-     */
-    public function testValidateConfigOptionJsonApiBelongsToLinksFailsWithString()
-    {
-        $this->expectException('Crud\Error\Exception\CrudException');
-        $this->expectExceptionMessage('JsonApiListener configuration option `jsonApiBelongsToLinks` only accepts a boolean');
-        $listener = $this
-            ->getMockBuilder(JsonApiListener::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-
-        $listener->setConfig([
-            'jsonApiBelongsToLinks' => 'string-not-accepted',
-        ]);
-
-        $this->setReflectionClassInstance($listener);
-        $this->callProtectedMethod('_validateConfigOptions', [], $listener);
     }
 
     /**

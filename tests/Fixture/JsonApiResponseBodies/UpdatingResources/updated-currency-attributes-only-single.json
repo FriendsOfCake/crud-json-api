@@ -6,6 +6,14 @@
             "code": "USD",
             "name": "Russian Ruble"
         },
+        "relationships": {
+            "countries": {
+                "links": {
+                    "self": "\/currencies\/2\/relationships\/countries",
+                    "related": "\/currencies\/2\/countries"
+                }
+            }
+        },
         "links": {
             "self": "\/currencies\/2"
         }

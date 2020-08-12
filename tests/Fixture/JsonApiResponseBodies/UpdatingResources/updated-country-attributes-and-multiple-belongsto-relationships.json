@@ -10,7 +10,8 @@
         "relationships": {
             "currency": {
                 "links": {
-                    "self": "\/currencies\/2"
+                    "self": "\/countries\/2\/relationships\/currency",
+                    "related": "\/countries\/2\/currency"
                 },
                 "data": {
                     "type": "currencies",
@@ -19,11 +20,36 @@
             },
             "nationalCapital": {
                 "links": {
-                    "self": "\/nationalCapitals\/5"
+                    "self": "\/countries\/2\/relationships\/nationalCapital",
+                    "related": "\/countries\/2\/nationalCapital"
                 },
                 "data": {
                     "type": "nationalCapitals",
                     "id": "5"
+                }
+            },
+            "cultures": {
+                "links": {
+                    "self": "\/countries\/2\/relationships\/cultures",
+                    "related": "\/countries\/2\/cultures"
+                }
+            },
+            "nationalCities": {
+                "links": {
+                    "self": "\/countries\/2\/relationships\/nationalCities",
+                    "related": "\/countries\/2\/nationalCities"
+                }
+            },
+            "subcountries": {
+                "links": {
+                    "self": "\/countries\/2\/relationships\/subcountries",
+                    "related": "\/countries\/2\/subcountries"
+                }
+            },
+            "supercountry": {
+                "links": {
+                    "self": "\/countries\/2\/relationships\/supercountry",
+                    "related": "\/countries\/2\/supercountry"
                 }
             }
         },

@@ -10,7 +10,8 @@
         "relationships": {
             "currency": {
                 "links": {
-                    "self": "\/currencies\/1"
+                    "self": "\/countries\/4\/relationships\/currency",
+                    "related": "\/countries\/4\/currency"
                 },
                 "data": {
                     "type": "currencies",
@@ -19,16 +20,36 @@
             },
             "nationalCapital": {
                 "links": {
-                    "self": "\/nationalCapitals\/5"
+                    "self": "\/countries\/4\/relationships\/nationalCapital",
+                    "related": "\/countries\/4\/nationalCapital"
                 },
                 "data": {
                     "type": "nationalCapitals",
                     "id": "5"
                 }
             },
+            "cultures": {
+                "links": {
+                    "self": "\/countries\/4\/relationships\/cultures",
+                    "related": "\/countries\/4\/cultures"
+                }
+            },
+            "nationalCities": {
+                "links": {
+                    "self": "\/countries\/4\/relationships\/nationalCities",
+                    "related": "\/countries\/4\/nationalCities"
+                }
+            },
+            "subcountries": {
+                "links": {
+                    "self": "\/countries\/4\/relationships\/subcountries",
+                    "related": "\/countries\/4\/subcountries"
+                }
+            },
             "supercountry": {
                 "links": {
-                    "self": "\/countries\/3"
+                    "self": "\/countries\/4\/relationships\/supercountry",
+                    "related": "\/countries\/4\/supercountry"
                 },
                 "data": {
                     "type": "countries",
@@ -52,7 +73,8 @@
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/3\/relationships\/currency",
+                        "related": "\/countries\/3\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -61,11 +83,36 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/4"
+                        "self": "\/countries\/3\/relationships\/nationalCapital",
+                        "related": "\/countries\/3\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "4"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/cultures",
+                        "related": "\/countries\/3\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/nationalCities",
+                        "related": "\/countries\/3\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/subcountries",
+                        "related": "\/countries\/3\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/supercountry",
+                        "related": "\/countries\/3\/supercountry"
                     }
                 }
             },

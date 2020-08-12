@@ -96,7 +96,6 @@ class JsonApiViewTest extends TestCase
             'withJsonApiVersion' => false,
             'meta' => [],
             'absoluteLinks' => false,
-            'jsonApiBelongsToLinks' => false,
             'include' => [],
             'fieldSets' => [],
             'jsonOptions' => [
@@ -422,7 +421,7 @@ class JsonApiViewTest extends TestCase
         ]);
 
         $this->assertSame(
-            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummyCounter":11111},"relationships":{"currency":{"links":{"self":"\/currencies\/1"},"data":{"type":"currencies","id":"1"}},"nationalCapital":{"links":{"self":"\/national_capitals\/view\/1"},"data":{"type":"nationalCapitals","id":"1"}}},"links":{"self":"\/countries\/1"}}}',
+            '{"data":{"type":"countries","id":"1","attributes":{"code":"NL","name":"The Netherlands","dummyCounter":11111},"relationships":{"currency":{"links":{"self":"\/countries\/1\/relationships\/currency","related":"\/countries\/1\/currency"},"data":{"type":"currencies","id":"1"}},"nationalCapital":{"links":{"self":"\/countries\/1\/relationships\/nationalCapital","related":"\/countries\/1\/nationalCapital"},"data":{"type":"nationalCapitals","id":"1"}},"cultures":{"links":{"self":"\/countries\/1\/relationships\/cultures","related":"\/countries\/1\/cultures"}},"nationalCities":{"links":{"self":"\/countries\/1\/relationships\/nationalCities","related":"\/countries\/1\/nationalCities"}},"subcountries":{"links":{"self":"\/countries\/1\/relationships\/subcountries","related":"\/countries\/1\/subcountries"}},"supercountry":{"links":{"self":"\/countries\/1\/relationships\/supercountry","related":"\/countries\/1\/supercountry"}}},"links":{"self":"\/countries\/1"}}}',
             $view->render()
         );
     }

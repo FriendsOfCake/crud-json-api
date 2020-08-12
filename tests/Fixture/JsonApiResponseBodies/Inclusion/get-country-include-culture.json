@@ -10,7 +10,8 @@
         "relationships": {
             "currency": {
                 "links": {
-                    "self": "\/currencies\/1"
+                    "self": "\/countries\/1\/relationships\/currency",
+                    "related": "\/countries\/1\/currency"
                 },
                 "data": {
                     "type": "currencies",
@@ -19,7 +20,8 @@
             },
             "nationalCapital": {
                 "links": {
-                    "self": "\/nationalCapitals\/1"
+                    "self": "\/countries\/1\/relationships\/nationalCapital",
+                    "related": "\/countries\/1\/nationalCapital"
                 },
                 "data": {
                     "type": "nationalCapitals",
@@ -28,7 +30,8 @@
             },
             "cultures": {
                 "links": {
-                    "related": "\/cultures?country_id=1"
+                    "self": "\/countries\/1\/relationships\/cultures",
+                    "related": "\/countries\/1\/cultures"
                 },
                 "data": [
                     {
@@ -36,6 +39,24 @@
                         "id": "1"
                     }
                 ]
+            },
+            "nationalCities": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/nationalCities",
+                    "related": "\/countries\/1\/nationalCities"
+                }
+            },
+            "subcountries": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/subcountries",
+                    "related": "\/countries\/1\/subcountries"
+                }
+            },
+            "supercountry": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/supercountry",
+                    "related": "\/countries\/1\/supercountry"
+                }
             }
         },
         "links": {
@@ -54,7 +75,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/cultures\/1\/relationships\/country",
+                        "related": "\/cultures\/1\/country"
                     },
                     "data": {
                         "type": "countries",

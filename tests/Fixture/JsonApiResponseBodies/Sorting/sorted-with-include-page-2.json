@@ -22,7 +22,8 @@
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/2"
+                        "self": "\/countries\/5\/relationships\/currency",
+                        "related": "\/countries\/5\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -31,11 +32,36 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/6"
+                        "self": "\/countries\/5\/relationships\/nationalCapital",
+                        "related": "\/countries\/5\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "6"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/cultures",
+                        "related": "\/countries\/5\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/nationalCities",
+                        "related": "\/countries\/5\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/subcountries",
+                        "related": "\/countries\/5\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/supercountry",
+                        "related": "\/countries\/5\/supercountry"
                     }
                 }
             },
@@ -54,7 +80,8 @@
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/4\/relationships\/currency",
+                        "related": "\/countries\/4\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -63,16 +90,36 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/5"
+                        "self": "\/countries\/4\/relationships\/nationalCapital",
+                        "related": "\/countries\/4\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "5"
                     }
                 },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/cultures",
+                        "related": "\/countries\/4\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/nationalCities",
+                        "related": "\/countries\/4\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/subcountries",
+                        "related": "\/countries\/4\/subcountries"
+                    }
+                },
                 "supercountry": {
                     "links": {
-                        "self": "\/countries\/3"
+                        "self": "\/countries\/4\/relationships\/supercountry",
+                        "related": "\/countries\/4\/supercountry"
                     },
                     "data": {
                         "type": "countries",
@@ -93,6 +140,14 @@
                 "code": "USD",
                 "name": "US Dollar"
             },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/2\/relationships\/countries",
+                        "related": "\/currencies\/2\/countries"
+                    }
+                }
+            },
             "links": {
                 "self": "\/currencies\/2"
             }
@@ -103,6 +158,14 @@
             "attributes": {
                 "code": "EUR",
                 "name": "Euro"
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/1\/relationships\/countries",
+                        "related": "\/currencies\/1\/countries"
+                    }
+                }
             },
             "links": {
                 "self": "\/currencies\/1"

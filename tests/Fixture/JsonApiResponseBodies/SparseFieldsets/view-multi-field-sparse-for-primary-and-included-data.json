@@ -6,6 +6,14 @@
             "name": "The Netherlands",
             "code": "NL"
         },
+        "relationships": {
+            "currency": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/currency",
+                    "related": "\/countries\/1\/currency"
+                }
+            }
+        },
         "links": {
             "self": "\/countries\/1"
         }

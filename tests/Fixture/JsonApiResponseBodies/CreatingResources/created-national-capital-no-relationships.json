@@ -6,6 +6,14 @@
             "name": "Havana",
             "description": "National capital of Cuba"
         },
+        "relationships": {
+            "countries": {
+                "links": {
+                    "self": "\/nationalCapitals\/7\/relationships\/countries",
+                    "related": "\/nationalCapitals\/7\/countries"
+                }
+            }
+        },
         "links": {
             "self": "\/nationalCapitals\/7"
         }

@@ -6,6 +6,14 @@
             "name": "Hollywood",
             "description": "National capital of the cinematic world"
         },
+        "relationships": {
+            "countries": {
+                "links": {
+                    "self": "\/nationalCapitals\/6\/relationships\/countries",
+                    "related": "\/nationalCapitals\/6\/countries"
+                }
+            }
+        },
         "links": {
             "self": "\/nationalCapitals\/6"
         }
