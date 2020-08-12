@@ -51,6 +51,12 @@
                     "self": "\/countries\/1\/relationships\/supercountry",
                     "related": "\/countries\/1\/supercountry"
                 }
+            },
+            "languages": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/languages",
+                    "related": "\/countries\/1\/languages"
+                }
             }
         },
         "links": {

@@ -31,6 +31,8 @@ class CountriesTable extends Table
             'foreignKey' => 'supercountry_id',
             'propertyName' => 'supercountry',
         ]);
+
+        $this->belongsToMany('Languages');
     }
 
     public function validationDefault(Validator $validator): Validator

@@ -30,6 +30,7 @@ class CountriesController extends Controller
                                      'Crud.Edit',
                                      'Crud.View',
                                      'Crud.Delete',
+                                     'CrudJsonApi.Relationships',
                                  ],
                                  'listeners' => [
                                      'CrudJsonApi.JsonApi',

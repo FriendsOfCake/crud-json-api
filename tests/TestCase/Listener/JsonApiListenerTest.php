@@ -985,6 +985,7 @@ class JsonApiListenerTest extends TestCase
             'NationalCities' => $table->NationalCities->getTarget(),
             'SubCountries' => $table->SubCountries->getTarget(),
             'SuperCountries' => $table->SuperCountries->getTarget(),
+            'Languages' => $table->Languages->getTarget(),
         ];
 
         $this->assertSame($expected, $result);
@@ -1032,23 +1033,24 @@ class JsonApiListenerTest extends TestCase
             'nationalCities',
             'subcountries',
             'supercountry',
+            'languages',
         ];
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
         $this->assertSame($expected, $result);
 
         unset($associations['currencies']['children']['countries']);
-        $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
+        $this->assertSame(['currencies', 'nationalcapitals', 'cultures', 'nationalcities', 'subcountries', 'supercountries', 'languages'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'nationalCapital', 'cultures', 'nationalCities', 'subcountries', 'supercountry'], $result);
+        $this->assertSame(['currency', 'nationalCapital', 'cultures', 'nationalCities', 'subcountries', 'supercountry', 'languages'], $result);
 
         // assert the include list is still auto-generated if an association is
         // removed from the AssociationsCollection
         unset($associations['cultures']);
-        $this->assertSame(['currencies', 'nationalcapitals', 'nationalcities', 'subcountries', 'supercountries'], array_keys($associations));
+        $this->assertSame(['currencies', 'nationalcapitals', 'nationalcities', 'subcountries', 'supercountries', 'languages'], array_keys($associations));
 
         $result = $this->callProtectedMethod('_getIncludeList', [$associations], $listener);
-        $this->assertSame(['currency', 'nationalCapital', 'nationalCities', 'subcountries', 'supercountry'], $result);
+        $this->assertSame(['currency', 'nationalCapital', 'nationalCities', 'subcountries', 'supercountry', 'languages'], $result);
 
         // assert user specified listener config option is returned as-is (no magic)
         $userSpecifiedIncludes = [

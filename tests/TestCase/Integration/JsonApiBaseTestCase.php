@@ -43,6 +43,8 @@ abstract class JsonApiBaseTestCase extends TestCase
         'plugin.CrudJsonApi.Cultures',
         'plugin.CrudJsonApi.NationalCapitals',
         'plugin.CrudJsonApi.NationalCities',
+        'plugin.CrudJsonApi.Languages',
+        'plugin.CrudJsonApi.CountriesLanguages',
     ];
 
     /**

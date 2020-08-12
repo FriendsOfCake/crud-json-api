@@ -116,6 +116,12 @@
                         "self": "\/countries\/1\/relationships\/supercountry",
                         "related": "\/countries\/1\/supercountry"
                     }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/languages",
+                        "related": "\/countries\/1\/languages"
+                    }
                 }
             },
             "links": {
@@ -174,6 +180,12 @@
                         "self": "\/countries\/2\/relationships\/supercountry",
                         "related": "\/countries\/2\/supercountry"
                     }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/languages",
+                        "related": "\/countries\/2\/languages"
+                    }
                 }
             },
             "links": {
@@ -231,6 +243,12 @@
                     "links": {
                         "self": "\/countries\/3\/relationships\/supercountry",
                         "related": "\/countries\/3\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/languages",
+                        "related": "\/countries\/3\/languages"
                     }
                 }
             },
@@ -294,6 +312,12 @@
                         "type": "countries",
                         "id": "3"
                     }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/languages",
+                        "related": "\/countries\/4\/languages"
+                    }
                 }
             },
             "links": {
@@ -351,6 +375,12 @@
                     "links": {
                         "self": "\/countries\/5\/relationships\/supercountry",
                         "related": "\/countries\/5\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/languages",
+                        "related": "\/countries\/5\/languages"
                     }
                 }
             },

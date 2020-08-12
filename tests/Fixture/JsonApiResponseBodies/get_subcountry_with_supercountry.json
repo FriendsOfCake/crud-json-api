@@ -55,6 +55,12 @@
                     "type": "countries",
                     "id": "3"
                 }
+            },
+            "languages": {
+                "links": {
+                    "self": "\/countries\/4\/relationships\/languages",
+                    "related": "\/countries\/4\/languages"
+                }
             }
         },
         "links": {
@@ -113,6 +119,12 @@
                     "links": {
                         "self": "\/countries\/3\/relationships\/supercountry",
                         "related": "\/countries\/3\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/languages",
+                        "related": "\/countries\/3\/languages"
                     }
                 }
             },
