@@ -106,7 +106,7 @@ class RelationshipsAction extends BaseAction
     /**
      * @return void
      */
-    public function isAllowed(): void
+    public function checkAllowed(): void
     {
         $request = $this->_request();
         $method = $request->getMethod();
