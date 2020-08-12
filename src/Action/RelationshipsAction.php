@@ -99,7 +99,7 @@ class RelationshipsAction extends BaseAction
     {
         $events = parent::implementedEvents();
 
-        $events['Crud.beforeHandle'] = ['callable' => [$this, 'isAllowed']];
+        $events['Crud.beforeHandle'] = ['callable' => [$this, 'checkAllowed']];
 
         return $events;
     }
@@ -153,6 +153,7 @@ class RelationshipsAction extends BaseAction
         $relationName = $this->_request()->getParam('type');
         $table = $this->_table();
         $association = $table->getAssociation($relationName);
+        $targetTable = $association->getTarget();
 
         [, $controllerName] = pluginSplit($table->getRegistryAlias());
         $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
@@ -169,20 +170,31 @@ class RelationshipsAction extends BaseAction
             throw new BadRequestException('Composite keys are not supported.');
         }
 
+        $fields = [$table->aliasField($primaryKey)];
+        $associationFields = [
+            $targetTable->aliasField($association->getTarget()->getPrimaryKey())
+        ];
+        $associationType = $association->type();
+
+        if (in_array($associationType, [Association::ONE_TO_MANY, Association::ONE_TO_ONE], true)) {
+            $associationFields[] = $targetTable->aliasField($association->getForeignKey());
+        } elseif ($associationType === Association::MANY_TO_ONE) {
+            $fields[] = $table->aliasField($association->getForeignKey());
+        }
+
         $primaryQuery = $table->find()
-            ->select([
-                $primaryKey,
-            ])
+            ->select($fields)
             ->where(
                 [
-                    $primaryKey => $foreignKeyParam,
+                    $table->aliasField($primaryKey) => $foreignKeyParam,
                 ]
             )
             ->contain([
                 $relationName => [
-                    'fields' => [$association->getTarget()->getPrimaryKey()],
+                    'fields' => $associationFields,
                 ],
             ]);
+        $primaryQuery->getEagerLoader()->enableAutoFields();
 
         $subject->set(
             [
@@ -208,6 +220,7 @@ class RelationshipsAction extends BaseAction
             return $entity;
         }
 
+        $this->setConfig('scope', 'entity');
         $subject->set([
             'entity' => $relatedEntities,
         ]);
