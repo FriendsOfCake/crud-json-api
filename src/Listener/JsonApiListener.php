@@ -298,6 +298,8 @@ class JsonApiListener extends ApiListener
      * In aid of supporting:
      * https://jsonapi.org/format/#crud-updating-to-many-relationships
      * https://jsonapi.org/format/#crud-updating-to-one-relationships
+     *
+     * @return bool
      */
     protected function _checkIsRelationshipsRequest(): bool
     {

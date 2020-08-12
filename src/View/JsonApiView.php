@@ -96,6 +96,10 @@ class JsonApiView extends View
         return $json ?: '';
     }
 
+    /**
+     * @param array $schemas Array of schemas
+     * @return \Neomerx\JsonApi\Contracts\Encoder\EncoderInterface
+     */
     protected function _getEncoder(array $schemas = []): EncoderInterface
     {
         // Please note that a third NeoMerx EncoderOptions argument `depth`

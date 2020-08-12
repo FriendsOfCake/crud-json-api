@@ -56,7 +56,6 @@ class DynamicEntitySchema extends BaseSchema
 
     /**
      * @param string $input Input string
-     *
      * @return string
      */
     protected function inflect(string $input): string
@@ -395,7 +394,7 @@ class DynamicEntitySchema extends BaseSchema
             $sourceName . '_id' => $entity->id,
             'from' => $from,
             'type' => $type,
-            '_name' => "CrudJsonApi.{$from}:{$type}"
+            '_name' => "CrudJsonApi.{$from}:{$type}",
         ];
 
         try {

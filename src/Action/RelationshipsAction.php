@@ -7,7 +7,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Http\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Hash;
@@ -133,7 +132,9 @@ class RelationshipsAction extends BaseAction
         }
 
         $relation = $this->_request()->getParam('type');
-        $allowed = array_key_exists($allowedRelationships, $relation) ? $allowedRelationships[$relation] : $allowedRelationships['*'];
+        $allowed = array_key_exists($allowedRelationships, $relation) ?
+            $allowedRelationships[$relation] :
+            $allowedRelationships['*'];
 
         if ($allowed === false || !in_array($mappedMethod, $allowed, true)) {
             throw new ForbiddenException();
@@ -221,7 +222,6 @@ class RelationshipsAction extends BaseAction
 
     /**
      * HTTP DELETE handler
-     *
      *
      * @return \Cake\Http\Response|null
      */
@@ -364,7 +364,7 @@ class RelationshipsAction extends BaseAction
      * Success callback
      *
      * @param \Crud\Event\Subject $subject Event subject
-     * @return \Cake\Http\Response|null
+     * @return void
      */
     protected function _success(Subject $subject): void
     {

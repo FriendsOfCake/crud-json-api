@@ -15,13 +15,13 @@ use Crud\Error\Exception\ValidationException;
 class DocumentRelationshipValidator extends DocumentValidator
 {
     /**
-       * Validates a JSON API request data document used for updating
-       * resources against the specification requirements described
-       * at http://jsonapi.org/format/#crud-updating.
-       *
-       * @throws \Crud\Error\Exception\ValidationException
-       * @return void
-       */
+     * Validates a JSON API request data document used for updating
+     * resources against the specification requirements described
+     * at http://jsonapi.org/format/#crud-updating.
+     *
+     * @throws \Crud\Error\Exception\ValidationException
+     * @return void
+     */
     public function validateUpdateDocument(): void
     {
         $this->_documentMustHavePrimaryData();
@@ -33,35 +33,17 @@ class DocumentRelationshipValidator extends DocumentValidator
         throw new ValidationException($this->_getErrorCollectionEntity());
     }
 
-    public function _arrayObjectsMustHaveType()
+    /**
+     * @return bool
+     */
+    protected function _primaryDataMayBeNullEmptyArrayObjectOrArray(): bool
     {
         $dataProperty = $this->_getProperty('data');
-        if (is_array($dataProperty)) {
-            foreach ($dataProperty as $key => $object) {
-            }
-        }
-    }
-
-    public function _primaryDataObjectArrayObjectsMustHaveType($arr)
-    {
-        if (!empty($arr)) {
-            foreach ($var as $key => $obj) {
-            }
-        }
-    }
-
-    public function _primaryDataObjectArrayObjectsMustHaveId($arr)
-    {
-        $dataProperty = $this->_getProperty('data');
-    }
-
-    public function _primaryDataMayBeNullEmptyArrayObjectOrArray()
-    {
-        $dataProperty = $this->_getProperty('data');
-        if ($this->_relationshipDataIsNull('') || empty((array) $dataProperty)) {
+        if ($this->_relationshipDataIsNull('') || empty((array)$dataProperty)) {
             return true;
         }
 
+        $about = '';
         if (is_array($dataProperty)) {
             $errors = false;
             foreach ($dataProperty as $key => $val) {

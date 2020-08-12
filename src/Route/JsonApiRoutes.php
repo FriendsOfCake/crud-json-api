@@ -35,13 +35,20 @@ class JsonApiRoutes
      * @param array $options Options array
      * @return void
      */
-    private static function buildRelationshipLink(RouteBuilder $routeBuilder, Association $association, array $options): void
-    {
+    private static function buildRelationshipLink(
+        RouteBuilder $routeBuilder,
+        Association $association,
+        array $options
+    ): void {
         $type = $association->getName();
 
         if (
             $options['relationshipLinks'] === false ||
-            (is_array($options['relationshipLinks']) && !array_key_exists($type, $options['relationshipLinks']) && $options['relationshipLinks']['*'] === false)
+            (
+                is_array($options['relationshipLinks']) &&
+                !array_key_exists($type, $options['relationshipLinks']) &&
+                $options['relationshipLinks']['*'] === false
+            )
         ) {
             return;
         }
@@ -143,7 +150,7 @@ class JsonApiRoutes
                             'type' => $name,
                         ],
                         [
-                            '_name' => "CrudJsonApi.{$from}:{$name}"
+                            '_name' => "CrudJsonApi.{$from}:{$name}",
                         ]
                     );
                 }
@@ -162,7 +169,7 @@ class JsonApiRoutes
                 'type' => $name,
             ],
             [
-                '_name' => "CrudJsonApi.{$from}:{$name}"
+                '_name' => "CrudJsonApi.{$from}:{$name}",
             ]
         );
     }
