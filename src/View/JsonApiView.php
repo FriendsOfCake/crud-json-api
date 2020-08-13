@@ -8,10 +8,13 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Association;
 use Cake\ORM\Entity;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use Crud\Error\Exception\CrudException;
+use Neomerx\JsonApi\Contracts\Encoder\EncoderInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Encoder\Encoder;
 use Neomerx\JsonApi\Schema\Link;
@@ -75,7 +78,9 @@ class JsonApiView extends View
      */
     public function render(?string $view = null, $layout = null): string
     {
-        if ($this->getConfig('repositories')) {
+        if ($this->getConfig('association')) {
+            $json = $this->_encodeWithIdentifiers();
+        } elseif ($this->getConfig('repositories')) {
             $json = $this->_encodeWithSchemas();
         } else {
             $json = $this->_encodeWithoutSchemas();
@@ -92,6 +97,47 @@ class JsonApiView extends View
     }
 
     /**
+     * @param array $schemas Array of schemas
+     * @return \Neomerx\JsonApi\Contracts\Encoder\EncoderInterface
+     */
+    protected function _getEncoder(array $schemas = []): EncoderInterface
+    {
+        // Please note that a third NeoMerx EncoderOptions argument `depth`
+        // exists but has not been implemented in this plugin.
+        $encoder = Encoder::instance($schemas)
+            ->withEncodeOptions($this->_jsonOptions());
+
+        // Add optional top-level `version` node to the response if enabled
+        // by user using listener config option.
+        if ($this->getConfig('withJsonApiVersion')) {
+            $encoder->withJsonApiVersion('1.1');
+            if (!is_bool($this->getConfig('withJsonApiVersion'))) {
+                $encoder->withJsonApiMeta($this->getConfig('withJsonApiVersion'));
+            }
+        }
+
+        // Add optional top-level `link` node to the response if enabled by
+        // user using listener config option.
+        if ($this->getConfig('links')) {
+            $links = $this->getConfig('links');
+            $encoder->withLinks(
+                array_map(
+                    function ($link) {
+                        if ($link instanceof Link) {
+                            return $link;
+                        }
+
+                        return new Link(false, $link, false);
+                    },
+                    $links
+                )
+            );
+        }
+
+        return $encoder;
+    }
+
+    /**
      * Generates a JSON API string without resource(s).
      *
      * @return null|string
@@ -102,16 +148,70 @@ class JsonApiView extends View
             return null;
         }
 
-        $encoder = Encoder::instance()
-            ->withEncodeOptions($this->_jsonOptions());
-
-        // Add optional top-level `link` node to the response if enabled by
-        // user using listener config option.
-        if ($this->getConfig('links')) {
-            $encoder->withLinks($this->getConfig('links'));
-        }
+        $encoder = $this->_getEncoder();
 
         return $encoder->encodeMeta($this->getConfig('meta'));
+    }
+
+    /**
+     * @return string
+     */
+    protected function _encodeWithIdentifiers(): string
+    {
+        /** @var \Cake\ORM\Association $association */
+        $association = $this->getConfig('association');
+        $sourceRepository = $association->getSource();
+        $targetRepository = $association->getTarget();
+        $isOne = \in_array(
+            $association->type(),
+            [Association::MANY_TO_ONE, Association::ONE_TO_ONE],
+            true
+        );
+        [$pluginName, $controllerName] = pluginSplit($sourceRepository->getRegistryAlias());
+        $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+
+        $repositoryName = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
+        [$foreignPluginName, $foreignControllerName] = pluginSplit($repositoryName);
+        $request = $this->getRequest();
+        $selfLink = Router::url(
+            [
+                'controller' => $controllerName,
+                'plugin' => $pluginName,
+                '_method' => 'GET',
+                'action' => 'relationships',
+                $sourceName . '_id' => $request->getParam($sourceName . '_id'),
+                'type' => $request->getParam('type'),
+            ],
+            $this->getConfig('absoluteLinks', false)
+        );
+        $relatedLink = Router::url(
+            [
+                'controller' => $foreignControllerName,
+                'plugin' => $foreignPluginName,
+                '_method' => 'GET',
+                'action' => $isOne ? 'view' : 'index',
+                $sourceName . '_id' => $request->getParam($sourceName . '_id'),
+                'type' => $request->getParam('type'),
+                'from' => $sourceRepository->getRegistryAlias(),
+            ],
+            $this->getConfig('absoluteLinks', false)
+        );
+        $this->setConfig('links', [
+            'self' => $selfLink,
+            'related' => $relatedLink,
+        ]);
+
+        $this->setConfig('repositories', [$targetRepository->getRegistryAlias() => $targetRepository]);
+        $schemas = $this->_entitiesToNeoMerxSchema($this->getConfig('repositories'));
+        $encoder = $this->_getEncoder($schemas);
+
+        $serialize = $this->getConfig('serialize');
+
+        if ($serialize !== false) {
+            $serialize = $this->_getDataToSerializeFromViewVars($serialize);
+        }
+
+        return $encoder->encodeIdentifiers($serialize);
     }
 
     /**
@@ -125,15 +225,29 @@ class JsonApiView extends View
             $this->_inflectIncludesViewVar();
         }
 
+        // Add top-level `links` node with pagination information (requires
+        // ApiPaginationListener which will have set/filled viewVar).
+        if ($this->getConfig('pagination')) {
+            $pagination = $this->getConfig('pagination');
+
+            $links = $this->getConfig('links', []);
+            $paginationLinks = $this->_getPaginationLinks($pagination);
+            $this->setConfig('links', $links + $paginationLinks);
+
+            // Additional pagination information has to be in top-level node `meta`
+            $meta = $this->getConfig('meta');
+            $meta['record_count'] = $pagination['record_count'];
+            $meta['page_count'] = $pagination['page_count'];
+            $meta['page_limit'] = $pagination['page_limit'];
+            $this->setConfig('meta', $meta);
+        }
+
         // All "Schema is not registered for a resource at path 'xyz'" errors
         // originate from the line below and are caused by the mentioned Cake Table
         // object not being present in the  `repositories` option.
         $schemas = $this->_entitiesToNeoMerxSchema($this->getConfig('repositories'));
 
-        // Please note that a third NeoMerx EncoderOptions argument `depth`
-        // exists but has not been implemented in this plugin.
-        $encoder = Encoder::instance($schemas)
-            ->withEncodeOptions($this->_jsonOptions());
+        $encoder = $this->_getEncoder($schemas);
 
         $serialize = $this->getConfig('serialize');
 
@@ -159,50 +273,6 @@ class JsonApiView extends View
             ->withIncludedPaths($include)
             ->withFieldSets($fieldSets);
 
-        // Add optional top-level `version` node to the response if enabled
-        // by user using listener config option.
-        if ($this->getConfig('withJsonApiVersion')) {
-            $encoder->withJsonApiVersion('1.1');
-            if (!is_bool($this->getConfig('withJsonApiVersion'))) {
-                $encoder->withJsonApiMeta($this->getConfig('withJsonApiVersion'));
-            }
-        }
-
-        // Add top-level `links` node with pagination information (requires
-        // ApiPaginationListener which will have set/filled viewVar).
-        if ($this->getConfig('pagination')) {
-            $pagination = $this->getConfig('pagination');
-
-            $links = $this->getConfig('links', []);
-            $paginationLinks = $this->_getPaginationLinks($pagination);
-            $this->setConfig('links', $links + $paginationLinks);
-
-            // Additional pagination information has to be in top-level node `meta`
-            $meta = $this->getConfig('meta');
-            $meta['record_count'] = $pagination['record_count'];
-            $meta['page_count'] = $pagination['page_count'];
-            $meta['page_limit'] = $pagination['page_limit'];
-            $this->setConfig('meta', $meta);
-        }
-
-        // Add optional top-level `link` node to the response if enabled by
-        // user using listener config option.
-        if ($this->getConfig('links')) {
-            $links = $this->getConfig('links');
-            $encoder->withLinks(
-                array_map(
-                    function ($link) {
-                        if ($link instanceof Link) {
-                            return $link;
-                        }
-
-                        return new Link(false, $link, false);
-                    },
-                    $links
-                )
-            );
-        }
-
         // Add optional top-level `meta` node to the response if enabled by
         // user using listener config option.
         if ($this->getConfig('meta')) {
@@ -210,7 +280,7 @@ class JsonApiView extends View
                 return $encoder->encodeMeta($this->getConfig('meta'));
             }
 
-             $encoder->withMeta($this->getConfig('meta'));
+            $encoder->withMeta($this->getConfig('meta'));
         }
 
         // JSON API as generated by NeoMerx. When things look off,  start debugging here

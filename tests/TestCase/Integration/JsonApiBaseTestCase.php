@@ -11,6 +11,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use CrudJsonApi\Error\JsonApiExceptionRenderer;
+use CrudJsonApi\Route\JsonApiRoutes;
 
 abstract class JsonApiBaseTestCase extends TestCase
 {
@@ -42,6 +43,8 @@ abstract class JsonApiBaseTestCase extends TestCase
         'plugin.CrudJsonApi.Cultures',
         'plugin.CrudJsonApi.NationalCapitals',
         'plugin.CrudJsonApi.NationalCities',
+        'plugin.CrudJsonApi.Languages',
+        'plugin.CrudJsonApi.CountriesLanguages',
     ];
 
     /**
@@ -54,21 +57,14 @@ abstract class JsonApiBaseTestCase extends TestCase
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
         Router::scope('/', function ($routes) {
-            $routes->resources('Countries', [
-                'inflect' => 'variable',
-            ]);
-            $routes->resources('Currencies', [ // single word belongsTo association
-                'inflect' => 'variable',
-            ]);
-            $routes->resources('Cultures', [ // single word hasMany association
-                'inflect' => 'variable',
-            ]);
-            $routes->resources('NationalCapitals', [ // multi-word belongsTo association
-                'inflect' => 'variable',
-            ]);
-            $routes->resources('NationalCities', [ // multi-word hasMany association
-                'inflect' => 'variable',
-            ]);
+            JsonApiRoutes::mapModels([
+                'Countries',
+                'Currencies',
+                'Cultures',
+                'NationalCapitals',
+                'NationalCities',
+                'Languages',
+            ], $routes);
         });
 
         $this->configRequest([

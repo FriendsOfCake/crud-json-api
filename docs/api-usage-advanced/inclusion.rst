@@ -120,10 +120,10 @@ As an example, a client could produce the exact same JSON API response as shown 
   If the ``include`` parameter is provided, then only the requested relationships will be included
   in the ``included`` schema.
 
-Whitelist/blacklist
+allowList/denyList
 ^^^^^^^^^^^^^^^^^^^
 
-It is possible to blacklist, or whitelist what the client is allowed to include.
+It is possible to denyList, or allowList what the client is allowed to include.
 This is done using the listener configuration:
 
 .. code-block:: php
@@ -132,16 +132,16 @@ This is done using the listener configuration:
   {
     $this->Crud
       ->listener('jsonApi')
-      ->config('queryParameters.include.whitelist', ['cultures', 'cities']);
+      ->config('queryParameters.include.allowList', ['cultures', 'cities']);
 
     return $this->Crud->execute();
   }
 
-Whitelisting will prevent all non-whitelisted associations from being
-contained. Blacklisting will prevent any blacklisted associations from
-being included. Blacklisting takes precedence of whitelisting (i.e
-blacklisting and whitelisting the same association will prevent it from
-being included). If you wish to prevent any associations, set the ``blacklist``
+allowListing will prevent all non-allowListed associations from being
+contained. Blacklisting will prevent any denyListed associations from
+being included. Blacklisting takes precedence of allowListing (i.e
+denyListing and allowListing the same association will prevent it from
+being included). If you wish to prevent any associations, set the ``denyList``
 config option to ``true``:
 
 .. code-block:: php
@@ -150,7 +150,7 @@ config option to ``true``:
   {
     $this->Crud
       ->listener('jsonApi')
-      ->config('queryParameters.include.blacklist', true);
+      ->config('queryParameters.include.denyList', true);
 
     return $this->Crud->execute();
   }

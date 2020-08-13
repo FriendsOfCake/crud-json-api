@@ -60,4 +60,55 @@ class FetchingResourcesIntegrationTest extends JsonApiBaseTestCase
         $this->_assertJsonApiResponseHeaders();
         $this->assertResponseSameAsFile('FetchingResources' . DS . $expectedResponseFile);
     }
+
+    /**
+     * PhpUnit Data Provider that will call `testFetchNestedResource()` for every array entry
+     * so we can test multiple successful GET requests without repeating ourselves.
+     *
+     * @return array
+     */
+    public function fetchNestedResourceProvider()
+    {
+        return [
+            'fetch-one-to-many-relation' => [
+                '/currencies/1/countries',
+                'get-currency-countries.json',
+            ],
+
+            'fetch-many-to-one-relation' => [
+                '/countries/1/currency',
+                'get-country-currency.json',
+            ],
+
+            'fetch-many-to-many-relation' => [
+                '/countries/1/languages',
+                'get-country-languages.json',
+            ],
+        ];
+    }
+
+    /**
+     * @param string $url The endpoint to hit
+     * @param string $expectedResponseFile The file to find the expected jsonapi response in
+     * @return void
+     * @dataProvider fetchNestedResourceProvider
+     */
+    public function testFetchNestedResource($url, $expectedResponseFile)
+    {
+        $this->configRequest(
+            [
+                'headers' => [
+                    'Accept' => 'application/vnd.api+json',
+                ],
+            ]
+        );
+
+        # execute the GET request
+        $this->get($url);
+
+        # assert the response
+        $this->assertResponseCode(200);
+        $this->_assertJsonApiResponseHeaders();
+        $this->assertResponseSameAsFile('FetchingResources' . DS . $expectedResponseFile);
+    }
 }

@@ -16,13 +16,14 @@
             "id": "4",
             "attributes": {
                 "code": "VT",
-                "name": "Vatican",
-                "dummyCounter": 44444
+                "dummyCounter": 44444,
+                "name": "Vatican"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/4\/relationships\/currency",
+                        "related": "\/countries\/4\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -31,20 +32,46 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/5"
+                        "self": "\/countries\/4\/relationships\/nationalCapital",
+                        "related": "\/countries\/4\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "5"
                     }
                 },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/cultures",
+                        "related": "\/countries\/4\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/nationalCities",
+                        "related": "\/countries\/4\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/subcountries",
+                        "related": "\/countries\/4\/subcountries"
+                    }
+                },
                 "supercountry": {
                     "links": {
-                        "self": "\/countries\/3"
+                        "self": "\/countries\/4\/relationships\/supercountry",
+                        "related": "\/countries\/4\/supercountry"
                     },
                     "data": {
                         "type": "countries",
                         "id": "3"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/4\/relationships\/languages",
+                        "related": "\/countries\/4\/languages"
                     }
                 }
             },
@@ -57,13 +84,14 @@
             "id": "5",
             "attributes": {
                 "code": "US",
-                "name": "United States of America",
-                "dummyCounter": 33333
+                "dummyCounter": 33333,
+                "name": "United States of America"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/2"
+                        "self": "\/countries\/5\/relationships\/currency",
+                        "related": "\/countries\/5\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -72,11 +100,42 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/6"
+                        "self": "\/countries\/5\/relationships\/nationalCapital",
+                        "related": "\/countries\/5\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "6"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/cultures",
+                        "related": "\/countries\/5\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/nationalCities",
+                        "related": "\/countries\/5\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/subcountries",
+                        "related": "\/countries\/5\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/supercountry",
+                        "related": "\/countries\/5\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/5\/relationships\/languages",
+                        "related": "\/countries\/5\/languages"
                     }
                 }
             },
@@ -89,13 +148,14 @@
             "id": "3",
             "attributes": {
                 "code": "IT",
-                "name": "Italy",
-                "dummyCounter": 33333
+                "dummyCounter": 33333,
+                "name": "Italy"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/3\/relationships\/currency",
+                        "related": "\/countries\/3\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -104,11 +164,42 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/4"
+                        "self": "\/countries\/3\/relationships\/nationalCapital",
+                        "related": "\/countries\/3\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "4"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/cultures",
+                        "related": "\/countries\/3\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/nationalCities",
+                        "related": "\/countries\/3\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/subcountries",
+                        "related": "\/countries\/3\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/supercountry",
+                        "related": "\/countries\/3\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/languages",
+                        "related": "\/countries\/3\/languages"
                     }
                 }
             },
@@ -125,6 +216,14 @@
                 "code": "EUR",
                 "name": "Euro"
             },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/1\/relationships\/countries",
+                        "related": "\/currencies\/1\/countries"
+                    }
+                }
+            },
             "links": {
                 "self": "\/currencies\/1"
             }
@@ -135,6 +234,14 @@
             "attributes": {
                 "code": "USD",
                 "name": "US Dollar"
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/2\/relationships\/countries",
+                        "related": "\/currencies\/2\/countries"
+                    }
+                }
             },
             "links": {
                 "self": "\/currencies\/2"

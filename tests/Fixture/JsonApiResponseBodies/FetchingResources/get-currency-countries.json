@@ -1,0 +1,210 @@
+{
+    "meta": {
+        "record_count": 4,
+        "page_count": 2,
+        "page_limit": null
+    },
+    "links": {
+        "self": "\/countries?page=1",
+        "first": "\/countries?page=1",
+        "last": "\/countries?page=2",
+        "next": "\/countries?page=2"
+    },
+    "data": [
+        {
+            "type": "countries",
+            "id": "1",
+            "attributes": {
+                "code": "NL",
+                "dummyCounter": 11111,
+                "matchingData": [],
+                "name": "The Netherlands"
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/currency",
+                        "related": "\/countries\/1\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "nationalCapital": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/nationalCapital",
+                        "related": "\/countries\/1\/nationalCapital"
+                    },
+                    "data": {
+                        "type": "nationalCapitals",
+                        "id": "1"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/cultures",
+                        "related": "\/countries\/1\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/nationalCities",
+                        "related": "\/countries\/1\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/subcountries",
+                        "related": "\/countries\/1\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/supercountry",
+                        "related": "\/countries\/1\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/languages",
+                        "related": "\/countries\/1\/languages"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/1"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "2",
+            "attributes": {
+                "code": "BG",
+                "dummyCounter": 22222,
+                "matchingData": [],
+                "name": "Bulgaria"
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/currency",
+                        "related": "\/countries\/2\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "nationalCapital": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/nationalCapital",
+                        "related": "\/countries\/2\/nationalCapital"
+                    },
+                    "data": {
+                        "type": "nationalCapitals",
+                        "id": "2"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/cultures",
+                        "related": "\/countries\/2\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/nationalCities",
+                        "related": "\/countries\/2\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/subcountries",
+                        "related": "\/countries\/2\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/supercountry",
+                        "related": "\/countries\/2\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/languages",
+                        "related": "\/countries\/2\/languages"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/2"
+            }
+        },
+        {
+            "type": "countries",
+            "id": "3",
+            "attributes": {
+                "code": "IT",
+                "dummyCounter": 33333,
+                "matchingData": [],
+                "name": "Italy"
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/currency",
+                        "related": "\/countries\/3\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                },
+                "nationalCapital": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/nationalCapital",
+                        "related": "\/countries\/3\/nationalCapital"
+                    },
+                    "data": {
+                        "type": "nationalCapitals",
+                        "id": "4"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/cultures",
+                        "related": "\/countries\/3\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/nationalCities",
+                        "related": "\/countries\/3\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/subcountries",
+                        "related": "\/countries\/3\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/supercountry",
+                        "related": "\/countries\/3\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/languages",
+                        "related": "\/countries\/3\/languages"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/countries\/3"
+            }
+        }
+    ]
+}

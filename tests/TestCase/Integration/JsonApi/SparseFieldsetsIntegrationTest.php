@@ -14,13 +14,13 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
     public function viewProvider()
     {
         return [
-            // assert "single-field" sparse for index actions
+             // assert "single-field" sparse for index actions
             'single-field sparse index' => [
                 '/countries?fields[countries]=name',
                 'index-single-field-sparse.json',
             ],
             'single-field sparse for included index data' => [
-                '/countries?include=currencies&fields[currencies]=id,name',
+                '/countries?include=currency&fields[currency]=id,name',
                 'index-single-field-sparse-for-included-data.json',
             ],
             'combined single-field sparse index (both primary and included data)' => [

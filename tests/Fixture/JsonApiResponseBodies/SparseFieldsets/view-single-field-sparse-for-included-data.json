@@ -4,13 +4,14 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands",
-            "dummyCounter": 11111
+            "dummyCounter": 11111,
+            "name": "The Netherlands"
         },
         "relationships": {
             "currency": {
                 "links": {
-                    "self": "\/currencies\/1"
+                    "self": "\/countries\/1\/relationships\/currency",
+                    "related": "\/countries\/1\/currency"
                 },
                 "data": {
                     "type": "currencies",
@@ -19,11 +20,42 @@
             },
             "nationalCapital": {
                 "links": {
-                    "self": "\/nationalCapitals\/1"
+                    "self": "\/countries\/1\/relationships\/nationalCapital",
+                    "related": "\/countries\/1\/nationalCapital"
                 },
                 "data": {
                     "type": "nationalCapitals",
                     "id": "1"
+                }
+            },
+            "cultures": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/cultures",
+                    "related": "\/countries\/1\/cultures"
+                }
+            },
+            "nationalCities": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/nationalCities",
+                    "related": "\/countries\/1\/nationalCities"
+                }
+            },
+            "subcountries": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/subcountries",
+                    "related": "\/countries\/1\/subcountries"
+                }
+            },
+            "supercountry": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/supercountry",
+                    "related": "\/countries\/1\/supercountry"
+                }
+            },
+            "languages": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/languages",
+                    "related": "\/countries\/1\/languages"
                 }
             }
         },

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace CrudJsonApi\Test\TestCase\Schema\JsonApi;
 
 use Cake\Controller\Controller;
-use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;
@@ -50,7 +49,7 @@ class DynamicEntitySchemaTest extends TestCase
     public function testGetAttributes()
     {
         // fetch data to test against
-        $table = TableRegistry::get('Countries');
+        $table = $this->getTableLocator()->get('Countries');
         $query = $table->find()
             ->where([
                 'Countries.id' => 2,
@@ -130,7 +129,7 @@ class DynamicEntitySchemaTest extends TestCase
     public function testRelationships()
     {
         // fetch associated data to test against
-        $table = TableRegistry::get('Countries');
+        $table = $this->getTableLocator()->get('Countries');
         $query = $table->find()
             ->where([
                 'Countries.id' => 2,
@@ -184,22 +183,14 @@ class DynamicEntitySchemaTest extends TestCase
         $this->assertSame($expectedFirstCultureId, $relationships['cultures'][SchemaInterface::RELATIONSHIP_DATA][0]['id']);
         $this->assertSame($expectedSecondCultureId, $relationships['cultures'][SchemaInterface::RELATIONSHIP_DATA][1]['id']);
 
-        // assert generated belongsToLink using listener default (direct link)
-        $view->set('_jsonApiBelongsToLinks', false);
-        $expected = '/currencies/1';
-        $result = $schema->getRelationshipSelfLink($entity, 'currency');
-        $this->setReflectionClassInstance($result);
-        $this->assertSame($expected, $this->getProtectedProperty('value', get_class($result)));
-
-        // assert generated belongsToLink using JsonApi (indirect link, requires custom JsonApiRoute)
-        $view->set('_jsonApiBelongsToLinks', true);
+        // assert generated relationship self link
         $expected = '/countries/2/relationships/currency';
         $result = $schema->getRelationshipSelfLink($entity, 'currency');
         $this->setReflectionClassInstance($result);
         $this->assertSame($expected, $this->getProtectedProperty('value', get_class($result)));
 
         // assert _ getRelationshipSelfLinks() for plural (hasMany)
-        $expected = '/cultures?country_id=2';
+        $expected = '/countries/2/cultures';
 
         $result = $schema->getRelationshipRelatedLink($entity, 'cultures');
         $this->setReflectionClassInstance($result);
@@ -216,7 +207,7 @@ class DynamicEntitySchemaTest extends TestCase
 
         // assert other valid relations are not included if no data is loaded
         // fetch associated data to test against
-        $table = TableRegistry::get('Countries');
+        $table = $this->getTableLocator()->get('Countries');
         $query = $table->find()
             ->where([
                 'Countries.id' => 2,
@@ -231,7 +222,7 @@ class DynamicEntitySchemaTest extends TestCase
         $this->assertArrayNotHasKey('cultures', $entity);
 
         $result = $schema->getRelationships($entity, $context);
-        $this->assertArrayNotHasKey('cultures', $result);
+        $this->assertArrayNotHasKey(DynamicEntitySchema::RELATIONSHIP_DATA, $result['cultures']);
         $this->assertArrayHasKey('currency', $result);
 
         // test custom foreign key

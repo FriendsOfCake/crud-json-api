@@ -4,13 +4,14 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands",
-            "dummyCounter": 11111
+            "dummyCounter": 11111,
+            "name": "The Netherlands"
         },
         "relationships": {
             "currency": {
                 "links": {
-                    "self": "\/currencies\/1"
+                    "self": "\/countries\/1\/relationships\/currency",
+                    "related": "\/countries\/1\/currency"
                 },
                 "data": {
                     "type": "currencies",
@@ -19,7 +20,8 @@
             },
             "nationalCapital": {
                 "links": {
-                    "self": "\/nationalCapitals\/1"
+                    "self": "\/countries\/1\/relationships\/nationalCapital",
+                    "related": "\/countries\/1\/nationalCapital"
                 },
                 "data": {
                     "type": "nationalCapitals",
@@ -28,7 +30,8 @@
             },
             "cultures": {
                 "links": {
-                    "related": "\/cultures?country_id=1"
+                    "self": "\/countries\/1\/relationships\/cultures",
+                    "related": "\/countries\/1\/cultures"
                 },
                 "data": [
                     {
@@ -39,7 +42,8 @@
             },
             "nationalCities": {
                 "links": {
-                    "related": "\/nationalCities?country_id=1"
+                    "self": "\/countries\/1\/relationships\/nationalCities",
+                    "related": "\/countries\/1\/nationalCities"
                 },
                 "data": [
                     {
@@ -59,6 +63,24 @@
                         "id": "6"
                     }
                 ]
+            },
+            "subcountries": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/subcountries",
+                    "related": "\/countries\/1\/subcountries"
+                }
+            },
+            "supercountry": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/supercountry",
+                    "related": "\/countries\/1\/supercountry"
+                }
+            },
+            "languages": {
+                "links": {
+                    "self": "\/countries\/1\/relationships\/languages",
+                    "related": "\/countries\/1\/languages"
+                }
             }
         },
         "links": {
@@ -73,6 +95,14 @@
                 "code": "EUR",
                 "name": "Euro"
             },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/1\/relationships\/countries",
+                        "related": "\/currencies\/1\/countries"
+                    }
+                }
+            },
             "links": {
                 "self": "\/currencies\/1"
             }
@@ -81,8 +111,16 @@
             "type": "nationalCapitals",
             "id": "1",
             "attributes": {
-                "name": "Amsterdam",
-                "description": "National capital of the Netherlands"
+                "description": "National capital of the Netherlands",
+                "name": "Amsterdam"
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/nationalCapitals\/1\/relationships\/countries",
+                        "related": "\/nationalCapitals\/1\/countries"
+                    }
+                }
             },
             "links": {
                 "self": "\/nationalCapitals\/1"
@@ -92,14 +130,15 @@
             "type": "cultures",
             "id": "1",
             "attributes": {
+                "anotherDummyCounter": 11111,
                 "code": "nl-NL",
-                "name": "Dutch",
-                "anotherDummyCounter": 11111
+                "name": "Dutch"
             },
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/cultures\/1\/relationships\/country",
+                        "related": "\/cultures\/1\/country"
                     },
                     "data": {
                         "type": "countries",
@@ -120,7 +159,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/nationalCities\/1\/relationships\/country",
+                        "related": "\/nationalCities\/1\/country"
                     },
                     "data": {
                         "type": "countries",
@@ -141,7 +181,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/nationalCities\/2\/relationships\/country",
+                        "related": "\/nationalCities\/2\/country"
                     },
                     "data": {
                         "type": "countries",
@@ -162,7 +203,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/nationalCities\/5\/relationships\/country",
+                        "related": "\/nationalCities\/5\/country"
                     },
                     "data": {
                         "type": "countries",
@@ -183,7 +225,8 @@
             "relationships": {
                 "country": {
                     "links": {
-                        "self": "\/countries\/1"
+                        "self": "\/nationalCities\/6\/relationships\/country",
+                        "related": "\/nationalCities\/6\/country"
                     },
                     "data": {
                         "type": "countries",

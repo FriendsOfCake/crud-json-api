@@ -17,6 +17,18 @@
             "attributes": {
                 "name": "The Netherlands"
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/currency",
+                        "related": "\/countries\/1\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/1"
             }
@@ -26,6 +38,18 @@
             "id": "2",
             "attributes": {
                 "name": "Bulgaria"
+            },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/currency",
+                        "related": "\/countries\/2\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                }
             },
             "links": {
                 "self": "\/countries\/2"
@@ -37,8 +61,32 @@
             "attributes": {
                 "name": "Italy"
             },
+            "relationships": {
+                "currency": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/currency",
+                        "related": "\/countries\/3\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
+                    }
+                }
+            },
             "links": {
                 "self": "\/countries\/3"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR"
+            },
+            "links": {
+                "self": "\/currencies\/1"
             }
         }
     ]

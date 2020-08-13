@@ -1,0 +1,12 @@
+{
+    "links": {
+        "self": "\/countries\/1\/relationships\/languages",
+        "related": "\/countries\/1\/languages"
+    },
+    "data": [
+        {
+            "type": "languages",
+            "id": "3"
+        }
+    ]
+}

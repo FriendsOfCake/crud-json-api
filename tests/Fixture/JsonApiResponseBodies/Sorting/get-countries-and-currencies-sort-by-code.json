@@ -16,13 +16,14 @@
             "id": "2",
             "attributes": {
                 "code": "BG",
-                "name": "Bulgaria",
-                "dummyCounter": 22222
+                "dummyCounter": 22222,
+                "name": "Bulgaria"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/2\/relationships\/currency",
+                        "related": "\/countries\/2\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -31,11 +32,42 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/2"
+                        "self": "\/countries\/2\/relationships\/nationalCapital",
+                        "related": "\/countries\/2\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "2"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/cultures",
+                        "related": "\/countries\/2\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/nationalCities",
+                        "related": "\/countries\/2\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/subcountries",
+                        "related": "\/countries\/2\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/supercountry",
+                        "related": "\/countries\/2\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/2\/relationships\/languages",
+                        "related": "\/countries\/2\/languages"
                     }
                 }
             },
@@ -48,13 +80,14 @@
             "id": "3",
             "attributes": {
                 "code": "IT",
-                "name": "Italy",
-                "dummyCounter": 33333
+                "dummyCounter": 33333,
+                "name": "Italy"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/3\/relationships\/currency",
+                        "related": "\/countries\/3\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -63,11 +96,42 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/4"
+                        "self": "\/countries\/3\/relationships\/nationalCapital",
+                        "related": "\/countries\/3\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "4"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/cultures",
+                        "related": "\/countries\/3\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/nationalCities",
+                        "related": "\/countries\/3\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/subcountries",
+                        "related": "\/countries\/3\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/supercountry",
+                        "related": "\/countries\/3\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/3\/relationships\/languages",
+                        "related": "\/countries\/3\/languages"
                     }
                 }
             },
@@ -80,13 +144,14 @@
             "id": "1",
             "attributes": {
                 "code": "NL",
-                "name": "The Netherlands",
-                "dummyCounter": 11111
+                "dummyCounter": 11111,
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {
                     "links": {
-                        "self": "\/currencies\/1"
+                        "self": "\/countries\/1\/relationships\/currency",
+                        "related": "\/countries\/1\/currency"
                     },
                     "data": {
                         "type": "currencies",
@@ -95,11 +160,42 @@
                 },
                 "nationalCapital": {
                     "links": {
-                        "self": "\/nationalCapitals\/1"
+                        "self": "\/countries\/1\/relationships\/nationalCapital",
+                        "related": "\/countries\/1\/nationalCapital"
                     },
                     "data": {
                         "type": "nationalCapitals",
                         "id": "1"
+                    }
+                },
+                "cultures": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/cultures",
+                        "related": "\/countries\/1\/cultures"
+                    }
+                },
+                "nationalCities": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/nationalCities",
+                        "related": "\/countries\/1\/nationalCities"
+                    }
+                },
+                "subcountries": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/subcountries",
+                        "related": "\/countries\/1\/subcountries"
+                    }
+                },
+                "supercountry": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/supercountry",
+                        "related": "\/countries\/1\/supercountry"
+                    }
+                },
+                "languages": {
+                    "links": {
+                        "self": "\/countries\/1\/relationships\/languages",
+                        "related": "\/countries\/1\/languages"
                     }
                 }
             },
@@ -115,6 +211,14 @@
             "attributes": {
                 "code": "EUR",
                 "name": "Euro"
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/currencies\/1\/relationships\/countries",
+                        "related": "\/currencies\/1\/countries"
+                    }
+                }
             },
             "links": {
                 "self": "\/currencies\/1"
