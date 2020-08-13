@@ -257,33 +257,31 @@ class RelationshipsAction extends BaseAction
 
         /** @var \Cake\ORM\Association $association */
         $association = $subject->association;
-        $associationType = $association->type();
         $property = $association->getProperty();
 
+        if (in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true)) {
+            throw new ForbiddenException('DELETE requests not allowed for to-one relationships');
+        }
+
         if (empty((array)$data)) {
-            $entity->$property = [];
-        } elseif ($associationType === Association::MANY_TO_MANY || $associationType === Association::ONE_TO_MANY) {
-            $foreignTable = $association->getTarget();
-            $foreignPrimaryKey = $foreignTable->getPrimaryKey();
+            $this->_success($subject);
 
-            if (is_array($foreignPrimaryKey)) {
-                throw new BadRequestException('Composite keys are not supported.');
-            }
+            return;
+        }
 
-            $currentIds = (array)Hash::extract($entity->$property, '{n}.' . $foreignPrimaryKey);
-            $idsToDelete = (array)Hash::extract($data, '{n}.id');
-            $entity->$property = [];
-            foreach ($currentIds as $key => $id) {
-                if (!in_array($id, $idsToDelete, false)) {
-                    // get the record to add
-                    try {
-                        $foreignRecord = $foreignTable->get($id);
-                    } catch (RecordNotFoundException $e) {
-                        continue;
-                    }
+        $foreignTable = $association->getTarget();
+        $foreignPrimaryKey = $foreignTable->getPrimaryKey();
 
-                    $entity->{$property}[] = $foreignRecord;
-                }
+        if (is_array($foreignPrimaryKey)) {
+            throw new BadRequestException('Composite keys are not supported.');
+        }
+
+        $idsToDelete = (array)Hash::extract($data, '{n}.id');
+        $foreignRecords = $entity->$property;
+        $entity->$property = [];
+        foreach ($foreignRecords as $key => $foreignRecord) {
+            if (!in_array($foreignRecord->id, $idsToDelete, false)) {
+                $entity->{$property}[] = $foreignRecord;
             }
         }
 
@@ -326,15 +324,10 @@ class RelationshipsAction extends BaseAction
         $entity->$property = empty($entity->$property) ? [] : $entity->$property;
 
         $ids = (array)Hash::extract($entity->$property, '{n}.id');
-        $foreignTable = $association->getTarget();
-        foreach ($data as $key => $recordAttributes) {
-            // get the related record
-            try {
-                $foreignRecord = $foreignTable->get($recordAttributes['id']);
-            } catch (RecordNotFoundException $e) {
-                continue;
-            }
-            // push it onto the relationsships array
+        $foreignRecords = $this->getForeignRecords($data, $association);
+
+        foreach ($foreignRecords as $foreignRecord) {
+            // push it onto the relationships array if it's not already related
             if (!in_array($foreignRecord->id, $ids, false)) {
                 $entity->{$property}[] = $foreignRecord;
             }
@@ -371,30 +364,27 @@ class RelationshipsAction extends BaseAction
         /** @var \Cake\ORM\Association $association */
         $association = $subject->association;
         $property = $association->getProperty();
+        $foreignTable = $association->getTarget();
 
-        if (empty((array)$data)) {
-            $entity->$property = [];
-        } else {
-            $entity->$property = [];
-
-            $foreignTable = $association->getTarget();
-            foreach ($data as $key => $recordAttributes) {
-                // get the related record
-                try {
-                    $foreignRecord = $foreignTable->get($recordAttributes['id']);
-                } catch (RecordNotFoundException $e) {
-                    continue;
-                }
-                // push it onto the relationsships array if it exists
-                $entity->{$property}[] = $foreignRecord;
+        if (in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true)) {
+            //Set the relationship to the corresponding entity
+            if (array_key_exists('id', $data)) {
+                $entity->{$property} = $foreignTable->get($data['id']);
+            } elseif ($data === null) {
+                $entity->{$property} = null;
             }
+        } else {
+            $entity->{$property} = $this->getForeignRecords($data, $association);
         }
 
         $entity->setDirty($property);
 
         $this->_trigger('beforeSave', $subject);
 
-        $association->setSaveStrategy('replace');
+        //Set saveStrategy to replace to remove relationships that should no longer exist
+        if (method_exists($association, 'setSaveStrategy')) {
+            $association->setSaveStrategy('replace');
+        }
         $saveMethod = $this->saveMethod();
         if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
             $this->_success($subject);
@@ -431,5 +421,45 @@ class RelationshipsAction extends BaseAction
         $this->setFlash('error', $subject);
 
         $this->_trigger('beforeRender', $subject);
+    }
+
+    /**
+     * @param array $data
+     * @param \Cake\ORM\Association $association
+     *
+     * @return array
+     */
+    protected function getForeignRecords(array $data, Association $association): array
+    {
+        if (empty($data)) {
+            return [];
+        }
+
+        $idsToAdd = (array)Hash::extract($data, '{n}.id');
+
+        //Get the foreign records
+        $foreignRecords = $association->find()
+            ->where(
+                [
+                    $association->getPrimaryKey() . ' in' => $idsToAdd
+                ]
+            )
+            ->all();
+
+        if (count($idsToAdd) !== count($foreignRecords)) {
+            $foundIds = $foreignRecords->extract(
+                static function ($record) {
+                    return $record->id;
+                }
+            )
+                ->toArray();
+            $missingIds = array_diff($idsToAdd, $foundIds);
+
+            throw new RecordNotFoundException(
+                __('Not all requested records could be found. Missing IDs are {0}', implode(', ', $missingIds))
+            );
+        }
+
+        return $foreignRecords->toArray();
     }
 }
