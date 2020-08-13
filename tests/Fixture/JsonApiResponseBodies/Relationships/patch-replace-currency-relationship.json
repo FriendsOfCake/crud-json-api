@@ -1,0 +1,10 @@
+{
+    "links": {
+        "self": "\/countries\/1\/relationships\/currency",
+        "related": "\/countries\/1\/currency"
+    },
+    "data": {
+        "type": "currencies",
+        "id": "2"
+    }
+}
