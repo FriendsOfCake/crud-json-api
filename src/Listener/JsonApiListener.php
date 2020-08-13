@@ -10,12 +10,13 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\MethodNotAllowedException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\ORM\Association;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Crud\Error\Exception\CrudException;
@@ -33,6 +34,8 @@ use InvalidArgumentException;
  */
 class JsonApiListener extends ApiListener
 {
+    use LocatorAwareTrait;
+
     public const MIME_TYPE = 'application/vnd.api+json';
 
     /**
@@ -170,7 +173,7 @@ class JsonApiListener extends ApiListener
 
         // generate a flat list of hasMany relationships for the current model
         $entity = $event->getSubject()->entity;
-        $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]);
+        $hasManyAssociations = $this->_getAssociationsList(null, [Association::ONE_TO_MANY]);
 
         if (empty($hasManyAssociations)) {
             return;
@@ -200,7 +203,7 @@ class JsonApiListener extends ApiListener
  * @var array $hasManyIds
 */
             $hasManyIds = Hash::extract($this->_controller()->getRequest()->getData($key), '{n}.id');
-            $hasManyTable = TableRegistry::get($associationName);
+            $hasManyTable = $this->getTableLocator()->get($associationName);
 
             // query database only for hasMany that match both passed id and the id of the primary resource
             /**
@@ -555,6 +558,73 @@ class JsonApiListener extends ApiListener
 
             $options['callable']($this->_request()->getQuery($parameter), $event->getSubject(), $options);
         }
+
+        $this->_fetchRelated($event->getSubject());
+    }
+
+    protected function _fetchRelated(Subject $subject): void
+    {
+        if ($this->_checkIsRelationshipsRequest()) {
+            return;
+        }
+
+        $request = $this->_request();
+        $from = $request->getParam('from');
+        $relationName = $request->getParam('type');
+
+        if (!$from || !$relationName) {
+            return;
+        }
+
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $subject->query->getRepository();
+        $fromRepository = $this->getTableLocator()->get($from);
+        $association = $fromRepository->getAssociation($relationName);
+        $associationType = $association->type();
+        $reverseAssociationTypes = [
+            Association::ONE_TO_ONE => [Association::ONE_TO_MANY], // hasOne -> belongsTo
+            Association::MANY_TO_ONE => [Association::ONE_TO_ONE, Association::ONE_TO_MANY], // belongsTo -> hasOne or hasMany
+            Association::ONE_TO_MANY => [Association::MANY_TO_ONE], // hasMany -> belongsTo
+            Association::MANY_TO_MANY => [Association::MANY_TO_MANY]
+        ];
+        $reverseAssociations = $this->_getAssociationsList($repository, $reverseAssociationTypes[$associationType]);
+        $reverseAssociation = null;
+
+        //There are no valid reverse associations that we could use. Bail with a 404
+        if (empty($reverseAssociations)) {
+            throw new NotFoundException('No valid relationship found.');
+        }
+
+        //More than one possible, check if there is one with a matching foreign key
+        if (count($reverseAssociations) > 1) {
+            $foreignKey = $association->getForeignKey();
+            foreach ($reverseAssociations as $reverseAssociationName) {
+                $reverseAssociation = $repository->getAssociation($reverseAssociationName);
+                $reverseForeignKey = $reverseAssociation->type() === Association::MANY_TO_MANY ?
+                    $reverseAssociation->getTargetForeignKey() :
+                    $reverseAssociation->getForeignKey();
+
+                if ($foreignKey === $reverseForeignKey) {
+                    break;
+                }
+            }
+        }
+
+        if (!$reverseAssociation) {
+            $reverseAssociation = $repository->getAssociation(current($reverseAssociations));
+        }
+
+        [, $controllerName] = pluginSplit($from);
+        $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+        $foreignKeyValue = $request->getParam($sourceName . '_id');
+
+        $subject->query
+            ->matching($reverseAssociation->getName(), static function (Query $query) use ($reverseAssociation, $foreignKeyValue) {
+                return $query
+                    ->where([
+                        $reverseAssociation->aliasField(current((array)$reverseAssociation->getPrimaryKey())) => $foreignKeyValue
+                    ]);
+            });
     }
 
     /**
@@ -1129,15 +1199,15 @@ class JsonApiListener extends ApiListener
 
     /**
      * Returns a flat array list with the names of all associations for the given
-     * entity, optionally limited to only matching associationTypes.
+     * repository (Or the default for the controller), optionally limited to only matching associationTypes.
      *
-     * @param  \Cake\Datasource\EntityInterface $entity           Entity
+     * @param  \Cake\ORM\Table|null $table           Table
      * @param  array                            $associationTypes Array with any combination of Cake\ORM\Association types
      * @return array
      */
-    protected function _getAssociationsList(EntityInterface $entity, array $associationTypes = []): array
+    protected function _getAssociationsList(?Table $table, array $associationTypes = []): array
     {
-        $table = $this->_controller()->loadModel();
+        $table = $table ?: $this->_table();
         if (!$table instanceof Table) {
             return [];
         }
