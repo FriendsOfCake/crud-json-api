@@ -1,0 +1,22 @@
+{
+    "data": {
+        "type": "currencies",
+        "id": "1",
+        "attributes": {
+            "code": "EUR",
+            "name": "Euro",
+            "matchingData": []
+        },
+        "relationships": {
+            "countries": {
+                "links": {
+                    "self": "\/currencies\/1\/relationships\/countries",
+                    "related": "\/currencies\/1\/countries"
+                }
+            }
+        },
+        "links": {
+            "self": "\/currencies\/1"
+        }
+    }
+}

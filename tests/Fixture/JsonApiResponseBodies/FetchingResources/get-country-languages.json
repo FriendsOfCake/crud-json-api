@@ -1,0 +1,44 @@
+{
+    "data": [
+        {
+            "type": "languages",
+            "id": "1",
+            "attributes": {
+                "code": "en",
+                "name": "English",
+                "matchingData": []
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/languages\/1\/relationships\/countries",
+                        "related": "\/languages\/1\/countries"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/languages\/1"
+            }
+        },
+        {
+            "type": "languages",
+            "id": "2",
+            "attributes": {
+                "code": "nl",
+                "name": "Dutch",
+                "matchingData": []
+            },
+            "relationships": {
+                "countries": {
+                    "links": {
+                        "self": "\/languages\/2\/relationships\/countries",
+                        "related": "\/languages\/2\/countries"
+                    }
+                }
+            },
+            "links": {
+                "self": "\/languages\/2"
+            }
+        }
+    ]
+}
