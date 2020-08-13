@@ -63,6 +63,7 @@ abstract class JsonApiBaseTestCase extends TestCase
                 'Cultures',
                 'NationalCapitals',
                 'NationalCities',
+                'Languages',
             ], $routes);
         });
 

@@ -10,4 +10,8 @@ use Cake\ORM\Table;
  */
 class LanguagesTable extends Table
 {
+    public function initialize(array $config): void
+    {
+        $this->belongsToMany('Countries');
+    }
 }

@@ -26,8 +26,9 @@ class NationalCapitalsController extends Controller
                     'Crud.Index',
                     'Crud.Add',
                     'Crud.Edit',
-                    'Crud.View',
+                    'CrudJsonApi.View',
                     'Crud.Delete',
+                    'CrudJsonApi.Relationships',
                 ],
                 'listeners' => [
                     'CrudJsonApi.JsonApi',
