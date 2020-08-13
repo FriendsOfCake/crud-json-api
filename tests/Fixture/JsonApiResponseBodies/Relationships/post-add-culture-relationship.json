@@ -1,0 +1,20 @@
+{
+    "links": {
+        "self": "\/countries\/2\/relationships\/cultures",
+        "related": "\/countries\/2\/cultures"
+    },
+    "data": [
+        {
+            "type": "cultures",
+            "id": "1"
+        },
+        {
+            "type": "cultures",
+            "id": "2"
+        },
+        {
+            "type": "cultures",
+            "id": "3"
+        }
+    ]
+}

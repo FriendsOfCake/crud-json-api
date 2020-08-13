@@ -289,6 +289,7 @@ class RelationshipsAction extends BaseAction
 
         $this->_trigger('beforeSave', $subject);
 
+        $association->setSaveStrategy('replace');
         $saveMethod = $this->saveMethod();
         if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
             $this->_success($subject);
@@ -316,6 +317,10 @@ class RelationshipsAction extends BaseAction
         /** @var \Cake\ORM\Association $association */
         $association = $subject->association;
         $property = $association->getProperty();
+
+        if (in_array($association->type(), [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true)) {
+            throw new ForbiddenException('POST requests not allowed for to-one relationships');
+        }
 
         // ensure that only adds new relationships, doesn't destroy old ones
         $entity->$property = empty($entity->$property) ? [] : $entity->$property;
@@ -389,6 +394,7 @@ class RelationshipsAction extends BaseAction
 
         $this->_trigger('beforeSave', $subject);
 
+        $association->setSaveStrategy('replace');
         $saveMethod = $this->saveMethod();
         if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
             $this->_success($subject);

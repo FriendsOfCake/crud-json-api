@@ -164,6 +164,10 @@ class JsonApiListener extends ApiListener
      */
     public function beforeSave(EventInterface $event): void
     {
+        if ($this->_checkIsRelationshipsRequest()) {
+            return;
+        }
+
         // generate a flat list of hasMany relationships for the current model
         $entity = $event->getSubject()->entity;
         $hasManyAssociations = $this->_getAssociationsList($entity, [Association::ONE_TO_MANY]);
@@ -181,7 +185,7 @@ class JsonApiListener extends ApiListener
                 continue;
             }
 
-            // prevent clients attempting to side-post/create related hasMany records
+            // prevent clients attempting to side-post/create related hasMany records for non-relationship requests
             if ($this->_request()->getMethod() === 'POST') {
                 throw new BadRequestException(
                     'JSON API 1.1 does not support sideposting ' .
