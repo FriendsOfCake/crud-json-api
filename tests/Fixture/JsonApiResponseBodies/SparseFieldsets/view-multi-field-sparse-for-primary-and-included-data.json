@@ -11,11 +11,28 @@
                 "links": {
                     "self": "\/countries\/1\/relationships\/currency",
                     "related": "\/countries\/1\/currency"
+                },
+                "data": {
+                    "type": "currencies",
+                    "id": "1"
                 }
             }
         },
         "links": {
             "self": "\/countries\/1"
         }
-    }
+    },
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "code": "EUR",
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        }
+    ]
 }

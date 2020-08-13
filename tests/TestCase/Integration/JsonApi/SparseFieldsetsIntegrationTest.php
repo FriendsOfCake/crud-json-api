@@ -15,38 +15,38 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             // assert "single-field" sparse for index actions
-//            'single-field sparse index' => [
-//                '/countries?fields[countries]=name',
-//                'index-single-field-sparse.json',
-//            ],
-//            'single-field sparse for included index data' => [
-//                '/countries?include=currencies&fields[currencies]=id,name',
-//                'index-single-field-sparse-for-included-data.json',
-//            ],
-//            'combined single-field sparse index (both primary and included data)' => [
-//                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
-//                'index-single-field-sparse-for-primary-and-included-data.json',
-//            ],
-//
-//            // assert "single-field" sparse for view actions
-//            'single-field sparse view' => [
-//                '/countries/1?fields[countries]=name',
-//                'view-single-field-sparse.json',
-//            ],
-//            'single-field sparse for included view data' => [
-//                '/countries/1?include=currencies&fields[currencies]=id,name',
-//                'view-single-field-sparse-for-included-data.json',
-//            ],
-//            'combined single-field sparse view (both primary and included data)' => [
-//                '/countries/1?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
-//                'view-single-field-sparse-for-primary-and-included-data.json',
-//            ],
-//
-//            // assert "multi-field" sparse for index actions
-//            'multi-field sparse index' => [
-//                '/countries?fields[countries]=name,code',
-//                'index-multi-field-sparse.json',
-//            ],
+            'single-field sparse index' => [
+                '/countries?fields[countries]=name',
+                'index-single-field-sparse.json',
+            ],
+            'single-field sparse for included index data' => [
+                '/countries?include=currencies&fields[currencies]=id,name',
+                'index-single-field-sparse-for-included-data.json',
+            ],
+            'combined single-field sparse index (both primary and included data)' => [
+                '/countries?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
+                'index-single-field-sparse-for-primary-and-included-data.json',
+            ],
+
+            // assert "single-field" sparse for view actions
+            'single-field sparse view' => [
+                '/countries/1?fields[countries]=name',
+                'view-single-field-sparse.json',
+            ],
+            'single-field sparse for included view data' => [
+                '/countries/1?include=currencies&fields[currencies]=id,name',
+                'view-single-field-sparse-for-included-data.json',
+            ],
+            'combined single-field sparse view (both primary and included data)' => [
+                '/countries/1?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
+                'view-single-field-sparse-for-primary-and-included-data.json',
+            ],
+
+            // assert "multi-field" sparse for index actions
+            'multi-field sparse index' => [
+                '/countries?fields[countries]=name,code',
+                'index-multi-field-sparse.json',
+            ],
             'multi-field sparse for included index data' => [
                 '/countries?include=currencies&fields[currencies]=id,name,code',
                 'index-multi-field-sparse-for-included-data.json',

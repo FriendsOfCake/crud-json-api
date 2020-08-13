@@ -22,6 +22,10 @@
                     "links": {
                         "self": "\/countries\/4\/relationships\/currency",
                         "related": "\/countries\/4\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
                     }
                 }
             },
@@ -40,6 +44,10 @@
                     "links": {
                         "self": "\/countries\/5\/relationships\/currency",
                         "related": "\/countries\/5\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "2"
                     }
                 }
             },
@@ -58,11 +66,37 @@
                     "links": {
                         "self": "\/countries\/1\/relationships\/currency",
                         "related": "\/countries\/1\/currency"
+                    },
+                    "data": {
+                        "type": "currencies",
+                        "id": "1"
                     }
                 }
             },
             "links": {
                 "self": "\/countries\/1"
+            }
+        }
+    ],
+    "included": [
+        {
+            "type": "currencies",
+            "id": "1",
+            "attributes": {
+                "name": "Euro"
+            },
+            "links": {
+                "self": "\/currencies\/1"
+            }
+        },
+        {
+            "type": "currencies",
+            "id": "2",
+            "attributes": {
+                "name": "US Dollar"
+            },
+            "links": {
+                "self": "\/currencies\/2"
             }
         }
     ]

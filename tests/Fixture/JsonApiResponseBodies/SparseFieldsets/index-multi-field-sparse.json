@@ -15,8 +15,8 @@
             "type": "countries",
             "id": "1",
             "attributes": {
-                "name": "The Netherlands",
-                "code": "NL"
+                "code": "NL",
+                "name": "The Netherlands"
             },
             "links": {
                 "self": "\/countries\/1"
@@ -26,8 +26,8 @@
             "type": "countries",
             "id": "2",
             "attributes": {
-                "name": "Bulgaria",
-                "code": "BG"
+                "code": "BG",
+                "name": "Bulgaria"
             },
             "links": {
                 "self": "\/countries\/2"
@@ -37,8 +37,8 @@
             "type": "countries",
             "id": "3",
             "attributes": {
-                "name": "Italy",
-                "code": "IT"
+                "code": "IT",
+                "name": "Italy"
             },
             "links": {
                 "self": "\/countries\/3"
