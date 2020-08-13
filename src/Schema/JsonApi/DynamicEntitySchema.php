@@ -193,6 +193,8 @@ class DynamicEntitySchema extends BaseSchema
             }
         }
 
+        ksort($attributes);
+
         return $attributes;
     }
 

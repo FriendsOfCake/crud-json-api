@@ -4,8 +4,8 @@
         "id": "1",
         "attributes": {
             "code": "EUR",
-            "name": "Euro",
-            "matchingData": []
+            "matchingData": [],
+            "name": "Euro"
         },
         "relationships": {
             "countries": {

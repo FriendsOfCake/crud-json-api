@@ -4,8 +4,8 @@
         "id": "3",
         "attributes": {
             "code": "IT",
-            "name": "Italy",
-            "dummyCounter": 33333
+            "dummyCounter": 33333,
+            "name": "Italy"
         },
         "relationships": {
             "currency": {
@@ -75,8 +75,8 @@
             "id": "4",
             "attributes": {
                 "code": "VT",
-                "name": "Vatican",
-                "dummyCounter": 44444
+                "dummyCounter": 44444,
+                "name": "Vatican"
             },
             "relationships": {
                 "currency": {

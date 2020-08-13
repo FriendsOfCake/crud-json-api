@@ -607,7 +607,7 @@ class JsonApiListener extends ApiListener
             $foreignKey = $association->getForeignKey();
             foreach ($reverseAssociations as $reverseAssociationName) {
                 $reverseAssociation = $repository->getAssociation($reverseAssociationName);
-                $reverseForeignKey = $reverseAssociation instanceOf Association\BelongsToMany ?
+                $reverseForeignKey = $reverseAssociation instanceof Association\BelongsToMany ?
                     $reverseAssociation->getTargetForeignKey() :
                     $reverseAssociation->getForeignKey();
 

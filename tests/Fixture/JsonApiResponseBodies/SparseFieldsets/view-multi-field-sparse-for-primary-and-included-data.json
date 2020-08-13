@@ -3,8 +3,8 @@
         "type": "countries",
         "id": "1",
         "attributes": {
-            "name": "The Netherlands",
-            "code": "NL"
+            "code": "NL",
+            "name": "The Netherlands"
         },
         "relationships": {
             "currency": {

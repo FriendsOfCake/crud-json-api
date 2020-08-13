@@ -4,8 +4,8 @@
         "id": "2",
         "attributes": {
             "code": "BG",
-            "name": "Bulgaria",
-            "dummyCounter": 22222
+            "dummyCounter": 22222,
+            "name": "Bulgaria"
         },
         "relationships": {
             "currency": {

@@ -5,8 +5,8 @@
             "id": "1",
             "attributes": {
                 "code": "en",
-                "name": "English",
-                "matchingData": []
+                "matchingData": [],
+                "name": "English"
             },
             "relationships": {
                 "countries": {
@@ -25,8 +25,8 @@
             "id": "2",
             "attributes": {
                 "code": "nl",
-                "name": "Dutch",
-                "matchingData": []
+                "matchingData": [],
+                "name": "Dutch"
             },
             "relationships": {
                 "countries": {

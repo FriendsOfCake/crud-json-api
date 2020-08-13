@@ -16,8 +16,8 @@
             "id": "2",
             "attributes": {
                 "code": "BG",
-                "name": "Bulgaria",
-                "dummyCounter": 22222
+                "dummyCounter": 22222,
+                "name": "Bulgaria"
             },
             "relationships": {
                 "currency": {
@@ -80,8 +80,8 @@
             "id": "3",
             "attributes": {
                 "code": "IT",
-                "name": "Italy",
-                "dummyCounter": 33333
+                "dummyCounter": 33333,
+                "name": "Italy"
             },
             "relationships": {
                 "currency": {
@@ -144,8 +144,8 @@
             "id": "1",
             "attributes": {
                 "code": "NL",
-                "name": "The Netherlands",
-                "dummyCounter": 11111
+                "dummyCounter": 11111,
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {
@@ -228,8 +228,8 @@
             "type": "nationalCapitals",
             "id": "2",
             "attributes": {
-                "name": "Sofia",
-                "description": "National capital of Bulgaria"
+                "description": "National capital of Bulgaria",
+                "name": "Sofia"
             },
             "relationships": {
                 "countries": {
@@ -247,8 +247,8 @@
             "type": "nationalCapitals",
             "id": "4",
             "attributes": {
-                "name": "Rome",
-                "description": "National capital of Italy"
+                "description": "National capital of Italy",
+                "name": "Rome"
             },
             "relationships": {
                 "countries": {
@@ -266,8 +266,8 @@
             "type": "nationalCapitals",
             "id": "1",
             "attributes": {
-                "name": "Amsterdam",
-                "description": "National capital of the Netherlands"
+                "description": "National capital of the Netherlands",
+                "name": "Amsterdam"
             },
             "relationships": {
                 "countries": {

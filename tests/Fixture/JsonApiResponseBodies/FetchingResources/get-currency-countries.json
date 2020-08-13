@@ -16,9 +16,9 @@
             "id": "1",
             "attributes": {
                 "code": "NL",
-                "name": "The Netherlands",
                 "dummyCounter": 11111,
-                "matchingData": []
+                "matchingData": [],
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {
@@ -81,9 +81,9 @@
             "id": "2",
             "attributes": {
                 "code": "BG",
-                "name": "Bulgaria",
                 "dummyCounter": 22222,
-                "matchingData": []
+                "matchingData": [],
+                "name": "Bulgaria"
             },
             "relationships": {
                 "currency": {
@@ -146,9 +146,9 @@
             "id": "3",
             "attributes": {
                 "code": "IT",
-                "name": "Italy",
                 "dummyCounter": 33333,
-                "matchingData": []
+                "matchingData": [],
+                "name": "Italy"
             },
             "relationships": {
                 "currency": {

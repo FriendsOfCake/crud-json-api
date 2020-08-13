@@ -4,8 +4,8 @@
         "id": "6",
         "attributes": {
             "code": "NZ",
-            "name": "New Zealand",
-            "dummyCounter": 66666
+            "dummyCounter": 66666,
+            "name": "New Zealand"
         },
         "relationships": {
             "currency": {

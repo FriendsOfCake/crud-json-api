@@ -4,8 +4,8 @@
         "id": "2",
         "attributes": {
             "code": "JM",
-            "name": "Jamaica",
-            "dummyCounter": 12345
+            "dummyCounter": 12345,
+            "name": "Jamaica"
         },
         "relationships": {
             "currency": {

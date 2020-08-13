@@ -4,8 +4,8 @@
         "id": "1",
         "attributes": {
             "code": "NL",
-            "name": "The Netherlands",
-            "dummyCounter": 11111
+            "dummyCounter": 11111,
+            "name": "The Netherlands"
         },
         "relationships": {
             "currency": {
@@ -74,9 +74,9 @@
             "type": "cultures",
             "id": "1",
             "attributes": {
+                "anotherDummyCounter": 11111,
                 "code": "nl-NL",
-                "name": "Dutch",
-                "anotherDummyCounter": 11111
+                "name": "Dutch"
             },
             "relationships": {
                 "country": {

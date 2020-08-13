@@ -15,8 +15,8 @@
             "id": "1",
             "attributes": {
                 "code": "NL",
-                "name": "The Netherlands",
-                "dummyCounter": 11111
+                "dummyCounter": 11111,
+                "name": "The Netherlands"
             },
             "relationships": {
                 "currency": {

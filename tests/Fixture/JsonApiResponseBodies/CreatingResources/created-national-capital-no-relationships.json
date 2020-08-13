@@ -3,8 +3,8 @@
         "type": "nationalCapitals",
         "id": "7",
         "attributes": {
-            "name": "Havana",
-            "description": "National capital of Cuba"
+            "description": "National capital of Cuba",
+            "name": "Havana"
         },
         "relationships": {
             "countries": {
