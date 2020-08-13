@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace CrudJsonApi\Test\TestCase\Schema\JsonApi;
 
 use Cake\Controller\Controller;
-use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use Crud\TestSuite\TestCase;
 use CrudJsonApi\Listener\JsonApiListener;

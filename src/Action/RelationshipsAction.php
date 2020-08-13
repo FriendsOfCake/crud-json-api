@@ -164,22 +164,24 @@ class RelationshipsAction extends BaseAction
         }
 
         $primaryKey = $table->getPrimaryKey();
+        $foreignPrimaryKey = $association->getTarget()->getPrimaryKey();
+        $foreignKey = $association->getForeignKey();
 
         //Does not support composite keys
-        if (is_array($primaryKey)) {
-            throw new BadRequestException('Composite keys are not supported.');
+        if (is_array($primaryKey) || is_array($foreignPrimaryKey) || is_array($foreignKey)) {
+            throw new BadRequestException('Composite keys are currently not supported.');
         }
 
         $fields = [$table->aliasField($primaryKey)];
         $associationFields = [
-            $targetTable->aliasField($association->getTarget()->getPrimaryKey())
+            $targetTable->aliasField($foreignPrimaryKey),
         ];
         $associationType = $association->type();
 
         if (in_array($associationType, [Association::ONE_TO_MANY, Association::ONE_TO_ONE], true)) {
-            $associationFields[] = $targetTable->aliasField($association->getForeignKey());
+            $associationFields[] = $targetTable->aliasField($foreignKey);
         } elseif ($associationType === Association::MANY_TO_ONE) {
-            $fields[] = $table->aliasField($association->getForeignKey());
+            $fields[] = $table->aliasField($foreignKey);
         }
 
         $primaryQuery = $table->find()
@@ -287,7 +289,9 @@ class RelationshipsAction extends BaseAction
 
         $this->_trigger('beforeSave', $subject);
 
-        $association->setSaveStrategy('replace');
+        if (method_exists($association, 'setSaveStrategy')) {
+            $association->setSaveStrategy('replace');
+        }
         $saveMethod = $this->saveMethod();
         if ($this->_table()->$saveMethod($entity, $this->saveOptions())) {
             $this->_success($subject);
@@ -424,9 +428,8 @@ class RelationshipsAction extends BaseAction
     }
 
     /**
-     * @param array $data
-     * @param \Cake\ORM\Association $association
-     *
+     * @param array $data Array of data
+     * @param \Cake\ORM\Association $association The association
      * @return array
      */
     protected function getForeignRecords(array $data, Association $association): array
@@ -436,12 +439,17 @@ class RelationshipsAction extends BaseAction
         }
 
         $idsToAdd = (array)Hash::extract($data, '{n}.id');
+        $associationPrimaryKey = $association->getPrimaryKey();
+
+        if (is_array($associationPrimaryKey)) {
+            throw new BadRequestException('Composite keys are currently not supported.');
+        }
 
         //Get the foreign records
         $foreignRecords = $association->find()
             ->where(
                 [
-                    $association->getPrimaryKey() . ' in' => $idsToAdd
+                    $association->aliasField($associationPrimaryKey) . ' in' => $idsToAdd,
                 ]
             )
             ->all();

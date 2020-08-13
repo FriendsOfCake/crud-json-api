@@ -16,6 +16,6 @@ Router::scope('/', function (RouteBuilder $routes) {
     JsonApiRoutes::mapModels([
         'Countries',
         'Currencies',
-        'Cultures'
+        'Cultures',
     ], $routes);
 });

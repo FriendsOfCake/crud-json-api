@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CrudJsonApi\Test\TestCase\Integration\JsonApi;
 
@@ -110,7 +111,7 @@ class RelationshipsIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             'POST' => ['post'],
-            'DELETE' => ['delete']
+            'DELETE' => ['delete'],
         ];
     }
 
@@ -154,7 +155,7 @@ class RelationshipsIntegrationTest extends JsonApiBaseTestCase
     {
         return [
             'POST' => ['post'],
-            'PATCH' => ['patch']
+            'PATCH' => ['patch'],
         ];
     }
 
