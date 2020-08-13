@@ -66,8 +66,8 @@ class JsonApiListener extends ApiListener
         'docValidatorAboutLinks' => false, // true to show links to JSON API specification clarifying the document validation error
         'queryParameters' => [
             'include' => [
-                'whitelist' => true,
-                'blacklist' => false,
+                'allowList' => true,
+                'denyList' => false,
             ],
         ], //Array of query parameters and associated transformers
         'inflect' => 'variable', //Default to camelBacked as per https://jsonapi.org/recommendations/#naming
@@ -344,18 +344,18 @@ class JsonApiListener extends ApiListener
      * Takes a "include" string and converts it into a correct CakePHP ORM association alias
      *
      * @param  array                $includes   The relationships to include
-     * @param  array|bool           $blacklist  Blacklisted includes
-     * @param  array|bool           $whitelist  Whitelisted options
+     * @param  array|bool           $denyList  Blacklisted includes
+     * @param  array|bool           $allowList  allowListed options
      * @param  \Cake\ORM\Table|null $repository The repository
      * @param  array                $path       Include path
      * @return array
      * @throws \Cake\Http\Exception\BadRequestException
      */
-    protected function _parseIncludes($includes, $blacklist, $whitelist, ?Table $repository = null, $path = []): array
+    protected function _parseIncludes($includes, $denyList, $allowList, ?Table $repository = null, $path = []): array
     {
         $wildcard = implode('.', array_merge($path, ['*']));
-        $wildcardWhitelist = Hash::get((array)$whitelist, $wildcard);
-        $wildcardBlacklist = Hash::get((array)$blacklist, $wildcard);
+        $wildcardallowList = Hash::get((array)$allowList, $wildcard);
+        $wildcardBlacklist = Hash::get((array)$denyList, $wildcard);
         $contains = [];
 
         foreach ($includes as $include => $nestedIncludes) {
@@ -364,16 +364,16 @@ class JsonApiListener extends ApiListener
             $includeDotPath = implode('.', $includePath);
 
             if (
-                $blacklist === true || ($blacklist !== false &&
-                ($wildcardBlacklist === true || Hash::get($blacklist, $includeDotPath) === true))
+                $denyList === true || ($denyList !== false &&
+                ($wildcardBlacklist === true || Hash::get($denyList, $includeDotPath) === true))
             ) {
                 continue;
             }
 
             if (
-                $whitelist === false || ($whitelist !== true
-                && !$wildcardWhitelist
-                && Hash::get($whitelist, $includeDotPath) === null)
+                $allowList === false || ($allowList !== true
+                && !$wildcardallowList
+                && Hash::get($allowList, $includeDotPath) === null)
             ) {
                 continue;
             }
@@ -392,8 +392,8 @@ class JsonApiListener extends ApiListener
             if (!empty($nestedIncludes)) {
                 $nestedContains = $this->_parseIncludes(
                     $nestedIncludes,
-                    $blacklist,
-                    $whitelist,
+                    $denyList,
+                    $allowList,
                     $association ? $association->getTarget() : null,
                     $includePath
                 );
@@ -414,7 +414,7 @@ class JsonApiListener extends ApiListener
     /**
      * Parses out include query parameter into a containable array, and contains the query.
      *
-     * Supported options is "Whitelist" and "Blacklist"
+     * Supported options is "allowList" and "Blacklist"
      *
      * @param  string|array        $includes The query data
      * @param  \Crud\Event\Subject $subject  The subject
@@ -432,20 +432,20 @@ class JsonApiListener extends ApiListener
             return;
         }
 
-        if ($options['blacklist'] === true || $options['whitelist'] === false) {
+        if ($options['denyList'] === true || $options['allowList'] === false) {
             throw new BadRequestException('The include parameter is not supported');
         }
 
         $this->setConfig('include', []);
 
         $includes = Hash::expand(Hash::normalize($includes));
-        $blacklist = is_array($options['blacklist'])
-            ? Hash::expand(Hash::normalize(array_fill_keys($options['blacklist'], true)))
-            : $options['blacklist'];
-        $whitelist = is_array($options['whitelist'])
-            ? Hash::expand(Hash::normalize(array_fill_keys($options['whitelist'], true)))
-            : $options['whitelist'];
-        $contains = $this->_parseIncludes($includes, $blacklist, $whitelist, $subject->query->getRepository());
+        $denyList = is_array($options['denyList'])
+            ? Hash::expand(Hash::normalize(array_fill_keys($options['denyList'], true)))
+            : $options['denyList'];
+        $allowList = is_array($options['allowList'])
+            ? Hash::expand(Hash::normalize(array_fill_keys($options['allowList'], true)))
+            : $options['allowList'];
+        $contains = $this->_parseIncludes($includes, $denyList, $allowList, $subject->query->getRepository());
 
         $subject->query->contain($contains);
 

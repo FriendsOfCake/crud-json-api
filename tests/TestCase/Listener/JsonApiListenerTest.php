@@ -96,8 +96,8 @@ class JsonApiListenerTest extends TestCase
             'docValidatorAboutLinks' => false,
             'queryParameters' => [
                 'include' => [
-                    'whitelist' => true,
-                    'blacklist' => false,
+                    'allowList' => true,
+                    'denyList' => false,
                 ],
             ],
             'inflect' => 'variable',
@@ -1230,7 +1230,7 @@ class JsonApiListenerTest extends TestCase
         return [
             'standard' => [
                 'cultures,currencies.countries',
-                ['blacklist' => false, 'whitelist' => true],
+                ['denyList' => false, 'allowList' => true],
                 [
                     'Cultures',
                     'Currencies' => ['Countries'],
@@ -1241,7 +1241,7 @@ class JsonApiListenerTest extends TestCase
             ],
             'singular name' => [
                 'cultures,currency',
-                ['blacklist' => false, 'whitelist' => true],
+                ['denyList' => false, 'allowList' => true],
                 [
                     'Cultures',
                     'Currencies',
@@ -1251,9 +1251,9 @@ class JsonApiListenerTest extends TestCase
                     'currency',
                 ],
             ],
-            'blacklist' => [
+            'denyList' => [
                 'cultures,currencies.countries',
-                ['blacklist' => ['currencies.countries'], 'whitelist' => true],
+                ['denyList' => ['currencies.countries'], 'allowList' => true],
                 [
                     'Cultures',
                     'Currencies',
@@ -1263,9 +1263,9 @@ class JsonApiListenerTest extends TestCase
                     'currency',
                 ],
             ],
-            'whitelist' => [
+            'allowList' => [
                 'cultures,currencies.countries',
-                ['blacklist' => false, 'whitelist' => ['cultures']],
+                ['denyList' => false, 'allowList' => ['cultures']],
                 [
                     'Cultures',
                 ],
@@ -1273,9 +1273,9 @@ class JsonApiListenerTest extends TestCase
                     'cultures',
                 ],
             ],
-            'multiple whitelists' => [
+            'multiple allowLists' => [
                 'cultures,currencies.countries,cultures.language',
-                ['blacklist' => false, 'whitelist' => ['cultures', 'currencies.countries']],
+                ['denyList' => false, 'allowList' => ['cultures', 'currencies.countries']],
                 [
                     'Cultures',
                     'Currencies' => [
@@ -1287,9 +1287,9 @@ class JsonApiListenerTest extends TestCase
                     'currency.countries',
                 ],
             ],
-            'whitelist wildcard' => [
+            'allowList wildcard' => [
                 'cultures,currencies.countries,cultures.language',
-                ['blacklist' => false, 'whitelist' => ['currencies.*']],
+                ['denyList' => false, 'allowList' => ['currencies.*']],
                 [
                     'Currencies' => [
                         'Countries',
@@ -1297,18 +1297,18 @@ class JsonApiListenerTest extends TestCase
                 ],
                 ['currency.countries'],
             ],
-            'blacklist wildcard' => [
+            'denyList wildcard' => [
                 'cultures,currencies.countries,currencies.names',
-                ['blacklist' => ['currencies.*'], 'whitelist' => true],
+                ['denyList' => ['currencies.*'], 'allowList' => true],
                 [
                     'Cultures',
                     'Currencies',
                 ],
                 ['cultures', 'currency'],
             ],
-            'blacklist with a whitelist wildcard' => [
+            'denyList with a allowList wildcard' => [
                 'cultures,currencies.countries,currencies.names,cultures.countries',
-                ['blacklist' => ['currencies.names'], 'whitelist' => ['cultures', 'currencies.*']],
+                ['denyList' => ['currencies.names'], 'allowList' => ['cultures', 'currencies.*']],
                 [
                     'Currencies' => [
                         'Countries',
@@ -1317,9 +1317,9 @@ class JsonApiListenerTest extends TestCase
                 ],
                 ['cultures', 'currency.countries'],
             ],
-            'blacklist is more important' => [
+            'denyList is more important' => [
                 'cultures,currencies.countries',
-                ['blacklist' => ['currencies.countries'], 'whitelist' => ['cultures', 'currencies.countries']],
+                ['denyList' => ['currencies.countries'], 'allowList' => ['cultures', 'currencies.countries']],
                 [
                     'Cultures',
                     'Currencies',
@@ -1359,15 +1359,15 @@ class JsonApiListenerTest extends TestCase
     public function includeQueryBadRequestProvider()
     {
         return [
-            'blacklist everything' => [
+            'denyList everything' => [
                 'cultures,currencies.countries',
-                ['blacklist' => true, 'whitelist' => ['cultures', 'currencies.countries']],
+                ['denyList' => true, 'allowList' => ['cultures', 'currencies.countries']],
                 [],
                 [],
             ],
-            'whitelist nothing' => [
+            'allowList nothing' => [
                 'cultures,currencies.countries',
-                ['blacklist' => false, 'whitelist' => false],
+                ['denyList' => false, 'allowList' => false],
                 [],
                 [],
             ],
@@ -1375,7 +1375,7 @@ class JsonApiListenerTest extends TestCase
     }
 
     /**
-     * Ensure that the whiteList nothing or blackList everything do not accept any include parameter, and responds with
+     * Ensure that the allowList nothing or blackList everything do not accept any include parameter, and responds with
      * BadRequestException
      *
      * @return void
@@ -1396,7 +1396,7 @@ class JsonApiListenerTest extends TestCase
 
         $subject->query = $query;
         $subject->query
-            ->expects($options['blacklist'] !== true && $options['whitelist'] !== false ? $this->once() : $this->never())
+            ->expects($options['denyList'] !== true && $options['allowList'] !== false ? $this->once() : $this->never())
             ->method('contain')
             ->with($expectedContain);
         $subject->query
