@@ -545,6 +545,9 @@ class JsonApiListener extends ApiListener
             ]
         );
 
+        /** @var \Crud\Event\Subject $subject */
+        $subject = $event->getSubject();
+
         foreach ($queryParameters as $parameter => $options) {
             if (is_callable($options)) {
                 $options = [
@@ -556,12 +559,16 @@ class JsonApiListener extends ApiListener
                 throw new InvalidArgumentException('Invalid callable supplied for query parameter ' . $parameter);
             }
 
-            $options['callable']($this->_request()->getQuery($parameter), $event->getSubject(), $options);
+            $options['callable']($this->_request()->getQuery($parameter), $subject, $options);
         }
 
-        $this->_fetchRelated($event->getSubject());
+        $this->_fetchRelated($subject);
     }
 
+    /**
+     * @param \Crud\Event\Subject $subject Event subject
+     * @return void
+     */
     protected function _fetchRelated(Subject $subject): void
     {
         if ($this->_checkIsRelationshipsRequest()) {
@@ -585,7 +592,7 @@ class JsonApiListener extends ApiListener
             Association::ONE_TO_ONE => [Association::ONE_TO_MANY], // hasOne -> belongsTo
             Association::MANY_TO_ONE => [Association::ONE_TO_ONE, Association::ONE_TO_MANY], // belongsTo -> hasOne or hasMany
             Association::ONE_TO_MANY => [Association::MANY_TO_ONE], // hasMany -> belongsTo
-            Association::MANY_TO_MANY => [Association::MANY_TO_MANY]
+            Association::MANY_TO_MANY => [Association::MANY_TO_MANY],
         ];
         $reverseAssociations = $this->_getAssociationsList($repository, $reverseAssociationTypes[$associationType]);
         $reverseAssociation = null;
@@ -600,7 +607,7 @@ class JsonApiListener extends ApiListener
             $foreignKey = $association->getForeignKey();
             foreach ($reverseAssociations as $reverseAssociationName) {
                 $reverseAssociation = $repository->getAssociation($reverseAssociationName);
-                $reverseForeignKey = $reverseAssociation->type() === Association::MANY_TO_MANY ?
+                $reverseForeignKey = $reverseAssociation instanceOf Association\BelongsToMany ?
                     $reverseAssociation->getTargetForeignKey() :
                     $reverseAssociation->getForeignKey();
 
@@ -619,10 +626,15 @@ class JsonApiListener extends ApiListener
         $foreignKeyValue = $request->getParam($sourceName . '_id');
 
         $subject->query
-            ->matching($reverseAssociation->getName(), static function (Query $query) use ($reverseAssociation, $foreignKeyValue) {
+            ->matching($reverseAssociation->getName(), static function (Query $query) use (
+                $reverseAssociation,
+                $foreignKeyValue
+            ) {
                 return $query
                     ->where([
-                        $reverseAssociation->aliasField(current((array)$reverseAssociation->getPrimaryKey())) => $foreignKeyValue
+                        $reverseAssociation->aliasField(
+                            current((array)$reverseAssociation->getPrimaryKey())
+                        ) => $foreignKeyValue,
                     ]);
             });
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CrudJsonApi\Action;
 
@@ -11,6 +12,11 @@ use Crud\Event\Subject;
  */
 class ViewAction extends BaseViewAction
 {
+    /**
+     * @param string|null $id ID for the record
+     * @return void
+     * @throws \Exception
+     */
     protected function _handle(?string $id = null): void
     {
         $request = $this->_request();
