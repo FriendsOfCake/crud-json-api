@@ -320,6 +320,14 @@ class JsonApiListener extends ApiListener
      */
     protected function _getAssociation(Table $repository, $include): ?Association
     {
+        //We refer to associations by their property names, so we try that first
+        $propertyName = Inflector::underscore($include);
+        $association = $repository->associations()->getByProperty($propertyName);
+
+        if ($association) {
+            return $association;
+        }
+
         $delimiter = '-';
         if (strpos($include, '_') !== false) {
             $delimiter = '_';
@@ -344,8 +352,8 @@ class JsonApiListener extends ApiListener
      * Takes a "include" string and converts it into a correct CakePHP ORM association alias
      *
      * @param  array                $includes   The relationships to include
-     * @param  array|bool           $denyList  Blacklisted includes
-     * @param  array|bool           $allowList  allowListed options
+     * @param  array|bool           $denyList  Denied includes
+     * @param  array|bool           $allowList  Allowed includes
      * @param  \Cake\ORM\Table|null $repository The repository
      * @param  array                $path       Include path
      * @return array
@@ -354,8 +362,8 @@ class JsonApiListener extends ApiListener
     protected function _parseIncludes($includes, $denyList, $allowList, ?Table $repository = null, $path = []): array
     {
         $wildcard = implode('.', array_merge($path, ['*']));
-        $wildcardallowList = Hash::get((array)$allowList, $wildcard);
-        $wildcardBlacklist = Hash::get((array)$denyList, $wildcard);
+        $wildcardAllowList = Hash::get((array)$allowList, $wildcard);
+        $wildcardDenyList = Hash::get((array)$denyList, $wildcard);
         $contains = [];
 
         foreach ($includes as $include => $nestedIncludes) {
@@ -365,14 +373,14 @@ class JsonApiListener extends ApiListener
 
             if (
                 $denyList === true || ($denyList !== false &&
-                ($wildcardBlacklist === true || Hash::get($denyList, $includeDotPath) === true))
+                ($wildcardDenyList === true || Hash::get($denyList, $includeDotPath) === true))
             ) {
                 continue;
             }
 
             if (
                 $allowList === false || ($allowList !== true
-                && !$wildcardallowList
+                && !$wildcardAllowList
                 && Hash::get($allowList, $includeDotPath) === null)
             ) {
                 continue;
@@ -505,7 +513,7 @@ class JsonApiListener extends ApiListener
                 $selectFields = array_merge($selectFields, array_filter($aliasFields));
             }
 
-            $association = $associations->get($include);
+            $association = $this->_getAssociation($repository, $include);
             if (!empty($association)) {
                 $contains[$association->getAlias()] = [
                     'fields' => $fields,
@@ -671,6 +679,7 @@ class JsonApiListener extends ApiListener
 
             if (strpos($sortField, '.') !== false) {
                 [$include, $field] = explode('.', $sortField);
+                $include = Inflector::underscore($include);
 
                 if ($include === Inflector::tableize($repository->getAlias())) {
                     $order[$repository->aliasField($field)] = $direction;
