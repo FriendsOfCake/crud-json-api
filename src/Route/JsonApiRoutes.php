@@ -179,49 +179,53 @@ class JsonApiRoutes
         $models = Hash::normalize($models);
         $locator = TableRegistry::getTableLocator();
 
-        foreach ($models as $model => $options) {
-            $options = $options ?: [];
-            $callback = null;
-            if (isset($options[0])) {
-                $options = [
-                    'only' => $options,
+        $plugin = $routeBuilder->params()['plugin'] ?? null;
+
+        $routeBuilder->scope('/', function (RouteBuilder $routeBuilder) use ($models, $plugin, $locator) {
+            $routeBuilder->namePrefix('');
+
+            foreach ($models as $model => $options) {
+                $options = $options ?: [];
+                $callback = null;
+                if (isset($options[0])) {
+                    $options = [
+                        'only' => $options,
+                    ];
+                }
+
+                $options += [
+                    'className' => $plugin ? $plugin . '.' . $model : $model,
+                    'allowedAssociations' => true,
+                    'ignoredAssociations' => [],
+                    'relationshipLinks' => true,
+                    'inflect' => static::getConfig('inflect') ?? 'variable',
                 ];
+
+                if (is_array($options['relationshipLinks'])) {
+                    $options['relationshipLinks'] = Hash::normalize($options['relationshipLinks']) + ['*' => false];
+                }
+
+                $tableObject = $locator->get($options['className']);
+
+                $associations = $tableObject->associations();
+
+                if ($options['allowedAssociations'] !== false) {
+                    $callback = function (RouteBuilder $routeBuilder) use ($associations, $options) {
+                        /** @var \Cake\ORM\Association $association */
+                        foreach ($associations as $association) {
+                            static::buildAssociationLinks($routeBuilder, $association, $options);
+                        }
+                    };
+                }
+
+                unset($options['className'], $options['allowedAssociations'], $options['ignoredAssociations']);
+
+                $routeBuilder->resources(
+                    $model,
+                    $options,
+                    $callback
+                );
             }
-
-            $plugin = $routeBuilder->params()['plugin'] ?? null;
-
-            $options += [
-                'className' => $plugin ? $plugin . '.' . $model : $model,
-                'allowedAssociations' => true,
-                'ignoredAssociations' => [],
-                'relationshipLinks' => true,
-                'inflect' => static::getConfig('inflect') ?? 'variable',
-            ];
-
-            if (is_array($options['relationshipLinks'])) {
-                $options['relationshipLinks'] = Hash::normalize($options['relationshipLinks']) + ['*' => false];
-            }
-
-            $tableObject = $locator->get($options['className']);
-
-            $associations = $tableObject->associations();
-
-            if ($options['allowedAssociations'] !== false) {
-                $callback = function (RouteBuilder $routeBuilder) use ($associations, $options) {
-                    /** @var \Cake\ORM\Association $association */
-                    foreach ($associations as $association) {
-                        static::buildAssociationLinks($routeBuilder, $association, $options);
-                    }
-                };
-            }
-
-            unset($options['className'], $options['allowedAssociations'], $options['ignoredAssociations']);
-
-            $routeBuilder->resources(
-                $model,
-                $options,
-                $callback
-            );
-        }
+        });
     }
 }
