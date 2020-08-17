@@ -7,8 +7,8 @@ class CountriesLanguagesFixture extends TestFixture
 {
     public $fields = [
         'id' => ['type' => 'integer'],
-        'country_id' => ['type' => 'string', 'length' => 3, 'null' => false],
-        'language_id' => ['type' => 'string', 'length' => 100, 'null' => false],
+        'country_id' => ['type' => 'integer', 'length' => 3, 'null' => false],
+        'language_id' => ['type' => 'integer', 'length' => 100, 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 

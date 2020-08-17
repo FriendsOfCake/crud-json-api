@@ -16,18 +16,18 @@ class RelationshipsIntegrationTest extends JsonApiBaseTestCase
     public function getProvider()
     {
         return [
-            'one-to-many: get cultures for country' => [
-                '/countries/2/relationships/cultures',
-                'get_culture_relationship_for_country.json',
-            ],
-            'one-to-many: get no cultures for country' => [
-                '/countries/4/relationships/cultures',
-                'get_culture_relationship_for_country_with_none.json',
-            ],
-            'many-to-one: get currency for country' => [
-                '/countries/2/relationships/currency',
-                'get_currency_relationship_for_country.json',
-            ],
+//            'one-to-many: get cultures for country' => [
+//                '/countries/2/relationships/cultures',
+//                'get_culture_relationship_for_country.json',
+//            ],
+//            'one-to-many: get no cultures for country' => [
+//                '/countries/4/relationships/cultures',
+//                'get_culture_relationship_for_country_with_none.json',
+//            ],
+//            'many-to-one: get currency for country' => [
+//                '/countries/2/relationships/currency',
+//                'get_currency_relationship_for_country.json',
+//            ],
             'many-to-many: get languages for country' => [
                 '/countries/1/relationships/languages',
                 'get_languages_relationship_for_country.json',
@@ -273,7 +273,7 @@ class RelationshipsIntegrationTest extends JsonApiBaseTestCase
                 'delete-not-existing-culture-relationship.json',
                 'delete-not-existing-culture-relationship.json',
             ],
-            'many-to-many: delete language to country' => [
+            'many-to-many: delete language from country' => [
                 '/countries/1/relationships/languages',
                 'delete-language-relationship.json',
                 'delete-language-relationship.json',

@@ -729,7 +729,7 @@ class JsonApiListener extends ApiListener
         $controller->viewBuilder()->setClassName('CrudJsonApi.JsonApi');
 
         // render a JSON API response with resource(s) if data is found
-        if (isset($subject->association) && (isset($subject->entity) || isset($subject->entities))) {
+        if (isset($subject->association) && isset($subject->entity)) {
             return $this->_renderWithIdentifiers($subject);
         }
 
@@ -786,13 +786,6 @@ class JsonApiListener extends ApiListener
                     'serialize' => true,
                     'association' => $association,
                     'inflect' => $this->getConfig('inflect'),
-                ]
-            );
-
-        $this->_controller()
-            ->set(
-                [
-                    Inflector::tableize($association->getAlias()) => $this->_getFindResult($subject),
                 ]
             );
 

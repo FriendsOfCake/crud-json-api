@@ -5,7 +5,6 @@ namespace CrudJsonApi\Action;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
@@ -50,7 +49,7 @@ class RelationshipsAction extends BaseAction
      */
     protected $_defaultConfig = [
         'enabled' => true,
-        'scope' => 'table',
+        'scope' => 'entity',
         'findMethod' => 'all',
         'view' => null,
         'viewVar' => null,
@@ -214,17 +213,9 @@ class RelationshipsAction extends BaseAction
 
         $subject->set(['success' => true]);
 
-        $relatedEntities = $entity->get($association->getProperty());
-
-        if (is_array($relatedEntities)) {
-            $subject->set(['entities' => new ResultSetDecorator($relatedEntities)]);
-
-            return $entity;
-        }
-
         $this->setConfig('scope', 'entity');
         $subject->set([
-            'entity' => $relatedEntities,
+            'entity' => $entity,
         ]);
 
         return $entity;
@@ -255,7 +246,7 @@ class RelationshipsAction extends BaseAction
         $data = $request->getData();
 
         $entity = $this->_findRelations($subject);
-        $subject->set(['entity' => $entity, 'entities' => null]);
+        $subject->set(['entity' => $entity]);
 
         /** @var \Cake\ORM\Association $association */
         $association = $subject->association;
