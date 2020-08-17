@@ -12,6 +12,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\View;
+use CrudJsonApi\InflectTrait;
 use InvalidArgumentException;
 use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
 use Neomerx\JsonApi\Contracts\Schema\ContextInterface;
@@ -25,6 +26,8 @@ use Neomerx\JsonApi\Schema\Identifier;
  */
 class DynamicEntitySchema extends BaseSchema
 {
+    use InflectTrait;
+
     /**
      * Holds the instance of Cake\View\View
      *
@@ -55,21 +58,6 @@ class DynamicEntitySchema extends BaseSchema
     }
 
     /**
-     * @param string $input Input string
-     * @return string
-     */
-    protected function inflect(string $input): string
-    {
-        $inflect = $this->view->getConfig('inflect', 'variable');
-
-        if (!$inflect) {
-            return $input;
-        }
-
-        return Inflector::$inflect($input);
-    }
-
-    /**
      * @param \Cake\ORM\Table $repository The repository object
      * @return mixed
      */
@@ -78,7 +66,7 @@ class DynamicEntitySchema extends BaseSchema
         $repositoryName = App::shortName(get_class($repository), 'Model/Table', 'Table');
         [, $entityName] = pluginSplit($repositoryName);
 
-        return $this->inflect($entityName);
+        return $this->inflect($this->view, $entityName);
     }
 
     /**
@@ -185,7 +173,7 @@ class DynamicEntitySchema extends BaseSchema
 
         // inflect attribute keys (like `created_by`)
         foreach ($attributes as $key => $value) {
-            $inflectedKey = $this->inflect($key);
+            $inflectedKey = $this->inflect($this->view, $key);
 
             if (!array_key_exists($inflectedKey, $attributes)) {
                 unset($attributes[$key]);
@@ -228,7 +216,7 @@ class DynamicEntitySchema extends BaseSchema
             }
 
             // inflect related data in entity if need be
-            $inflectedProperty = $this->inflect($property);
+            $inflectedProperty = $this->inflect($this->view, $property);
 
             if (empty($entity->$inflectedProperty)) {
                 $entity->$inflectedProperty = $entity->$property;

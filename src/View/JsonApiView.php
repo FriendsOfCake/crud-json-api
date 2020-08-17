@@ -14,6 +14,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use Crud\Error\Exception\CrudException;
+use CrudJsonApi\InflectTrait;
 use Neomerx\JsonApi\Contracts\Encoder\EncoderInterface;
 use Neomerx\JsonApi\Contracts\Schema\LinkInterface;
 use Neomerx\JsonApi\Encoder\Encoder;
@@ -21,6 +22,8 @@ use Neomerx\JsonApi\Schema\Link;
 
 class JsonApiView extends View
 {
+    use InflectTrait;
+
     /**
      * Constructor
      *
@@ -162,56 +165,22 @@ class JsonApiView extends View
         $association = $this->getConfig('association');
         $sourceRepository = $association->getSource();
         $targetRepository = $association->getTarget();
-        $isOne = \in_array(
-            $association->type(),
-            [Association::MANY_TO_ONE, Association::ONE_TO_ONE],
-            true
-        );
-        [$pluginName, $controllerName] = pluginSplit($sourceRepository->getRegistryAlias());
-        $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
+        $associationName = $this->inflect($this, $association->getProperty());
 
-        $repositoryName = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
-        [$foreignPluginName, $foreignControllerName] = pluginSplit($repositoryName);
-        $request = $this->getRequest();
-        $selfLink = Router::url(
-            [
-                'controller' => $controllerName,
-                'plugin' => $pluginName,
-                '_method' => 'GET',
-                'action' => 'relationships',
-                $sourceName . '_id' => $request->getParam($sourceName . '_id'),
-                'type' => $request->getParam('type'),
-            ],
-            $this->getConfig('absoluteLinks', false)
-        );
-        $relatedLink = Router::url(
-            [
-                'controller' => $foreignControllerName,
-                'plugin' => $foreignPluginName,
-                '_method' => 'GET',
-                'action' => $isOne ? 'view' : 'index',
-                $sourceName . '_id' => $request->getParam($sourceName . '_id'),
-                'type' => $request->getParam('type'),
-                'from' => $sourceRepository->getRegistryAlias(),
-            ],
-            $this->getConfig('absoluteLinks', false)
-        );
-        $this->setConfig('links', [
-            'self' => $selfLink,
-            'related' => $relatedLink,
+        $this->setConfig('repositories', [
+            $targetRepository->getRegistryAlias() => $targetRepository,
+            $sourceRepository->getRegistryAlias() => $sourceRepository,
         ]);
-
-        $this->setConfig('repositories', [$targetRepository->getRegistryAlias() => $targetRepository]);
         $schemas = $this->_entitiesToNeoMerxSchema($this->getConfig('repositories'));
         $encoder = $this->_getEncoder($schemas);
 
-        $serialize = $this->getConfig('serialize');
+        $viewVar = $this->get('viewVar');
+        $entity = $this->get($viewVar);
+        $encoder
+            ->withRelationshipSelfLink($entity, $associationName)
+            ->withRelationshipRelatedLink($entity, $associationName);
 
-        if ($serialize !== false) {
-            $serialize = $this->_getDataToSerializeFromViewVars($serialize);
-        }
-
-        return $encoder->encodeIdentifiers($serialize);
+        return $encoder->encodeIdentifiers($entity->get($association->getProperty()));
     }
 
     /**
