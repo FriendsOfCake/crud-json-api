@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CrudJsonApi;
 
@@ -13,6 +14,10 @@ trait InflectTrait
      */
     protected function inflect(object $configClass, string $input): string
     {
+        if (!method_exists($configClass, 'getConfig')) {
+            return $input;
+        }
+
         $inflect = $configClass->getConfig('inflect', 'variable');
 
         if (!$inflect) {
