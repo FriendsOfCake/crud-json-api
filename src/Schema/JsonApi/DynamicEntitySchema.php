@@ -221,8 +221,8 @@ class DynamicEntitySchema extends BaseSchema
             if (empty($entity->$inflectedProperty)) {
                 $entity->$inflectedProperty = $entity->$property;
                 unset($entity->$property);
-                $property = $inflectedProperty;
             }
+            $property = $inflectedProperty;
 
             $hasSelfLink = false;
             try {
