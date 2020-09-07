@@ -125,7 +125,7 @@ class DynamicEntitySchema extends BaseSchema
             ? $entity->getVisible()
             : $entity->visibleProperties();
         foreach ($properties as $property) {
-            if ($property === '_joinData') {
+            if ($property === '_joinData' || $property === '_matchingData') {
                 continue;
             }
 
