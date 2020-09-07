@@ -6,6 +6,7 @@ namespace CrudJsonApi\Schema\JsonApi;
 use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
@@ -27,6 +28,7 @@ use Neomerx\JsonApi\Schema\Identifier;
 class DynamicEntitySchema extends BaseSchema
 {
     use InflectTrait;
+    use LocatorAwareTrait;
 
     /**
      * Holds the instance of Cake\View\View
@@ -106,7 +108,7 @@ class DynamicEntitySchema extends BaseSchema
 
         $repositoryName = $entity->getSource();
 
-        return $this->view->getConfig('repositories')[$repositoryName];
+        return $this->getTableLocator()->get($repositoryName);
     }
 
     /**
@@ -221,8 +223,8 @@ class DynamicEntitySchema extends BaseSchema
             if (empty($entity->$inflectedProperty)) {
                 $entity->$inflectedProperty = $entity->$property;
                 unset($entity->$property);
-                $property = $inflectedProperty;
             }
+            $property = $inflectedProperty;
 
             $hasSelfLink = false;
             try {
