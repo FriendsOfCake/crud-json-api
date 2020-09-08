@@ -89,7 +89,8 @@ class PaginationListener extends BaseListener
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
         $baseUrl = $request->getAttributes()['params'];
-        unset($baseUrl['pass'], $baseUrl['_matchedRoute']);
+        unset($baseUrl['pass'], $baseUrl['_matchedRoute'], $baseUrl['?']);
+
         $self = Router::url(
             $baseUrl + [
             '?' => ['page' => $pagination['page']] + $query,
