@@ -5,10 +5,10 @@
         "page_limit": null
     },
     "links": {
-        "self": "\/countries?page=1",
-        "first": "\/countries?page=1",
-        "last": "\/countries?page=2",
-        "next": "\/countries?page=2"
+        "self": "\/currencies\/1\/countries?page=1",
+        "first": "\/currencies\/1\/countries?page=1",
+        "last": "\/currencies\/1\/countries?page=2",
+        "next": "\/currencies\/1\/countries?page=2"
     },
     "data": [
         {
@@ -17,7 +17,6 @@
             "attributes": {
                 "code": "NL",
                 "dummyCounter": 11111,
-                "matchingData": [],
                 "name": "The Netherlands"
             },
             "relationships": {
@@ -82,7 +81,6 @@
             "attributes": {
                 "code": "BG",
                 "dummyCounter": 22222,
-                "matchingData": [],
                 "name": "Bulgaria"
             },
             "relationships": {
@@ -147,7 +145,6 @@
             "attributes": {
                 "code": "IT",
                 "dummyCounter": 33333,
-                "matchingData": [],
                 "name": "Italy"
             },
             "relationships": {

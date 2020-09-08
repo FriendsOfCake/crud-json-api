@@ -88,32 +88,25 @@ class PaginationListener extends BaseListener
 
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
+        $baseUrl = $request->getAttributes()['params'];
+        unset($baseUrl['pass'], $baseUrl['_matchedRoute'], $baseUrl['?']);
+
         $self = Router::url(
-            [
-            'controller' => $this->_controller()->getName(),
-            'action' => 'index',
-            '_method' => 'GET',
+            $baseUrl + [
             '?' => ['page' => $pagination['page']] + $query,
             ],
             $fullBase
         );
 
         $first = Router::url(
-            [
-            'controller' => $this->_controller()->getName(),
-            'action' => 'index',
-            '_method' => 'GET',
+            $baseUrl + [
             '?' => ['page' => 1] + $query,
             ],
             $fullBase
         );
 
         $last = Router::url(
-            [
-            'controller' => $this->_controller()->getName(),
-            'action' => 'index',
-            'page' => $pagination['pageCount'],
-            '_method' => 'GET',
+            $baseUrl + [
             '?' => ['page' => $pagination['pageCount']] + $query,
             ],
             $fullBase
@@ -122,11 +115,8 @@ class PaginationListener extends BaseListener
         $prev = null;
         if ($pagination['prevPage']) {
             $prev = Router::url(
-                [
-                'controller' => $this->_controller()->getName(),
-                'action' => 'index',
+                $baseUrl + [
                 '?' => ['page' => $pagination['page'] - 1] + $query,
-                '_method' => 'GET',
                 ],
                 $fullBase
             );
@@ -135,11 +125,8 @@ class PaginationListener extends BaseListener
         $next = null;
         if ($pagination['nextPage']) {
             $next = Router::url(
-                [
-                'controller' => $this->_controller()->getName(),
-                'action' => 'index',
+                $baseUrl + [
                 '?' => ['page' => $pagination['page'] + 1] + $query,
-                '_method' => 'GET',
                 ],
                 $fullBase
             );

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CrudJsonApi\Listener;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
@@ -633,6 +634,7 @@ class JsonApiListener extends ApiListener
         $sourceName = Inflector::underscore(Inflector::singularize($controllerName));
         $foreignKeyValue = $request->getParam($sourceName . '_id');
 
+        $associationKeys = $repository->associations()->keys();
         $subject->query
             ->matching($reverseAssociation->getName(), static function (Query $query) use (
                 $reverseAssociation,
@@ -644,6 +646,16 @@ class JsonApiListener extends ApiListener
                             current((array)$reverseAssociation->getPrimaryKey())
                         ) => $foreignKeyValue,
                     ]);
+            })
+            ->formatResults(function (CollectionInterface $results) use ($repository, $associationKeys) {
+                //Matching on a belongsToMany association adds an extra join association that we need to cleanup here.
+                $afterAssociationKeys = $repository->associations()->keys();
+                $extraAssociations = array_diff($afterAssociationKeys, $associationKeys);
+                foreach ($extraAssociations as $extraAssociation) {
+                    $repository->associations()->remove($extraAssociation);
+                }
+
+                return $results;
             });
     }
 
