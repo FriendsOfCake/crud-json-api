@@ -573,17 +573,26 @@ class JsonApiListener extends ApiListener
         $this->_fetchRelated($subject);
     }
 
-    protected function checkValidReverseAssociation(Association $forwardAssociation, Association $reverseAssociation): bool
-    {
+    /**
+     * @param \Cake\ORM\Association $forwardAssociation The forward association
+     * @param \Cake\ORM\Association $reverseAssociation The reverse association
+     * @return bool
+     */
+    protected function checkValidReverseAssociation(
+        Association $forwardAssociation,
+        Association $reverseAssociation
+    ): bool {
         $reverseAssociationTarget = $reverseAssociation->getTarget();
         $forwardAssociationSource = $forwardAssociation->getSource();
-           
+
         if (get_class($forwardAssociationSource) !== get_class($reverseAssociationTarget)) {
             return false;
         }
 
         $forwardForeignKey = $forwardAssociation->getForeignKey();
-        $reverseForeignKey = $reverseAssociation instanceof Association\BelongsToMany ? $reverseAssociation->getTargetForeignKey() : $reverseAssociation->getForeignKey();
+        $reverseForeignKey = $reverseAssociation instanceof Association\BelongsToMany ?
+            $reverseAssociation->getTargetForeignKey() :
+            $reverseAssociation->getForeignKey();
 
         if ($forwardForeignKey !== $reverseForeignKey) {
             return false;
@@ -596,7 +605,7 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        if (!$reverseAssociation instanceof Association\BelongsToMany) {
+        if (!$reverseAssociation instanceof Association\BelongsToMany || !$forwardAssociation instanceof Association\BelongsToMany) {
             return true;
         }
 
