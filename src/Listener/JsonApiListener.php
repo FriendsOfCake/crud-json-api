@@ -573,6 +573,39 @@ class JsonApiListener extends ApiListener
         $this->_fetchRelated($subject);
     }
 
+    protected function checkValidReverseAssociation(Association $forwardAssociation, Association $reverseAssociation): bool
+    {
+        $reverseAssociationTarget = $reverseAssociation->getTarget();
+        $forwardAssociationSource = $forwardAssociation->getSource();
+           
+        if (get_class($forwardAssociationSource) !== get_class($reverseAssociationTarget)) {
+            return false;
+        }
+
+        $forwardForeignKey = $forwardAssociation->getForeignKey();
+        $reverseForeignKey = $reverseAssociation instanceof Association\BelongsToMany ? $reverseAssociation->getTargetForeignKey() : $reverseAssociation->getForeignKey();
+
+        if ($forwardForeignKey !== $reverseForeignKey) {
+            return false;
+        }
+
+        $reverseConditions = $reverseAssociation->getConditions();
+        $forwardConditions = $forwardAssociation->getConditions();
+
+        if ($forwardConditions !== $reverseConditions) {
+            return false;
+        }
+
+        if (!$reverseAssociation instanceof Association\BelongsToMany) {
+            return true;
+        }
+
+        $reverseThrough = $reverseAssociation->getThrough();
+        $forwardThrough = $forwardAssociation->getThrough();
+
+        return $forwardThrough === $reverseThrough;
+    }
+
     /**
      * @param \Crud\Event\Subject $subject Event subject
      * @return void
@@ -586,7 +619,6 @@ class JsonApiListener extends ApiListener
         $request = $this->_request();
         $from = $request->getParam('from');
         $relationName = $request->getParam('type');
-
         if (!$from || !$relationName) {
             return;
         }
@@ -610,23 +642,19 @@ class JsonApiListener extends ApiListener
             throw new NotFoundException('No valid relationship found.');
         }
 
-        //More than one possible, check if there is one with a matching foreign key
-        if (count($reverseAssociations) > 1) {
-            $foreignKey = $association->getForeignKey();
-            foreach ($reverseAssociations as $reverseAssociationName) {
-                $reverseAssociation = $repository->getAssociation($reverseAssociationName);
-                $reverseForeignKey = $reverseAssociation instanceof Association\BelongsToMany ?
-                    $reverseAssociation->getTargetForeignKey() :
-                    $reverseAssociation->getForeignKey();
+        //Search for a valid reverse association
+        $reverseAssociation = null;
+        foreach ($reverseAssociations as $reverseAssociationName) {
+            $checkReverseAssociation = $repository->getAssociation($reverseAssociationName);
 
-                if ($foreignKey === $reverseForeignKey) {
-                    break;
-                }
+            if ($this->checkValidReverseAssociation($association, $checkReverseAssociation)) {
+                $reverseAssociation = $checkReverseAssociation;
+                break;
             }
         }
 
         if (!$reverseAssociation) {
-            $reverseAssociation = $repository->getAssociation(current($reverseAssociations));
+            throw new NotFoundException('No valid relationship found.');
         }
 
         [, $controllerName] = pluginSplit($from);
