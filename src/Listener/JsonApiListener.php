@@ -1211,8 +1211,10 @@ class JsonApiListener extends ApiListener
     protected function _checkRequestData(): void
     {
         $requestMethod = $this->_controller()->getRequest()->getMethod();
+        $isRelationshipAction = $this->_checkIsRelationshipsRequest();
 
-        if ($requestMethod !== 'POST' && $requestMethod !== 'PATCH' && $requestMethod !== 'DELETE') {
+        if (($requestMethod !== 'POST' && $requestMethod !== 'PATCH' && $requestMethod !== 'DELETE') ||
+            ($requestMethod === 'DELETE' && !$isRelationshipAction)) {
             return;
         }
 
@@ -1220,14 +1222,13 @@ class JsonApiListener extends ApiListener
 
         if (empty($requestData)) {
             throw new BadRequestException(
-                'Missing request data required for POST and PATCH methods. ' .
-                 'Make sure that you are sending a request body and that it is valid JSON.'
+                'Missing request data required for POST and PATCH methods, as well as DELETE methods to relationship endpoints. ' .
+                'Make sure that you are sending a request body and that it is valid JSON.'
             );
         }
 
         $validator = new DocumentValidator($requestData, $this->getConfig());
 
-        $isRelationshipAction = $this->_checkIsRelationshipsRequest();
         if ($isRelationshipAction) {
             $relationshipValidator = new DocumentRelationshipValidator($requestData, $this->getConfig());
             $relationshipValidator->validateUpdateDocument();
