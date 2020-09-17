@@ -211,12 +211,13 @@ class JsonApiListener extends ApiListener
  * @var string $entityForeignKey
 */
             $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
+            $primaryKey = $hasManyTable->getPrimaryKey();
             $query = $hasManyTable->find()
-                ->select(['id'])
+                ->select([$primaryKey])
                 ->where(
                     [
-                    $entityForeignKey => $primaryResourceId,
-                    'id IN' => $hasManyIds,
+                        $entityForeignKey => $primaryResourceId,
+                        $primaryKey . ' IN' => $hasManyIds,
                     ]
                 );
 
