@@ -1075,7 +1075,7 @@ class JsonApiListenerTest extends TestCase
     {
         $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage(
-            'Missing request data required for POST and PATCH methods. ' .
+            'Missing request data required for POST and PATCH methods, as well as DELETE methods to relationship endpoints. ' .
             'Make sure that you are sending a request body and that it is valid JSON.'
         );
         $controller = $this
