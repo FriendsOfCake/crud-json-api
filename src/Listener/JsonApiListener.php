@@ -211,12 +211,13 @@ class JsonApiListener extends ApiListener
  * @var string $entityForeignKey
 */
             $entityForeignKey = $hasManyTable->getAssociation($entity->getSource())->getForeignKey();
+            $primaryKey = current((array)$hasManyTable->getPrimaryKey());
             $query = $hasManyTable->find()
-                ->select(['id'])
+                ->select([$primaryKey])
                 ->where(
                     [
-                    $entityForeignKey => $primaryResourceId,
-                    'id IN' => $hasManyIds,
+                        $entityForeignKey => $primaryResourceId,
+                        $primaryKey . ' IN' => $hasManyIds,
                     ]
                 );
 
@@ -606,7 +607,10 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        if (!$reverseAssociation instanceof Association\BelongsToMany || !$forwardAssociation instanceof Association\BelongsToMany) {
+        if (
+            !$reverseAssociation instanceof Association\BelongsToMany ||
+            !$forwardAssociation instanceof Association\BelongsToMany
+        ) {
             return true;
         }
 
@@ -1213,8 +1217,10 @@ class JsonApiListener extends ApiListener
         $requestMethod = $this->_controller()->getRequest()->getMethod();
         $isRelationshipAction = $this->_checkIsRelationshipsRequest();
 
-        if (($requestMethod !== 'POST' && $requestMethod !== 'PATCH' && $requestMethod !== 'DELETE') ||
-            ($requestMethod === 'DELETE' && !$isRelationshipAction)) {
+        if (
+            ($requestMethod !== 'POST' && $requestMethod !== 'PATCH' && $requestMethod !== 'DELETE') ||
+            ($requestMethod === 'DELETE' && !$isRelationshipAction)
+        ) {
             return;
         }
 
@@ -1222,7 +1228,8 @@ class JsonApiListener extends ApiListener
 
         if (empty($requestData)) {
             throw new BadRequestException(
-                'Missing request data required for POST and PATCH methods, as well as DELETE methods to relationship endpoints. ' .
+                'Missing request data required for POST and PATCH methods, ' .
+                'as well as DELETE methods to relationship endpoints. ' .
                 'Make sure that you are sending a request body and that it is valid JSON.'
             );
         }
