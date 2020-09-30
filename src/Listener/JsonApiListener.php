@@ -643,7 +643,7 @@ class JsonApiListener extends ApiListener
         $association = $fromRepository->getAssociation($relationName);
         $associationType = $association->type();
         $reverseAssociationTypes = [
-            Association::ONE_TO_ONE => [Association::ONE_TO_MANY], // hasOne -> belongsTo
+            Association::ONE_TO_ONE => [Association::MANY_TO_ONE], // hasOne -> belongsTo
             Association::MANY_TO_ONE => [Association::ONE_TO_ONE, Association::ONE_TO_MANY], // belongsTo -> hasOne or hasMany
             Association::ONE_TO_MANY => [Association::MANY_TO_ONE], // hasMany -> belongsTo
             Association::MANY_TO_MANY => [Association::MANY_TO_MANY],
