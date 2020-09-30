@@ -600,8 +600,26 @@ class JsonApiListener extends ApiListener
             return false;
         }
 
-        $reverseConditions = $reverseAssociation->getConditions();
-        $forwardConditions = $forwardAssociation->getConditions();
+        /**
+         * Strip table aliases from the association conditions to prevent cases where a different alias causes
+         * associations
+         */
+        $stripAliasedConditions = function ($conditions) {
+            if (!is_array($conditions)) {
+                return $conditions;
+            }
+
+            $strippedConditions = [];
+            foreach ($conditions as $field => $condition) {
+                $field = preg_replace('/.*\.(.*)/', '$1', $field);
+                $strippedConditions[$field] = $condition;
+            }
+
+            return $strippedConditions;
+        };
+
+        $reverseConditions = $stripAliasedConditions($reverseAssociation->getConditions());
+        $forwardConditions = $stripAliasedConditions($forwardAssociation->getConditions());
 
         if ($forwardConditions !== $reverseConditions) {
             return false;
