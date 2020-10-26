@@ -41,6 +41,10 @@ class SparseFieldsetsIntegrationTest extends JsonApiBaseTestCase
                 '/countries/1?fields[countries]=name,currency&include=currencies&fields[currencies]=id,code',
                 'view-single-field-sparse-for-primary-and-included-data.json',
             ],
+            'multi-barrel single-field sparse view' => [
+                '/countries/1?fields[countries]=dummyCounter',
+                'view-multi-barrel-single-field-sparse.json',
+            ],
 
             // assert "multi-field" sparse for index actions
             'multi-field sparse index' => [

@@ -23,6 +23,7 @@ use Cake\Utility\Inflector;
 use Crud\Error\Exception\CrudException;
 use Crud\Event\Subject;
 use Crud\Listener\ApiListener;
+use CrudJsonApi\InflectTrait;
 use CrudJsonApi\Listener\JsonApi\DocumentRelationshipValidator;
 use CrudJsonApi\Listener\JsonApi\DocumentValidator;
 use InvalidArgumentException;
@@ -35,6 +36,7 @@ use InvalidArgumentException;
  */
 class JsonApiListener extends ApiListener
 {
+    use InflectTrait;
     use LocatorAwareTrait;
 
     public const MIME_TYPE = 'application/vnd.api+json';
@@ -482,6 +484,7 @@ class JsonApiListener extends ApiListener
         }
 
         // format $fieldSets to array acceptable by listener config()
+
         $fieldSets = array_map(
             static function ($val) {
                 return explode(',', $val);
@@ -490,21 +493,26 @@ class JsonApiListener extends ApiListener
         );
 
         $repository = $subject->query->getRepository();
-        $associations = $repository->associations();
 
-        $nodeName = Inflector::tableize($repository->getAlias());
-        if (empty($fieldSets[$nodeName])) {
-            $selectFields = [];
-        } else {
-            $selectFields = [$repository->aliasField($repository->getPrimaryKey())];
+        $nodeName = $this->inflect($this, $repository->getAlias());
+        $selectFields = [];
+        if (!empty($fieldSets[$nodeName])) {
+            $selectFields[] = [$repository->aliasField($repository->getPrimaryKey())];
         }
         $columns = $repository->getSchema()->columns();
         $contains = [];
         foreach ($fieldSets as $include => $fields) {
+            $fields = array_map(function ($field) {
+                if ($this->getConfig('inflect') === 'underscore') {
+                    return $field;
+                }
+
+                return Inflector::underscore($field);
+            }, $fields);
             if ($include === $nodeName) {
                 $aliasFields = array_map(
-                    function ($val) use ($repository, $columns) {
-                        if (!in_array($val, $columns)) {
+                    static function ($val) use ($repository, $columns) {
+                        if (!in_array($val, $columns, true)) {
                             return null;
                         }
 
@@ -512,16 +520,17 @@ class JsonApiListener extends ApiListener
                     },
                     $fields
                 );
-                $selectFields = array_merge($selectFields, array_filter($aliasFields));
+                $selectFields[] = array_filter($aliasFields);
             }
 
             $association = $this->_getAssociation($repository, $include);
-            if (!empty($association)) {
+            if ($association) {
                 $contains[$association->getAlias()] = [
                     'fields' => $fields,
                 ];
             }
         }
+        $selectFields = array_merge([], ...$selectFields);
 
         $subject->query->select($selectFields);
         if (!empty($contains)) {
