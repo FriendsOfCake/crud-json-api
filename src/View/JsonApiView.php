@@ -73,11 +73,11 @@ class JsonApiView extends View
      * - with empty body
      * - with body containing only the meta node
      *
-     * @param  string|null $view   Name of view file to use
+     * @param  string|null $template   Name of view file to use
      * @param  string|null $layout Layout to use.
      * @return string
      */
-    public function render(?string $view = null, $layout = null): string
+    public function render(?string $template = null, $layout = null): string
     {
         if ($this->getConfig('association')) {
             $json = $this->_encodeWithIdentifiers();
@@ -309,6 +309,11 @@ class JsonApiView extends View
             // Otherwise use the dynamic schema provided by Crud
             if (!$schemaClass) {
                 $schemaClass = App::className('CrudJsonApi.DynamicEntity', 'Schema\JsonApi', 'Schema');
+            }
+
+            //Otherwise something is horribly wrong
+            if (!$schemaClass) {
+                throw new \RuntimeException('No valid schema classes found');
             }
 
             // Uses NeoMerx createSchemaFromClosure()` to generate Closure
