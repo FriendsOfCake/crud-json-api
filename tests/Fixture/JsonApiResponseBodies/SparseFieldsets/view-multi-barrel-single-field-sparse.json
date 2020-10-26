@@ -1,0 +1,12 @@
+{
+    "data": {
+        "type": "countries",
+        "id": "1",
+        "attributes": {
+            "dummyCounter": 11111
+        },
+        "links": {
+            "self": "\/countries\/1"
+        }
+    }
+}
