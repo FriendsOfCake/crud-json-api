@@ -151,15 +151,15 @@ class DynamicEntitySchema extends BaseSchema
      * NeoMerx override used to pass entity root properties to be shown
      * as JsonApi `attributes`.
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
      */
-    public function getAttributes($entity, ContextInterface $context): iterable
+    public function getAttributes($resource, ContextInterface $context): iterable
     {
-        $entity->setHidden((array)$this->getRepository()->getPrimaryKey(), true);
+        $resource->setHidden((array)$this->getRepository()->getPrimaryKey(), true);
 
-        $attributes = $this->entityToShallowArray($entity);
+        $attributes = $this->entityToShallowArray($resource);
 
         // remove associated data so it won't appear inside jsonapi `attributes`
         foreach ($this->getRepository()->associations() as $association) {
@@ -194,11 +194,11 @@ class DynamicEntitySchema extends BaseSchema
      *
      * JSON API optional `related` links not implemented yet.
      *
-     * @param  \Cake\Datasource\EntityInterface $entity Entity object
+     * @param  \Cake\Datasource\EntityInterface $resource Entity object
      * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
      */
-    public function getRelationships($entity, ContextInterface $context): iterable
+    public function getRelationships($resource, ContextInterface $context): iterable
     {
         $relations = [];
 
@@ -206,35 +206,35 @@ class DynamicEntitySchema extends BaseSchema
             $property = $association->getProperty();
             $foreignKey = $association->getForeignKey();
 
-            $data = $entity->get($property);
+            $data = $resource->get($property);
             //If no data, and it's not a BelongsTo relationship, use no data
             if (!$data && $association->type() !== Association::MANY_TO_ONE) {
                 $data = false;
             }
 
             //If there is no data, and the foreignKey field is null, skip
-            if (!$data && (is_array($foreignKey) || !$entity->get($foreignKey))) {
+            if (!$data && (is_array($foreignKey) || !$resource->get($foreignKey))) {
                 $data = false;
             }
 
             // inflect related data in entity if need be
             $inflectedProperty = $this->inflect($this->view, $property);
 
-            if (empty($entity->$inflectedProperty)) {
-                $entity->$inflectedProperty = $entity->$property;
-                unset($entity->$property);
+            if (empty($resource->$inflectedProperty)) {
+                $resource->$inflectedProperty = $resource->$property;
+                unset($resource->$property);
             }
             $property = $inflectedProperty;
 
             $hasSelfLink = false;
             try {
-                $this->getRelationshipSelfLink($entity, $property);
+                $this->getRelationshipSelfLink($resource, $property);
                 $hasSelfLink = true;
             } catch (MissingRouteException $e) {
             }
             $hasRelatedLink = false;
             try {
-                $this->getRelationshipRelatedLink($entity, $property);
+                $this->getRelationshipRelatedLink($resource, $property);
                 $hasRelatedLink = true;
             } catch (MissingRouteException $e) {
             }
@@ -255,7 +255,7 @@ class DynamicEntitySchema extends BaseSchema
 
             if (!$data && !is_array($foreignKey)) {
                 $data = new Identifier(
-                    (string)$entity->get($foreignKey),
+                    (string)$resource->get($foreignKey),
                     $this->getTypeFromRepository($association->getTarget())
                 );
             }
@@ -315,11 +315,11 @@ class DynamicEntitySchema extends BaseSchema
      *
      * Example: /cultures?country_id=1 (or /country/1/cultures if your routes are configured like this)
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
-    public function getRelationshipSelfLink($entity, string $name): LinkInterface
+    public function getRelationshipSelfLink($resource, string $name): LinkInterface
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
@@ -336,7 +336,7 @@ class DynamicEntitySchema extends BaseSchema
             $this->_getRepositoryRoutingParameters($this->getRepository()) + [
                 '_method' => 'GET',
                 'action' => 'relationships',
-                $sourceName . '_id' => $entity->id,
+                $sourceName . '_id' => $resource->id,
                 'from' => $from,
                 'type' => $type,
             ],
@@ -352,11 +352,11 @@ class DynamicEntitySchema extends BaseSchema
      *
      * hasMany example"   /countries/1/currencies"
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
      */
-    public function getRelationshipRelatedLink($entity, string $name): LinkInterface
+    public function getRelationshipRelatedLink($resource, string $name): LinkInterface
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
@@ -383,7 +383,7 @@ class DynamicEntitySchema extends BaseSchema
             ->getRegistryAlias();
         $type = $association->getName();
         $route = $baseRoute + [
-            $sourceName . '_id' => $entity->id,
+            $sourceName . '_id' => $resource->id,
             'from' => $from,
             'type' => $type,
             '_name' => "CrudJsonApi.{$from}:{$type}",
@@ -397,12 +397,12 @@ class DynamicEntitySchema extends BaseSchema
         } catch (MissingRouteException $e) {
             //This means that the JSON:API recommended route is missing. We need to try something else.
 
-            $relatedEntity = $entity->get($name);
+            $relatedEntity = $resource->get($name);
 
             if ($relatedEntity instanceof EntityInterface) {
                 $keys = array_values($relatedEntity->extract((array)$relatedRepository->getPrimaryKey()));
             } else {
-                $keys = array_values($entity->extract((array)$association->getForeignKey()));
+                $keys = array_values($resource->extract((array)$association->getForeignKey()));
             }
             $keys = Hash::filter($keys);
             if (empty($keys)) {
