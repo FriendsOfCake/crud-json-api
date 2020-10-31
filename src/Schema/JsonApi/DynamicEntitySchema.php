@@ -323,7 +323,7 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            throw new InvalidArgumentException('Invalid association ' . $name);
+            throw new InvalidArgumentException(sprintf('Invalid association for resource %s: %s', get_class($resource), $name));
         }
 
         $from = $this->getRepository()
