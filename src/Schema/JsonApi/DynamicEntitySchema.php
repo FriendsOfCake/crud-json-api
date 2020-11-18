@@ -127,7 +127,7 @@ class DynamicEntitySchema extends BaseSchema
             ? $entity->getVisible()
             : $entity->visibleProperties();
         foreach ($properties as $property) {
-            if ($property === '_joinData' || $property === '_matchingData') {
+            if ($property[0] === '_') {
                 continue;
             }
 
@@ -175,7 +175,7 @@ class DynamicEntitySchema extends BaseSchema
 
         // inflect attribute keys (like `created_by`)
         foreach ($attributes as $key => $value) {
-            $inflectedKey = $this->inflect($this->view, $key);
+            $inflectedKey = is_numeric($key) || $key[0] === '_' ? $key : $this->inflect($this->view, $key);
 
             if (!array_key_exists($inflectedKey, $attributes)) {
                 unset($attributes[$key]);
@@ -218,7 +218,7 @@ class DynamicEntitySchema extends BaseSchema
             }
 
             // inflect related data in entity if need be
-            $inflectedProperty = $this->inflect($this->view, $property);
+            $inflectedProperty = $property[0] === '_' ? $property : $this->inflect($this->view, $property);
 
             if (empty($resource->$inflectedProperty)) {
                 $resource->$inflectedProperty = $resource->$property;
@@ -323,7 +323,9 @@ class DynamicEntitySchema extends BaseSchema
     {
         $association = $this->getAssociationByProperty($name);
         if (!$association) {
-            throw new InvalidArgumentException('Invalid association ' . $name);
+            throw new InvalidArgumentException(
+                sprintf('Invalid association for resource %s: %s', get_class($resource), $name)
+            );
         }
 
         $from = $this->getRepository()
