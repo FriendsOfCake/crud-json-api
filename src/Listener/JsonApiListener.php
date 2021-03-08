@@ -1342,7 +1342,9 @@ class JsonApiListener extends ApiListener
         $result = [];
 
         // support deletion of relationships as per https://jsonapi.org/format/#crud-updating-to-one-relationships
-        if($document['data'] === null) return $result;
+        if($document['data'] === null) {
+          return $result;
+        }
 
         // convert primary resource
         if (array_key_exists('id', $document['data'])) {
