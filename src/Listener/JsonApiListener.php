@@ -1342,25 +1342,25 @@ class JsonApiListener extends ApiListener
         $result = [];
 
         // convert primary resource
-        if (array_key_exists('id', $document['data'])) {
+        if (isset($document['data']['id'])) {
             $result['id'] = $document['data']['id'];
         }
 
-        if (array_key_exists('attributes', $document['data'])) {
-            $result = array_merge_recursive($result, $document['data']['attributes']);
+        if (isset( $document['data']['attributes'])) {
+          $result = array_merge_recursive($result, $document['data']['attributes']);
 
-            // Un-inflect all attribute keys directly below the primary resource if need be
-            if ($this->getConfig('inflect') !== 'underscore') {
-                foreach ($result as $key => $value) {
-                    $underscoredKey = Inflector::underscore($key);
+          // Un-inflect all attribute keys directly below the primary resource if need be
+          if ($this->getConfig('inflect') !== 'underscore') {
+              foreach ($result as $key => $value) {
+                  $underscoredKey = Inflector::underscore($key);
 
-                    if (!array_key_exists($underscoredKey, $result)) {
-                        $result[$underscoredKey] = $value;
-                        unset($result[$key]);
-                    }
-                }
-            }
-        }
+                  if (!isset( $result[$underscoredKey])) {
+                      $result[$underscoredKey] = $value;
+                      unset($result[$key]);
+                  }
+              }
+          }
+      }
 
         // handle relationships URL
         if ($this->_checkIsRelationshipsRequest()) {
@@ -1368,9 +1368,9 @@ class JsonApiListener extends ApiListener
         }
 
         // no further action if there are no relationships
-        if (!array_key_exists('relationships', $document['data'])) {
-            return $result;
-        }
+        if (!isset($document['data']['relationships'])) {
+          return $result;
+      }
 
         // translate relationships into CakePHP array format
         foreach ($document['data']['relationships'] as $key => $details) {
@@ -1397,18 +1397,18 @@ class JsonApiListener extends ApiListener
                 $relationResults = [];
                 foreach ($details['data'] as $relationData) {
                     $relationResult = [];
-                    if (array_key_exists('id', $relationData)) {
+                    if (isset( $relationData['id'])) {
                         $relationResult['id'] = $relationData['id'];
                     }
 
-                    if (array_key_exists('attributes', $relationData)) {
+                    if (isset( $relationData['attributes'])) {
                         $relationResult = array_merge_recursive($relationResult, $relationData['attributes']);
 
                         // dasherize attribute keys if need be
                         if ($this->getConfig('inflect') !== 'underscore') {
                             foreach ($relationResult as $resultKey => $value) {
                                 $underscoredKey = Inflector::underscore($resultKey);
-                                if (!array_key_exists($underscoredKey, $relationResult)) {
+                                if (!isset( $relationResult[$underscoredKey])) {
                                     $relationResult[$underscoredKey] = $value;
                                     unset($relationResult[$resultKey]);
                                 }
