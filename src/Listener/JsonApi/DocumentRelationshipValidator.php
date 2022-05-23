@@ -50,13 +50,10 @@ class DocumentRelationshipValidator extends DocumentValidator
             }
 
             $errors = false;
-            foreach ($dataProperty as $key => $val) {
-                if (is_array($val)) {
-                    if (!array_key_exists('type', $val) || !array_key_exists('id', $val)) {
-                        $errors = true;
-                    }
-                } else {
+            foreach ($dataProperty as $val) {
+                if (!is_array($val) || !array_key_exists('type', $val) || !array_key_exists('id', $val)) {
                     $errors = true;
+                    break;
                 }
             }
             if (!$errors) {
