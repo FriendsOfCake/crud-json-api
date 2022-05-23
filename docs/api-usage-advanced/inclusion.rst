@@ -16,14 +16,14 @@ and a ``hasMany`` relationship with Cultures:
 
   public function view()
   {
-    $this->Crud->on('beforeFind', function (Event $event) {
-      $event->getSubject()->query->contain([
-        'Currencies',
-        'Cultures',
-      ]);
-    });
+      $this->Crud->on('beforeFind', function (Event $event) {
+          $event->getSubject()->query->contain([
+              'Currencies',
+              'Cultures',
+          ]);
+      });
 
-    return $this->Crud->execute();
+      return $this->Crud->execute();
   }
 
 Assuming a successful find the listener would produce the
@@ -130,11 +130,11 @@ This is done using the listener configuration:
 
   public function view()
   {
-    $this->Crud
-      ->listener('jsonApi')
-      ->config('queryParameters.include.allowList', ['cultures', 'cities']);
+      $this->Crud
+          ->listener('jsonApi')
+          ->config('queryParameters.include.allowList', ['cultures', 'cities']);
 
-    return $this->Crud->execute();
+      return $this->Crud->execute();
   }
 
 allowListing will prevent all non-allowListed associations from being
@@ -148,9 +148,9 @@ config option to ``true``:
 
   public function view()
   {
-    $this->Crud
-      ->listener('jsonApi')
-      ->config('queryParameters.include.denyList', true);
+      $this->Crud
+          ->listener('jsonApi')
+          ->config('queryParameters.include.denyList', true);
 
-    return $this->Crud->execute();
+      return $this->Crud->execute();
   }

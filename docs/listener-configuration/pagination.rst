@@ -9,36 +9,36 @@ it to all controllers, application wide.
 
 .. code-block:: php
 
-  <?php
-  class AppController extends Controller {
-
-    public function initialize()
-    {
-      $this->loadComponent('RequestHandler');
-      $this->loadComponent('Crud.Crud', [
-        'actions' => [
-          'Crud.Index',
-          'Crud.View'
-        ],
-        'listeners' => [
-          'CrudJsonApi.JsonApi',
-          'CrudJsonApi.Pagination',
-        ]
-      ]);
-    }
+  class AppController extends Controller
+  {
+      public function initialize()
+      {
+          $this->loadComponent('RequestHandler');
+          $this->loadComponent('Crud.Crud', [
+              'actions' => [
+                'Crud.Index',
+                'Crud.View',
+              ],
+              'listeners' => [
+                'CrudJsonApi.JsonApi',
+                'CrudJsonApi.Pagination',
+              ],
+          ]);
+      }
+  }
 
 Alternatively, attach the listener to your controllers ``beforeFilter``
 if you prefer attaching the listener to only specific controllers on the fly.
 
 .. code-block:: php
 
-  <?php
-  class SamplesController extends AppController {
-
-    public function beforeFilter(\Cake\Event\Event $event) {
-      parent::beforeFilter();
-      $this->Crud->addListener('CrudJsonApi.Pagination');
-    }
+  class SamplesController extends AppController
+  {
+      public function beforeFilter(\Cake\Event\EventInterface $event)
+      {
+          parent::beforeFilter($event);
+          $this->Crud->addListener('CrudJsonApi.Pagination');
+      }
   }
 
 All ``GET`` requests to the index action will now add

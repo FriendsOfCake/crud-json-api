@@ -15,14 +15,14 @@ Now create search aliases named ``filter`` in your tables like shown below:
 
   public function searchManager()
   {
-    $searchManager = $this->behaviors()->Search->searchManager();
-    $searchManager->like('filter', [
-      'before' => true,
-      'after' => true,
-      'field' => [$this->aliasField('name')]
-    ]);
+      $searchManager = $this->behaviors()->Search->searchManager();
+      $searchManager->like('filter', [
+          'before' => true,
+          'after' => true,
+          'field' => [$this->aliasField('name')],
+      ]);
 
-    return $searchManager;
+      return $searchManager;
   }
 
 Once that is done you will be able to search your API using URLs similar to:
