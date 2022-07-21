@@ -138,11 +138,11 @@ This is done using the listener configuration:
   }
 
 allowListing will prevent all non-allowListed associations from being
-contained. Blacklisting will prevent any denyListed associations from
-being included. Blacklisting takes precedence of allowListing (i.e
-denyListing and allowListing the same association will prevent it from
-being included). If you wish to prevent any associations, set the ``denyList``
-config option to ``true``:
+contained. denyListing will prevent associations from being included.
+denyListing takes precedence over allowListing (i.e denyListing and
+allowListing the same association will prevent it from being included).
+If you wish to prevent any associations, set the ``denyList``config
+option to ``true``:
 
 .. code-block:: php
 
