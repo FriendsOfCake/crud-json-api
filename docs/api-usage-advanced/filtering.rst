@@ -29,8 +29,3 @@ Once that is done you will be able to search your API using URLs similar to:
 
 - ``/countries?filter=netherlands``
 - ``/countries?filter=nether``
-
-Please note that the following search requests would also be matched:
-
-- ``/countries?filter[id]=1``
-- ``/countries?filter[id][]=1&filter[id][]=2``
