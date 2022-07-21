@@ -17,5 +17,6 @@ once enabled as `described here <https://crud.readthedocs.io/en/latest/listeners
           "numRows": 10,
           "error": null
         }
+      ]
     }
   }
