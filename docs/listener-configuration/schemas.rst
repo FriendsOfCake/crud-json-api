@@ -31,17 +31,16 @@ file looking similar to:
 
 .. code-block:: phpinline
 
-  <?php
   namespace App\Schema\JsonApi;
 
   use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema;
 
   class CountrySchema extends DynamicEntitySchema
   {
-    public function getSelfSubUrl($entity = null)
-    {
-      return 'http://prefix.only/countries/controller/self-links/';
-    }
+      public function getSelfSubUrl($entity = null)
+      {
+          return 'https://countryies.example.com/controller/self-links/';
+      }
   }
 
 Custom dynamic schema
@@ -55,15 +54,14 @@ a ``src/Schema/JsonApi/DynamicEntitySchema.php`` file looking similar to:
 
 .. code-block:: phpinline
 
-  <?php
   namespace App\Schema\JsonApi;
 
   use CrudJsonApi\Schema\JsonApi\DynamicEntitySchema as CrudDynamicEntitySchema;
 
   class DynamicEntitySchema extends CrudDynamicEntitySchema
   {
-    public function getSelfSubUrl($entity = null)
-    {
-      return 'http://prefix.all/controller/self-links/';
-    }
+      public function getSelfSubUrl($entity = null)
+      {
+          return 'https://api.example.com/controller/self-links/';
+      }
   }

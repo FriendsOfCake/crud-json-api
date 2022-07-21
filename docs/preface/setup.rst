@@ -71,33 +71,32 @@ is loaded **before** ``Crud``.
 
 .. code-block:: php
 
-  <?php
-  class AppController extends Controller {
-
-    public function initialize()
-    {
-      $this->loadComponent('RequestHandler');
-      $this->loadComponent('Crud.Crud', [
-        'actions' => [
-          'Crud.Index',
-          'Crud.View'
-        ],
-        'listeners' => ['CrudJsonApi.JsonApi']
-      ]);
-    }
+  class AppController extends Controller
+  {
+      public function initialize()
+      {
+          $this->loadComponent('RequestHandler');
+          $this->loadComponent('Crud.Crud', [
+              'actions' => [
+                  'Crud.Index',
+                  'Crud.View',
+              ],
+              'listeners' => ['CrudJsonApi.JsonApi'],
+          ]);
+      }
+  }
 
 Alternatively, attach the listener to your controllers ``beforeFilter``
 if you prefer attaching the listener to only specific controllers on the fly.
 
 .. code-block:: php
 
-  <?php
-  class SamplesController extends AppController {
-
-    public function beforeFilter(\Cake\Event\Event $event) {
-      parent::beforeFilter();
-      $this->Crud->addListener('CrudJsonApi.JsonApi');
-    }
+  class SamplesController extends AppController
+  {
+      public function beforeFilter(\Cake\Event\Event $event) {
+          parent::beforeFilter();
+          $this->Crud->addListener('CrudJsonApi.JsonApi');
+      }
   }
 
 Exception Handler
@@ -112,14 +111,13 @@ class and enabling it with the ``exceptionRenderer`` configuration option.
 
 .. code-block:: php
 
-  <?php
-  class AppController extends Controller {
-
-    public function initialize()
-    {
-      parent::initialize();
-      $this->Crud->config(['listeners.jsonApi.exceptionRenderer' => 'App\Error\JsonApiExceptionRenderer']);
-    }
+  class AppController extends Controller
+  {
+      public function initialize()
+      {
+          parent::initialize();
+          $this->Crud->config(['listeners.jsonApi.exceptionRenderer' => 'App\Error\JsonApiExceptionRenderer']);
+      }
   }
 
 .. note::
@@ -150,16 +148,16 @@ to configure your global routing scope in ``config/routes.php`` similar to:
 .. code-block:: phpinline
 
   const API_RESOURCES = [
-    'Countries',
-    'Currencies'
+      'Countries',
+      'Currencies',
   ];
 
   Router::scope('/', function ($routes) {
-    foreach (API_RESOURCES as $apiResource) {
-        $routes->resources($apiResource, [
-            'inflect' => 'dasherize'
-        ]);
-    }
+      foreach (API_RESOURCES as $apiResource) {
+          $routes->resources($apiResource, [
+              'inflect' => 'dasherize',
+          ]);
+      }
   });
 
 Request detector
@@ -173,7 +171,7 @@ and can be used like this inside your application:
 .. code-block:: php
 
   if ($this->request->is('jsonapi')) {
-    return('cool, using JSON API');
+      return 'cool, using JSON API';
   }
 
 .. note::
