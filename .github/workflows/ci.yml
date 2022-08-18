@@ -1,4 +1,4 @@
-name: CrudJSONApi CI
+name: CI
 
 on:
   push:
@@ -10,27 +10,29 @@ on:
 
 jobs:
   testsuite:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ '7.2', '7.3', '7.4' ]
+        php-version: [ '7.4', '8.0', '8.1' ]
         db-type: [ mysql ]
-    name: PHP ${{ matrix.php-version }} & ${{ matrix.db-type }}
+        prefer-lowest: ['']
+        include:
+          - php-version: '7.2'
+            db-type: 'mysql'
+            prefer-lowest: 'prefer-lowest'
 
     steps:
 
       - name: Setup MySQL latest
-        if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
+        if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
         run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
 
       - name: Setup MySQL 5.6
-        if: matrix.db-type == 'mysql' && matrix.php-version == '7.4'
+        if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
         run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.6 --character-set-server=utf8
 
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -49,41 +51,44 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m')"
 
       - name: Cache composer dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
       - name: composer install
-        run: composer install
+        run: |
+          if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
+            composer update --prefer-lowest --prefer-stable
+          else
+            composer update
+          fi
 
       - name: Configure PHPUnit matcher
         if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
-        uses: mheap/phpunit-matcher-action@master
+        uses: mheap/phpunit-matcher-action@v1
 
       - name: Run PHPUnit
         run: |
-          if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
-          if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.4' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
-          if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-            vendor/bin/phpunit
-          else
-            vendor/bin/phpunit --verbose
-          fi
+          if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
+          if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
+          vendor/bin/phpunit --verbose
+
+      - name: Code Coverage Report
+        if: success() && matrix.php-version == '7.4' && matrix.db-type == 'mysql'
+        uses: codecov/codecov-action@v3
 
   coding-standard:
     name: Coding Standard
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.4'
           extensions: mbstring, intl, apcu
           coverage: none
 
@@ -96,7 +101,7 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m')"
 
       - name: Cache composer dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
@@ -109,17 +114,15 @@ jobs:
 
   static-analysis:
     name: Static Analysis
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.4'
           extensions: mbstring, intl, apcu
           coverage: none
           tools: cs2pr
