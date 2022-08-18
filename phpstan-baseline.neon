@@ -1,0 +1,16 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Dead catch \\- Cake\\\\Core\\\\Exception\\\\CakeException is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Error/JsonApiExceptionRenderer.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Controller\\\\Controller\\:\\:\\$Crud\\.$#"
+			count: 1
+			path: src/Listener/PaginationListener.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Datasource\\\\EntityInterface\\:\\:visibleProperties\\(\\)\\.$#"
+			count: 1
+			path: src/Schema/JsonApi/DynamicEntitySchema.php

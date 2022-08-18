@@ -73,5 +73,10 @@
             "@psalm"
         ],
         "test": "phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

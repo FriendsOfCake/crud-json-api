@@ -67,7 +67,7 @@ class JsonApiRoutes
             $allowedMethods = array_keys($methodMap);
         }
 
-        $path = static::inflect($association->getProperty());
+        $path = self::inflect($association->getProperty());
         $from = $association->getSource()
             ->getRegistryAlias();
         [, $controller] = pluginSplit($from);
@@ -117,12 +117,12 @@ class JsonApiRoutes
             true
         );
 
-        $pathName = static::inflect($association->getProperty());
+        $pathName = self::inflect($association->getProperty());
 
         $associationRepository = App::shortName(get_class($association->getTarget()), 'Model/Table', 'Table');
         [$associationPlugin, $controller] = pluginSplit($associationRepository);
 
-        static::buildRelationshipLink($routeBuilder, $association, $options);
+        self::buildRelationshipLink($routeBuilder, $association, $options);
 
         if ($associationPlugin !== $plugin) {
             $routeBuilder->scope(
@@ -155,7 +155,7 @@ class JsonApiRoutes
         }
 
         $routeBuilder->connect(
-            '/' . static::inflect($pathName),
+            '/' . self::inflect($pathName),
             [
                 'controller' => $controller,
                 '_method' => 'GET',
@@ -213,7 +213,7 @@ class JsonApiRoutes
                     $callback = function (RouteBuilder $routeBuilder) use ($associations, $options) {
                         /** @var \Cake\ORM\Association $association */
                         foreach ($associations as $association) {
-                            static::buildAssociationLinks($routeBuilder, $association, $options);
+                            self::buildAssociationLinks($routeBuilder, $association, $options);
                         }
                     };
                 }
