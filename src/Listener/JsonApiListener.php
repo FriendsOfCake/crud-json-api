@@ -89,7 +89,7 @@ class JsonApiListener extends ApiListener
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -1063,7 +1063,7 @@ class JsonApiListener extends ApiListener
     protected function _getSingleEntity(Subject $subject): ?EntityInterface
     {
         if (!empty($subject->entities) && $subject->entities instanceof Query) {
-            // @phpstan-ignore-next-line
+            /** @psalm-suppress InvalidReturnStatement */
             return (clone $subject->entities)->first();
         }
 
@@ -1271,6 +1271,7 @@ class JsonApiListener extends ApiListener
                 $validator->validateCreateDocument();
             }
 
+            /** @psalm-suppress TypeDoesNotContainType */
             if ($requestMethod === 'PATCH' || $requestMethod === 'DELETE') {
                 $validator->validateUpdateDocument();
             }

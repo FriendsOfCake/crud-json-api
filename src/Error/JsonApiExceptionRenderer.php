@@ -85,16 +85,16 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
      * Method used for rendering 422 validation used for both CakePHP entity
      * validation errors and JSON API (request data) documents.
      *
-     * @param  \Crud\Error\Exception\ValidationException $exception Exception
+     * @param  \Crud\Error\Exception\ValidationException $error Exception
      * @return \Cake\Http\Response
      */
-    public function validation(ValidationException $exception): Response
+    public function validation(ValidationException $error): Response
     {
         if (!$this->controller->getRequest()->accepts('application/vnd.api+json')) {
-            return parent::validation($exception);
+            return parent::validation($error);
         }
 
-        $status = $exception->getCode();
+        $status = $error->getCode();
 
         try {
             $this->controller->setResponse($this->controller->getResponse()->withStatus($status));
@@ -103,7 +103,7 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
             $this->controller->setResponse($this->controller->getResponse()->withStatus($status));
         }
 
-        $errorCollection = $this->_getNeoMerxErrorCollection($exception->getValidationErrors());
+        $errorCollection = $this->_getNeoMerxErrorCollection($error->getValidationErrors());
 
         $encoder = Encoder::instance();
         $json = $encoder->encodeErrors($errorCollection);
@@ -180,16 +180,13 @@ class JsonApiExceptionRenderer extends ExceptionRenderer
 
         $debug = [];
         $debug['class'] = get_class($viewVars['error']);
-
-        if (!isset($debug['trace'])) {
-            $debug['trace'] = Debugger::formatTrace(
-                $viewVars['error']->getTrace(),
-                [
-                'format' => 'array',
-                'args' => false,
-                ]
-            );
-        }
+        $debug['trace'] = Debugger::formatTrace(
+            $viewVars['error']->getTrace(),
+            [
+            'format' => 'array',
+            'args' => false,
+            ]
+        );
 
         $result = json_decode($json, true);
         $result['debug'] = $debug;

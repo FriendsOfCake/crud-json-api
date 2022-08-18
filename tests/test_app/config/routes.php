@@ -6,7 +6,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use CrudJsonApi\Route\JsonApiRoutes;
 
-Router::scope('/', function (RouteBuilder $routes) {
+Router::createRouteBuilder('/')->scope('/', function (RouteBuilder $routes) {
     $routes->setRouteClass(InflectedRoute::class);
     $routes->setExtensions(['json']);
 

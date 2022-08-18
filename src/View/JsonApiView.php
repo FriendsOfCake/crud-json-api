@@ -38,7 +38,7 @@ class JsonApiView extends View
     ) {
         parent::__construct($request, $response, $eventManager, $viewOptions);
 
-        if ($response && $response instanceof Response) {
+        if ($response !== null) {
             $this->response = $response->withType('jsonapi');
         }
     }
@@ -74,7 +74,7 @@ class JsonApiView extends View
      * - with body containing only the meta node
      *
      * @param  string|null $template   Name of view file to use
-     * @param  string|null $layout Layout to use.
+     * @param  string|false|null $layout Layout to use.
      * @return string
      */
     public function render(?string $template = null, $layout = null): string

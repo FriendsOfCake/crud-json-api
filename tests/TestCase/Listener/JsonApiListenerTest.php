@@ -56,7 +56,7 @@ class JsonApiListenerTest extends TestCase
     {
         parent::setUp();
 
-        Router::scope(
+        Router::createRouteBuilder('/')->scope(
             '/',
             static function (RouteBuilder $routeBuilder) {
                 $routeBuilder->fallbacks();

@@ -82,10 +82,11 @@ class DynamicEntitySchema extends BaseSchema
     /**
      * Get resource id.
      *
-     * @param  \Cake\ORM\Entity $entity Entity
+     * @param  \Cake\ORM\Entity $resource Entity
      * @return string
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function getId($entity): ?string
+    public function getId($resource): ?string
     {
         $primaryKey = $this->repository->getPrimaryKey();
 
@@ -93,7 +94,7 @@ class DynamicEntitySchema extends BaseSchema
             throw new \RuntimeException('Crud-Json-Api does not support composite keys out of the box.');
         }
 
-        return (string)$entity->get($primaryKey);
+        return (string)$resource->get($primaryKey);
     }
 
     /**
@@ -123,6 +124,7 @@ class DynamicEntitySchema extends BaseSchema
     protected function entityToShallowArray(EntityInterface $entity)
     {
         $result = [];
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $properties = method_exists($entity, 'getVisible')
             ? $entity->getVisible()
             : $entity->visibleProperties();
@@ -154,6 +156,7 @@ class DynamicEntitySchema extends BaseSchema
      * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function getAttributes($resource, ContextInterface $context): iterable
     {
@@ -197,6 +200,7 @@ class DynamicEntitySchema extends BaseSchema
      * @param  \Cake\Datasource\EntityInterface $resource Entity object
      * @param \Neomerx\JsonApi\Contracts\Schema\ContextInterface $context The Context
      * @return array
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function getRelationships($resource, ContextInterface $context): iterable
     {
@@ -240,16 +244,14 @@ class DynamicEntitySchema extends BaseSchema
             }
 
             //Include link elements for other relations
-            if ($data === false && ($hasSelfLink || $hasRelatedLink)) {
-                $relations[$property] = [
-                    self::RELATIONSHIP_LINKS_SELF => $hasSelfLink,
-                    self::RELATIONSHIP_LINKS_RELATED => $hasRelatedLink,
-                ];
+            if ($data === false) {
+                if ($hasSelfLink || $hasRelatedLink) {
+                    $relations[$property] = [
+                        self::RELATIONSHIP_LINKS_SELF => $hasSelfLink,
+                        self::RELATIONSHIP_LINKS_RELATED => $hasRelatedLink,
+                    ];
+                }
 
-                continue;
-            }
-
-            if ($data === false && !$hasSelfLink && !$hasRelatedLink) {
                 continue;
             }
 
@@ -273,16 +275,17 @@ class DynamicEntitySchema extends BaseSchema
     /**
      * NeoMerx override used to generate `self` links
      *
-     * @param  \Cake\ORM\Entity|null $entity Entity, null only to be compatible with the Neomerx method
+     * @param  \Cake\ORM\Entity|null $resource Entity, null only to be compatible with the Neomerx method
      * @return string
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function getSelfSubUrl($entity = null): string
+    public function getSelfSubUrl($resource = null): string
     {
-        if ($entity === null) {
+        if ($resource === null) {
             return '';
         }
 
-        $keys = array_values($entity->extract((array)$this->getRepository()->getPrimaryKey()));
+        $keys = array_values($resource->extract((array)$this->getRepository()->getPrimaryKey()));
 
         return Router::url(
             $this->_getRepositoryRoutingParameters($this->repository) + $keys + [
@@ -318,6 +321,7 @@ class DynamicEntitySchema extends BaseSchema
      * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function getRelationshipSelfLink($resource, string $name): LinkInterface
     {
@@ -338,7 +342,7 @@ class DynamicEntitySchema extends BaseSchema
             $this->_getRepositoryRoutingParameters($this->getRepository()) + [
                 '_method' => 'GET',
                 'action' => 'relationships',
-                $sourceName . '_id' => $resource->id,
+                $sourceName . '_id' => $resource->get('id'),
                 'from' => $from,
                 'type' => $type,
             ],
@@ -357,6 +361,7 @@ class DynamicEntitySchema extends BaseSchema
      * @param \Cake\Datasource\EntityInterface $resource Entity
      * @param string                           $name   Relationship name in lowercase singular or plural
      * @return \Neomerx\JsonApi\Contracts\Schema\LinkInterface
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function getRelationshipRelatedLink($resource, string $name): LinkInterface
     {
@@ -385,7 +390,7 @@ class DynamicEntitySchema extends BaseSchema
             ->getRegistryAlias();
         $type = $association->getName();
         $route = $baseRoute + [
-            $sourceName . '_id' => $resource->id,
+            $sourceName . '_id' => $resource->get('id'),
             'from' => $from,
             'type' => $type,
             '_name' => "CrudJsonApi.{$from}:{$type}",

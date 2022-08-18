@@ -288,9 +288,9 @@ class DocumentValidator extends stdClass
             }
 
             // multiple hasMany relationships
-            $hasManys = $this->_getProperty($relationshipPathObject->dotted . '.data');
+            $count = count($this->_getProperty($relationshipPathObject->dotted . '.data'));
 
-            for ($i = 0; $i < count($hasManys); $i++) {
+            for ($i = 0; $i < $count; $i++) {
                 $pathObject = $this->_getPathObject($relationshipPathObject->dotted . '.data.' . $i);
 
                 $this->_relationshipDataMustHaveType($relationship, $pathObject);

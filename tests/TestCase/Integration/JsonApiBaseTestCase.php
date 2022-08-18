@@ -56,7 +56,7 @@ abstract class JsonApiBaseTestCase extends TestCase
 
         Configure::write('Error.exceptionRenderer', JsonApiExceptionRenderer::class);
 
-        Router::scope('/', function ($routes) {
+        Router::createRouteBuilder('/')->scope('/', function ($routes) {
             JsonApiRoutes::mapModels([
                 'Countries',
                 'Currencies',

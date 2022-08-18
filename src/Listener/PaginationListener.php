@@ -22,7 +22,7 @@ class PaginationListener extends BaseListener
      *
      * We attach at priority 10 so normal bound events can run before us
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -86,6 +86,7 @@ class PaginationListener extends BaseListener
             $query['sort'] = $request->getQuery('sort');
         }
 
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         $fullBase = (bool)$this->_controller()->Crud->getConfig('listeners.jsonApi.absoluteLinks');
 
         $baseUrl = $request->getAttributes()['params'];
