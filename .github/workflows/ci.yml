@@ -72,7 +72,11 @@ jobs:
         run: |
           if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
           if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
-          vendor/bin/phpunit --verbose
+          if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.4' ]]; then
+            vendor/bin/phpunit --coverage-clover=coverage.xml --verbose
+          else
+            vendor/bin/phpunit
+          fi
 
       - name: Code Coverage Report
         if: success() && matrix.php-version == '7.4' && matrix.db-type == 'mysql'
