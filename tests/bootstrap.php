@@ -1,5 +1,6 @@
 <?php
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 
 // @codingStandardsIgnoreFile
@@ -99,3 +100,7 @@ Cake\Datasource\ConnectionManager::setConfig(
 
 Plugin::getCollection()->add(new \Crud\Plugin());
 Plugin::getCollection()->add(new \CrudJsonApi\Plugin());
+
+Configure::write('Error.ignoredDeprecationPaths', [
+    'vendor/cakephp/cakephp/src/TestSuite/Fixture/FixtureInjector.php',
+]);
