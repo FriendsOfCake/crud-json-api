@@ -180,7 +180,7 @@ by specifying a callable.
 
 .. code-block:: phpinline
 
-  $this->Crud->listener('jsonApi')->config('queryParameter.parent', [
+  $this->Crud->listener('jsonApi')->setConfig('queryParameter.parent', [
       'callable' => function ($queryData, $subject) {
           $subject->query->where('parent' => $queryData);
       },

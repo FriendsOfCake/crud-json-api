@@ -132,7 +132,7 @@ This is done using the listener configuration:
   {
       $this->Crud
           ->listener('jsonApi')
-          ->config('queryParameters.include.allowList', ['cultures', 'cities']);
+          ->setConfig('queryParameters.include.allowList', ['cultures', 'cities']);
 
       return $this->Crud->execute();
   }
@@ -150,7 +150,7 @@ option to ``true``:
   {
       $this->Crud
           ->listener('jsonApi')
-          ->config('queryParameters.include.denyList', true);
+          ->setConfig('queryParameters.include.denyList', true);
 
       return $this->Crud->execute();
   }
